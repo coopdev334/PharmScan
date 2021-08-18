@@ -34,6 +34,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
         val listState = rememberLazyListState()
+        // Use for testing
         val itemList = listOf("coopcomp1", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4")
 
         Scaffold(
