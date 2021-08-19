@@ -204,7 +204,7 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
                 fontSize = 50.sp,
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
-                    .padding(start = 100.dp) // Change this value
+                    .padding(start = 150.dp) // Change this value
                     .clickable {
                         navController.popBackStack(Screen.Settings.route, inclusive = false)
                     },
