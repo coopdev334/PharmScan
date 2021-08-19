@@ -11,13 +11,11 @@ fun Navigate() {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.MainScreen.route
-    ) {
+        startDestination = Screen.MainScreen.route) {
 
         addMainScreen(navController = navController)
         addAboutScreen(navController = navController)
         addViewColDataFNameScreen(navController = navController)
-        addSettingsScreen(navController = navController)
-        addNetFileSendScreen(navController = navController)
+
     }
 }

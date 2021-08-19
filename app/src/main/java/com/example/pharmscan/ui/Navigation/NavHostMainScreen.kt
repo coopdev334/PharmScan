@@ -43,7 +43,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
 
         Scaffold(
             scaffoldState = scaffoldState,
-            drawerShape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp, bottomEnd = 10.dp, bottomStart = 10.dp),
+            drawerShape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp, bottomEnd = 15.dp, bottomStart = 15.dp),
             drawerContent = {
                 Text(
                     text = "Settings",
@@ -65,7 +65,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                     modifier = Modifier.clickable {
                         coroutineScope.launch {
                             scaffoldState.drawerState.close()
-                            scaffoldState.snackbarHostState.showSnackbar("Drawer Settings") }
+                            navController.navigate(Screen.ViewCancel.route) }
                     },
                     fontSize = 30.sp,
                     fontWeight = FontWeight.W300,
