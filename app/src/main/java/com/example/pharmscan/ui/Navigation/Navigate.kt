@@ -18,5 +18,6 @@ fun Navigate() {
         addAboutScreen(navController = navController)
         addViewColDataFNameScreen(navController = navController)
         addSettingsScreen(navController = navController)
+        addNetFileSendScreen(navController = navController)
     }
 }

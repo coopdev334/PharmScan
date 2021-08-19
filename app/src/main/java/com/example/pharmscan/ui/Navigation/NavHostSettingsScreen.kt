@@ -1,12 +1,13 @@
 package com.example.pharmscan.ui.Navigation
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.navigation.NavController
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.pharmscan.ui.Screen.Screen
@@ -56,7 +57,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
                     .align(alignment = Alignment.Start)
                     .padding(start = 20.dp)
                     .clickable {
-                        navController.navigate(Screen.Settings.route)
+                        navController.navigate(Screen.NetFileSend.route)
                     },
                 fontWeight = FontWeight.Light,
                 //fontStyle = FontStyle.Italic,

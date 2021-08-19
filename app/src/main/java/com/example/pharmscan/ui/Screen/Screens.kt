@@ -5,6 +5,7 @@ sealed class Screen(val route: String) {
     object AboutScreen : Screen("AboutRoute")
     object ViewColDataFNameScreen : Screen("ViewColDataFNameRoute")
     object Settings : Screen("SettingsRoute")
+    object NetFileSend : Screen("NetFileSendRoute")
 
     // Helper function to append variable number of arguments to route
     // Note this works for mandatory arguments only
