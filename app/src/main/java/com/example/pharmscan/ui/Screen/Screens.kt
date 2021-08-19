@@ -2,6 +2,8 @@ package com.example.pharmscan.ui.Screen
 
 sealed class Screen(val route: String) {
     object MainScreen : Screen("MainRoute")
+    object AboutScreen : Screen("AboutRoute")
+    object ViewColDataFNameScreen : Screen("ViewColDataFNameRoute")
 
     // Helper function to append variable number of arguments to route
     // Note this works for mandatory arguments only

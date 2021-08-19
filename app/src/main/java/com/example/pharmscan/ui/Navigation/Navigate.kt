@@ -14,6 +14,8 @@ fun Navigate() {
         startDestination = Screen.MainScreen.route) {
 
         addMainScreen(navController = navController)
+        addAboutScreen(navController = navController)
+        addViewColDataFNameScreen(navController = navController)
 
     }
 }
