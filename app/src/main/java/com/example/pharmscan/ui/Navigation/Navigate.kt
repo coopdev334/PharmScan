@@ -17,6 +17,6 @@ fun Navigate() {
         addMainScreen(navController = navController)
         addAboutScreen(navController = navController)
         addViewColDataFNameScreen(navController = navController)
-
+        addSettingsScreen(navController = navController)
     }
 }

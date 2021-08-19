@@ -50,7 +50,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                     modifier = Modifier.clickable {
                         coroutineScope.launch {
                             scaffoldState.drawerState.close()
-                            scaffoldState.snackbarHostState.showSnackbar("Drawer Settings") }
+                            navController.navigate(Screen.Settings.route) } // FUTURE MERGE CONFLICT HERE
                     },
                     fontSize = 30.sp,
                     fontWeight = FontWeight.W300,
