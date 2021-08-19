@@ -51,6 +51,17 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
             ) {
             }
             Text(
+                text = "<-",
+                fontSize = 40.sp,
+                modifier = Modifier.align(alignment = Alignment.Start).padding(start = 20.dp)
+                    .clickable {
+                        navController.popBackStack(Screen.MainScreen.route, inclusive = false)
+                    },
+                fontWeight = FontWeight.Light,
+                //fontStyle = FontStyle.Italic,
+                //color = Color.Black
+            )
+            Text(
                 text = "Network File Send",
                 fontSize = 40.sp,
                 modifier = Modifier
@@ -63,7 +74,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
                 //fontStyle = FontStyle.Italic,
                 //color = Color.Black
             )
-            Spacer(modifier = Modifier.height(height = 10.dp))
+            Spacer(modifier = Modifier.height(height = 30.dp))
 
             Text(
                 text = "Network ID",
@@ -78,7 +89,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
                 //fontStyle = FontStyle.Italic,
                 //color = Color.Black
             )
-            Spacer(modifier = Modifier.height(height = 10.dp))
+            Spacer(modifier = Modifier.height(height = 30.dp))
 
             Text(
                 text = "Cost Limit",
@@ -93,7 +104,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
                 //fontStyle = FontStyle.Italic,
                 //color = Color.Black
             )
-            Spacer(modifier = Modifier.height(height = 10.dp))
+            Spacer(modifier = Modifier.height(height = 30.dp))
 
             Text(
                 text = "Manual Price Entry",
@@ -104,21 +115,6 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
                     .clickable {
                         navController.navigate(Screen.Settings.route)
                                },
-                fontWeight = FontWeight.Light,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
-            )
-            Spacer(modifier = Modifier.height(height = 10.dp))
-
-            Text(
-                text = "Go Back to Main Screen",
-                fontSize = 40.sp,
-                modifier = Modifier
-                    .align(alignment = Alignment.Start)
-                    .padding(start = 20.dp)
-                    .clickable {
-                        navController.popBackStack(Screen.MainScreen.route, inclusive = false)
-                    },
                 fontWeight = FontWeight.Light,
                 //fontStyle = FontStyle.Italic,
                 //color = Color.Black
