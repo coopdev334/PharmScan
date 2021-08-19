@@ -47,13 +47,6 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Row( //MAYBE I DONT NEED THIS
-                modifier = Modifier
-                    .fillMaxWidth(),
-                //.background(Color.Yellow),
-                horizontalArrangement = Arrangement.Center
-            ) {
-            }
             Text(
                 text = "Tag",
                 fontSize = 40.sp,
@@ -64,14 +57,7 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
                 //fontStyle = FontStyle.Italic,
                 //color = Color.Black
             )
-            @Composable
-            fun TagCheckBox(){
-                val checkedState = remember {  mutableStateOf(true)  }
-                Checkbox(
-                    checked = checkedState.value,
-                    onCheckedChange = { checkedState.value = it }
-                )
-            }
+            TagCheckBox()
             Spacer(modifier = Modifier.height(height = 10.dp))
             Text(
                 text = "Changes",
@@ -83,17 +69,7 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
                 //fontStyle = FontStyle.Italic,
                 //color = Color.Black
             )
-            @Composable
-            fun ChangesTextField() {
-                Column(Modifier.padding(16.dp)) {
-                    val textState = remember {  mutableStateOf(TextFieldValue())   }
-                    TextField(
-                        value = textState.value,
-                        onValueChange = { textState.value = it }
-                    )
-                    Text("The textfield's text")
-                }
-            }
+            ChangesTextField()
             Spacer(modifier = Modifier.height(height = 10.dp))
             Text(
                 text = "Interval",
@@ -105,17 +81,7 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
                 //fontStyle = FontStyle.Italic,
                 //color = Color.Black
             )
-            @Composable
-            fun IntervalTextField() {
-                Column(Modifier.padding(16.dp)) {
-                    val textState = remember {  mutableStateOf(TextFieldValue())   }
-                    TextField(
-                        value = textState.value,
-                        onValueChange = { textState.value = it }
-                    )
-                    Text("The textfield's text")
-                }
-            }
+            IntervalTextField()
             Spacer(modifier = Modifier.height(height = 10.dp))
             Text(
                 text = "Reccnt",
@@ -127,17 +93,7 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
                 //fontStyle = FontStyle.Italic,
                 //color = Color.Black
             )
-            @Composable
-            fun ReccntTextField() {
-                Column(Modifier.padding(16.dp)) {
-                    val textState = remember {  mutableStateOf(TextFieldValue())   }
-                    TextField(
-                        value = textState.value,
-                        onValueChange = { textState.value = it }
-                    )
-                    Text("The textfield's text")
-                }
-            }
+            ReccntTextField()
             Spacer(modifier = Modifier.height(height = 10.dp))
             if (0==0){
                 Text(
@@ -155,49 +111,42 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
                     //color = Color.Black
                 )
             }
-            Text(
-                text = "Tag",
-                fontSize = 30.sp,
+            Row(
                 modifier = Modifier
-                    .align(alignment = Alignment.Start)
-                    .padding(start = 20.dp),
-                fontWeight = FontWeight.Light,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
-            )
+                    .fillMaxWidth(),
+                //.background(Color.Yellow),
+                horizontalArrangement = Arrangement.Start
+            ) {
 
-            @Composable
-            fun TagTextField() {
-                Column(Modifier.padding(16.dp)) {
-                    val textState = remember {  mutableStateOf(TextFieldValue())   }
-                    TextField(
-                        value = textState.value,
-                        onValueChange = { textState.value = it }
-                    )
-                    Text("The textfield's text")
-                }
-            }
-            Text(
-                text = "Interval",
-                fontSize = 30.sp,
+                Text(
+                    text = "Tag",
+                    fontSize = 30.sp,
+                    modifier = Modifier
+                        .padding(start = 20.dp),
+                    fontWeight = FontWeight.Light,
+                    //fontStyle = FontStyle.Italic,
+                    //color = Color.Black
+                )
+                TagTextField()
+            /*}
+            Row(
                 modifier = Modifier
-                    .align(alignment = Alignment.Start)
-                    .padding(start = 20.dp),
-                fontWeight = FontWeight.Light,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
-            )
-            @Composable
-            fun IntervalTextFieldOther() { // MAYBE FIND A BETTER NAME
-                Column(Modifier.padding(16.dp)) {
-                    val textState = remember {  mutableStateOf(TextFieldValue())   }
-                    TextField(
-                        value = textState.value,
-                        onValueChange = { textState.value = it }
-                    )
-                    Text("The textfield's text")
-                }
+                    .fillMaxWidth(),
+                //.background(Color.Yellow),
+                horizontalArrangement = Arrangement.Center
+            ) { */
+                Text(
+                    text = "Interval",
+                    fontSize = 30.sp,
+                    modifier = Modifier
+                        .padding(start = 20.dp),
+                    fontWeight = FontWeight.Light,
+                    //fontStyle = FontStyle.Italic,
+                    //color = Color.Black
+                )
+                IntervalTextFieldOther() // Change Name?
             }
+
             Spacer(modifier = Modifier.height(height = 10.dp))
             Text(
                 text = "OK",
@@ -215,4 +164,79 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
         }
     }
 }
+@Composable
+fun TagCheckBox(){
+    val checkedState = remember {  mutableStateOf(true)  }
+    Checkbox(
+        checked = checkedState.value,
+        onCheckedChange = { checkedState.value = it }
+    )
+}
+@Composable
+fun ChangesTextField() {
+    Column(Modifier.padding(16.dp)) {
+        val textState = remember {  mutableStateOf(TextFieldValue())   }
+        TextField(
+            value = textState.value,
+            onValueChange = { textState.value = it },
+            modifier = Modifier
+                    .height(50.dp)
+        )
 
+        //Text("The textfield's text")
+    }
+}
+@Composable
+fun IntervalTextField() {
+    Column(Modifier.padding(16.dp)) {
+        val textState = remember {  mutableStateOf(TextFieldValue())   }
+        TextField(
+            value = textState.value,
+            onValueChange = { textState.value = it },
+            modifier = Modifier
+                .height(50.dp)
+        )
+        //Text("The textfield's text")
+    }
+}
+@Composable
+fun ReccntTextField() {
+    Column(Modifier.padding(16.dp)) {
+        val textState = remember {  mutableStateOf(TextFieldValue())   }
+        TextField(
+            value = textState.value,
+            onValueChange = { textState.value = it },
+            modifier = Modifier
+                .height(50.dp)
+        )
+        //Text("The textfield's text")
+    }
+}
+@Composable
+fun TagTextField() {
+    Column(Modifier.padding(16.dp)) {
+        val textState = remember {  mutableStateOf(TextFieldValue())   }
+        TextField(
+            value = textState.value,
+            onValueChange = { textState.value = it },
+            modifier = Modifier
+                .height(50.dp)
+                .width(50.dp)
+        )
+        //Text("The textfield's text")
+    }
+}
+@Composable
+fun IntervalTextFieldOther() { // MAYBE FIND A BETTER NAME
+    Column(Modifier.padding(16.dp)) {
+        val textState = remember {  mutableStateOf(TextFieldValue())   }
+        TextField(
+            value = textState.value,
+            onValueChange = { textState.value = it },
+            modifier = Modifier
+                .height(50.dp)
+                .width(50.dp)
+        )
+        //Text("The textfield's text")
+    }
+}

@@ -64,17 +64,7 @@ fun NavGraphBuilder.addCostLimit(navController: NavController) {
                 //fontStyle = FontStyle.Italic,
                 //color = Color.Black
             )
-            @Composable
-            fun CostLimitTextField() {
-                Column(Modifier.padding(16.dp)) {
-                    val textState = remember { mutableStateOf(TextFieldValue()) }
-                    TextField(
-                        value = textState.value,
-                        onValueChange = { textState.value = it }
-                    )
-                    Text("The textfield's text")
-                }
-            }
+            CostLimitTextField()
             Text(
                 text = "OK",
                 fontSize = 50.sp,
@@ -89,5 +79,16 @@ fun NavGraphBuilder.addCostLimit(navController: NavController) {
                 //color = Color.Black
             )
         }
+        }
     }
-}
+    @Composable
+    fun CostLimitTextField() {
+        Column(Modifier.padding(16.dp)) {
+            val textState = remember { mutableStateOf(TextFieldValue()) }
+            TextField(
+                value = textState.value,
+                onValueChange = { textState.value = it }
+            )
+            //Text("The textfield's text")
+        }
+    }

@@ -39,11 +39,11 @@ import com.example.pharmscan.ui.theme.Typography
 import kotlinx.coroutines.launch
 
 fun NavGraphBuilder.addNetID(navController: NavController) {
-    composable(Screen.NetID.route){
+    composable(Screen.NetID.route) {
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
 
-        Column (
+        Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -64,17 +64,7 @@ fun NavGraphBuilder.addNetID(navController: NavController) {
                 //fontStyle = FontStyle.Italic,
                 //color = Color.Black
             )
-            @Composable
-            fun ComputerAccountTextField() {
-                Column(Modifier.padding(16.dp)) {
-                    val textState = remember { mutableStateOf(TextFieldValue()) }
-                    TextField(
-                        value = textState.value,
-                        onValueChange = { textState.value = it }
-                    )
-                    Text("The textfield's text")
-                }
-            }
+            ComputerAccountTextField()
             Spacer(modifier = Modifier.height(height = 10.dp))
             Text(
                 text = "Host Computer Password",
@@ -86,17 +76,7 @@ fun NavGraphBuilder.addNetID(navController: NavController) {
                 //fontStyle = FontStyle.Italic,
                 //color = Color.Black
             )
-            @Composable
-            fun ComputerPasswordTextField() {
-                Column(Modifier.padding(16.dp)) {
-                    val textState = remember { mutableStateOf(TextFieldValue()) }
-                    TextField(
-                        value = textState.value,
-                        onValueChange = { textState.value = it }
-                    )
-                    Text("The textfield's text")
-                }
-            }
+            ComputerPasswordTextField()
             Spacer(modifier = Modifier.height(height = 10.dp))
             Text(
                 text = "OK",
@@ -115,3 +95,26 @@ fun NavGraphBuilder.addNetID(navController: NavController) {
 
     }
 }
+    @Composable
+    fun ComputerAccountTextField() {
+        Column(Modifier.padding(16.dp)) {
+            val textState = remember { mutableStateOf(TextFieldValue()) }
+            TextField(
+                value = textState.value,
+                onValueChange = { textState.value = it }
+            )
+            //Text("The textfield's text")
+        }
+    }
+    @Composable
+    fun ComputerPasswordTextField() {
+        Column(Modifier.padding(16.dp)) {
+            val textState = remember { mutableStateOf(TextFieldValue()) }
+            TextField(
+                value = textState.value,
+                onValueChange = { textState.value = it }
+            )
+            //Text("The textfield's text")
+        }
+    }
+
