@@ -7,6 +7,7 @@ sealed class Screen(val route: String) {
     object Settings : Screen("SettingsRoute")
     object NetFileSend : Screen("NetFileSendRoute")
     object NetID: Screen("NetIDRoute")
+    object CostLimit : Screen("CostLimitRoute")
     object ViewCancel : Screen("ViewCancelRoute")
     // Helper function to append variable number of arguments to route
     // Note this works for mandatory arguments only
