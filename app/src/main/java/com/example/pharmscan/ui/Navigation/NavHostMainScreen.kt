@@ -12,25 +12,10 @@ import androidx.navigation.compose.composable
 import com.example.pharmscan.ui.Screen.Screen
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CutCornerShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.MaterialTheme.colors
-import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.sp
-import com.example.pharmscan.ui.theme.PharmScanTheme
-import com.example.pharmscan.ui.theme.Typography
 import kotlinx.coroutines.launch
 
 fun NavGraphBuilder.addMainScreen(navController: NavController) {
@@ -121,7 +106,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                     }
                 )
             },
-            content = { innerPadding ->
+            content = {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -142,9 +127,6 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
 
                 LazyColumn(
                     Modifier.padding(top = 30.dp, bottom = 70.dp),
-                    //contentPadding = innerPadding,
-                    //contentPadding = PaddingValues(horizontal = 16.dp, vertical = 50.dp),
-
                     state = listState,
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
@@ -154,7 +136,6 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                             Modifier
                                 .fillMaxWidth()
                                 .height(1.dp)
-                                //.background(colors[it % colors.primary])
                                 .background(MaterialTheme.colors.secondary)
                         )
                         //Spacer(modifier = Modifier.height(8.dp))
