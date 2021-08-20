@@ -49,37 +49,31 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
         ) {
             Text(
                 text = "Tag",
-                fontSize = 40.sp,
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
                     .padding(start = 20.dp),
-                fontWeight = FontWeight.Light,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
+                style = MaterialTheme.typography.h2,
+                color = MaterialTheme.colors.onBackground
             )
             TagCheckBox()
             Spacer(modifier = Modifier.height(height = 10.dp))
             Text(
                 text = "Changes",
-                fontSize = 40.sp,
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
                     .padding(start = 20.dp),
-                fontWeight = FontWeight.Light,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
+                style = MaterialTheme.typography.h2,
+                color = MaterialTheme.colors.onBackground
             )
             ChangesTextField()
             Spacer(modifier = Modifier.height(height = 10.dp))
             Text(
                 text = "Interval",
-                fontSize = 40.sp,
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
                     .padding(start = 20.dp),
-                fontWeight = FontWeight.Light,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
+                style = MaterialTheme.typography.h2,
+                color = MaterialTheme.colors.onBackground
             )
             IntervalTextField()
             Spacer(modifier = Modifier.height(height = 10.dp))
@@ -89,9 +83,8 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
                     .padding(start = 20.dp),
-                fontWeight = FontWeight.Light,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
+                style = MaterialTheme.typography.h2,
+                color = MaterialTheme.colors.onBackground
             )
             ReccntTextField()
             Spacer(modifier = Modifier.height(height = 10.dp))
@@ -102,13 +95,11 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
             else { // No Network exists
                 Text(
                     text = "No Network Warning!",
-                    fontSize = 40.sp,
                     modifier = Modifier
                         .align(alignment = Alignment.Start)
                         .padding(start = 20.dp),
-                    fontWeight = FontWeight.Light,
-                    //fontStyle = FontStyle.Italic,
-                    //color = Color.Black
+                    style = MaterialTheme.typography.h2,
+                    color = MaterialTheme.colors.onBackground
                 )
             }
             Row(
@@ -120,12 +111,10 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
 
                 Text(
                     text = "Tag",
-                    fontSize = 30.sp,
                     modifier = Modifier
                         .padding(start = 20.dp),
-                    fontWeight = FontWeight.Light,
-                    //fontStyle = FontStyle.Italic,
-                    //color = Color.Black
+                    style = MaterialTheme.typography.body2,
+                    color = MaterialTheme.colors.onBackground
                 )
                 TagTextField()
             /*}
@@ -137,12 +126,10 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
             ) { */
                 Text(
                     text = "Interval",
-                    fontSize = 30.sp,
                     modifier = Modifier
                         .padding(start = 20.dp),
-                    fontWeight = FontWeight.Light,
-                    //fontStyle = FontStyle.Italic,
-                    //color = Color.Black
+                    style = MaterialTheme.typography.body2,
+                    color = MaterialTheme.colors.onBackground
                 )
                 IntervalTextFieldOther() // Change Name?
             }
@@ -150,16 +137,14 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(height = 10.dp))
             Text(
                 text = "OK",
-                fontSize = 50.sp,
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
                     .padding(start = 150.dp) // Change this value
                     .clickable {
                         navController.popBackStack(Screen.Settings.route, inclusive = false)
                     },
-                fontWeight = FontWeight.Light,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
+                style = MaterialTheme.typography.h2,
+                color = MaterialTheme.colors.onBackground
             )
         }
     }

@@ -56,27 +56,23 @@ fun NavGraphBuilder.addCostLimit(navController: NavController) {
             }
             Text(
                 text = "Cost Limit",
-                fontSize = 40.sp,
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
                     .padding(start = 120.dp), // MAYBE CHANGE THIS?
-                fontWeight = FontWeight.Light,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
+                style = MaterialTheme.typography.h2,
+                color = MaterialTheme.colors.onBackground
             )
             CostLimitTextField()
             Text(
                 text = "OK",
-                fontSize = 50.sp,
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
                     .padding(start = 150.dp) // Change this value
                     .clickable {
                         navController.popBackStack(Screen.Settings.route, inclusive = false)
                     },
-                fontWeight = FontWeight.Light,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
+                style = MaterialTheme.typography.h2,
+                color = MaterialTheme.colors.onBackground
             )
         }
         }
@@ -89,6 +85,5 @@ fun NavGraphBuilder.addCostLimit(navController: NavController) {
                 value = textState.value,
                 onValueChange = { textState.value = it }
             )
-            //Text("The textfield's text")
         }
     }

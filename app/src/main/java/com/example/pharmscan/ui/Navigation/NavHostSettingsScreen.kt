@@ -19,6 +19,9 @@ import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
@@ -52,74 +55,73 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
             }
             Text(
                 text = "<-",
-                fontSize = 40.sp,
-                modifier = Modifier.align(alignment = Alignment.Start).padding(start = 20.dp)
+                modifier = Modifier
+                    .align(alignment = Alignment.Start)
+                    .padding(start = 20.dp)
                     .clickable {
                         navController.popBackStack(Screen.MainScreen.route, inclusive = false)
                     },
-                fontWeight = FontWeight.Light,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
+                style = MaterialTheme.typography.h2,
+                color = MaterialTheme.colors.onBackground
             )
             Text(
                 text = "Network File Send",
-                fontSize = 40.sp,
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
                     .padding(start = 20.dp)
                     .clickable {
                         navController.navigate(Screen.NetFileSend.route)
                     },
-                fontWeight = FontWeight.Light,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
+                style = MaterialTheme.typography.h2,
+                color = MaterialTheme.colors.onBackground
             )
             Spacer(modifier = Modifier.height(height = 30.dp))
 
             Text(
                 text = "Network ID",
-                fontSize = 40.sp,
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
                     .padding(start = 20.dp)
                     .clickable {
                         navController.navigate(Screen.NetID.route)
                     },
-                fontWeight = FontWeight.Light,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
+                style = MaterialTheme.typography.h2,
+                color = MaterialTheme.colors.onBackground
             )
             Spacer(modifier = Modifier.height(height = 30.dp))
 
             Text(
                 text = "Cost Limit",
-                fontSize = 40.sp,
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
                     .padding(start = 20.dp)
                     .clickable {
                         navController.navigate(Screen.CostLimit.route)
-                               },
-                fontWeight = FontWeight.Light,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
+                    },
+                style = MaterialTheme.typography.h2,
+                color = MaterialTheme.colors.onBackground
             )
             Spacer(modifier = Modifier.height(height = 30.dp))
 
             Text(
                 text = "Manual Price Entry",
-                fontSize = 40.sp,
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
-                    .padding(start = 20.dp)
-                    .clickable {
-                        navController.navigate(Screen.Settings.route)
-                               },
-                fontWeight = FontWeight.Light,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
+                    .padding(start = 20.dp),
+                style = MaterialTheme.typography.h2,
+                color = MaterialTheme.colors.onBackground
             )
+            PriceEntryCheckbox()
         }
     }
 }
+@Composable
+fun PriceEntryCheckbox(){
+    val checkedState = remember {  mutableStateOf(true)  }
+    Checkbox(
+        checked = checkedState.value,
+        onCheckedChange = { checkedState.value = it }
+    )
+}
+
 

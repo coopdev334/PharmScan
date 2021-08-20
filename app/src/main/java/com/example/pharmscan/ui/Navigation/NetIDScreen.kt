@@ -56,13 +56,11 @@ fun NavGraphBuilder.addNetID(navController: NavController) {
             }
             Text(
                 text = "Host Computer Account",
-                fontSize = 40.sp,
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
                     .padding(start = 20.dp),
-                fontWeight = FontWeight.Light,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
+                style = MaterialTheme.typography.h2,
+                color = MaterialTheme.colors.onBackground
             )
             ComputerAccountTextField()
             Spacer(modifier = Modifier.height(height = 10.dp))
@@ -72,9 +70,8 @@ fun NavGraphBuilder.addNetID(navController: NavController) {
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
                     .padding(start = 20.dp),
-                fontWeight = FontWeight.Light,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
+                style = MaterialTheme.typography.h2,
+                color = MaterialTheme.colors.onBackground
             )
             ComputerPasswordTextField()
             Spacer(modifier = Modifier.height(height = 10.dp))
@@ -87,9 +84,8 @@ fun NavGraphBuilder.addNetID(navController: NavController) {
                     .clickable {
                         navController.popBackStack(Screen.Settings.route, inclusive = false)
                     },
-                fontWeight = FontWeight.Light,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
+                style = MaterialTheme.typography.h2,
+                color = MaterialTheme.colors.onBackground
             )
         }
 
@@ -103,7 +99,6 @@ fun NavGraphBuilder.addNetID(navController: NavController) {
                 value = textState.value,
                 onValueChange = { textState.value = it }
             )
-            //Text("The textfield's text")
         }
     }
     @Composable
@@ -114,7 +109,6 @@ fun NavGraphBuilder.addNetID(navController: NavController) {
                 value = textState.value,
                 onValueChange = { textState.value = it }
             )
-            //Text("The textfield's text")
         }
     }
 
