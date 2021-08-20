@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
@@ -43,22 +44,19 @@ fun NavGraphBuilder.addViewColDataFNameScreen(navController: NavController) {
                     .clickable {
                         navController.popBackStack(Screen.MainScreen.route, inclusive = false)
                     },
-                fontWeight = FontWeight.Light,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
+                style = MaterialTheme.typography.h5,
+                color = MaterialTheme.colors.onBackground
             )
             Text(
                 text = "Collected Data",
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Medium,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
+                style = MaterialTheme.typography.h4,
+                color = MaterialTheme.colors.onBackground
             )
             Spacer(modifier = Modifier.height(height = 10.dp))
             Text(
                 text = "File Name",
-                fontWeight = FontWeight.Medium,
-                fontSize = 30.sp
+                style = MaterialTheme.typography.h4,
+                color = MaterialTheme.colors.onBackground
             )
             Spacer(modifier = Modifier.height(height = 30.dp))
             Box(
@@ -70,8 +68,8 @@ fun NavGraphBuilder.addViewColDataFNameScreen(navController: NavController) {
             ) {
                 Text(
                     text = "lkdsflkasdfl_12344.dat",
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 25.sp
+                    style = MaterialTheme.typography.h5,
+                    color = MaterialTheme.colors.onBackground
                 )
             }
         }

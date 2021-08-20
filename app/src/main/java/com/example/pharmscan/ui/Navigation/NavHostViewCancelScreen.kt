@@ -40,37 +40,15 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController) {
                     .clickable {
                         navController.popBackStack(Screen.MainScreen.route, inclusive = false)
                     },
-                fontWeight = FontWeight.Light,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
+                style = MaterialTheme.typography.h5,
+                color = MaterialTheme.colors.onBackground
             )
             Text(
-                text = "PharmScan",
-                fontSize = 40.sp,
-                fontWeight = FontWeight.Bold,
-                //fontStyle = FontStyle.Italic,
-                //color = Color.Black
+                text = "TO DO: finish this screen",
+                style = MaterialTheme.typography.h5,
+                color = MaterialTheme.colors.onBackground
             )
             Spacer(modifier = Modifier.height(height = 10.dp))
-            Text(
-                text = "Version: 1.0",
-                fontSize = 20.sp
-            )
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Text(
-                text = "Build: 1.0",
-                fontSize = 20.sp
-            )
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Text(
-                text = "Unit Id: 0E89H67",
-                fontSize = 20.sp
-            )
-            Spacer(modifier = Modifier.height(height = 100.dp))
-            Text(
-                text = "By: coopdev334",
-                fontSize = 20.sp
-            )
 
         }
     }

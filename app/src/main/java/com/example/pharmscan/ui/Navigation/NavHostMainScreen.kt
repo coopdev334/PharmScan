@@ -43,7 +43,8 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
 
         Scaffold(
             scaffoldState = scaffoldState,
-            drawerShape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp, bottomEnd = 15.dp, bottomStart = 15.dp),
+            //drawerShape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp, bottomEnd = 15.dp, bottomStart = 15.dp),
+            drawerShape = MaterialTheme.shapes.large,
             drawerContent = {
                 Text(
                     text = "Settings",
@@ -52,12 +53,10 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                             scaffoldState.drawerState.close()
                             scaffoldState.snackbarHostState.showSnackbar("Drawer Settings") }
                     },
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.W300,
-                    fontStyle = FontStyle.Italic,
-                    color = Color.Black
+                    style = MaterialTheme.typography.caption,
+                    color = MaterialTheme.colors.onBackground
                 )
-                
+
                 Spacer(modifier = Modifier.height(height = 10.dp))
 
                 Text(
@@ -67,10 +66,8 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                             scaffoldState.drawerState.close()
                             navController.navigate(Screen.ViewCancel.route) }
                     },
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.W300,
-                    fontStyle = FontStyle.Italic,
-                    color = Color.Black
+                    style = MaterialTheme.typography.caption,
+                    color = MaterialTheme.colors.onBackground
                 )
 
                 Spacer(modifier = Modifier.height(height = 10.dp))
@@ -83,10 +80,8 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                             navController.navigate(Screen.ViewColDataFNameScreen.route)
                         }
                     },
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.W300,
-                    fontStyle = FontStyle.Italic,
-                    color = Color.Black
+                    style = MaterialTheme.typography.caption,
+                    color = MaterialTheme.colors.onBackground
                 )
 
                 Spacer(modifier = Modifier.height(height = 10.dp))
@@ -99,14 +94,9 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                             navController.navigate(Screen.AboutScreen.route)
                         }
                     },
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.W300,
-                    fontStyle = FontStyle.Italic,
-                    color = Color.Black
+                    style = MaterialTheme.typography.caption,
+                    color = MaterialTheme.colors.onBackground
                 )
-
-
-
             },
             topBar = {
                 TopAppBar(
@@ -145,9 +135,8 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                                 scaffoldState.drawerState.close()
                                 scaffoldState.snackbarHostState.showSnackbar("Drawer Settings") }
                         },
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.W600,
-                        color = Color.Black
+                        style = MaterialTheme.typography.h5,
+                        color = MaterialTheme.colors.onBackground
                     )
                 }
 
@@ -166,7 +155,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                                 .fillMaxWidth()
                                 .height(1.dp)
                                 //.background(colors[it % colors.primary])
-                                .background(Color.LightGray)
+                                .background(MaterialTheme.colors.secondary)
                         )
                         //Spacer(modifier = Modifier.height(8.dp))
                         Row(
@@ -198,9 +187,8 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                                             }
                                         )
                                     },
-                                fontSize = 40.sp,
-                                color = Color.Blue
-                                //style = TextStyle(background = Color.LightGray, textAlign = TextAlign.Center)
+                                style = MaterialTheme.typography.h4,
+                                color = MaterialTheme.colors.onBackground
                             )
                         }
                     }
