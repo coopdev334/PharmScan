@@ -1,7 +1,7 @@
 package com.example.pharmscan.ui.Navigation
 
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.detectTapGestures
+//import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.ui.Modifier
@@ -14,19 +14,42 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.input.pointer.pointerInput
+import com.example.pharmscan.ui.Dialog.AddHostComputer
+//import androidx.compose.ui.input.pointer.pointerInput
+import com.example.pharmscan.ui.Dialog.DeleteHostComputerAlert
 import kotlinx.coroutines.launch
 
 // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
 @ExperimentalFoundationApi
 fun NavGraphBuilder.addMainScreen(navController: NavController) {
+    var delHostCompName = ""
+    var addHostCompName = ""
+
     composable(Screen.MainScreen.route) {
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
         val listState = rememberLazyListState()
+        val showDelHostCompDialog = remember { mutableStateOf(false) }
+        val showAddHostCompDialog = remember { mutableStateOf(false) }
+
         // Use for testing
         val itemList = listOf("coopcomp1", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp1", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4")
+
+        if (showDelHostCompDialog.value) {
+            DeleteHostComputerAlert(
+                hostComp = delHostCompName,
+                showDialog = showDelHostCompDialog.value,
+                onDismiss = {showDelHostCompDialog.value = false})
+        }
+
+        if (showAddHostCompDialog.value) {
+            AddHostComputer(
+                showDialog = showAddHostCompDialog.value,
+                onDismiss = {showAddHostCompDialog.value = false})
+        }
 
         Scaffold(
             scaffoldState = scaffoldState,
@@ -104,7 +127,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                 ExtendedFloatingActionButton(
                     text = { Text("+") },
                     onClick = {
-                        coroutineScope.launch { scaffoldState.snackbarHostState.showSnackbar("Snackbar") }
+                        showAddHostCompDialog.value = true
                     }
                 )
             },
@@ -133,7 +156,6 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     items(itemList.size) { index ->
-                        val itemVal = itemList[index]
                         Box(
                             Modifier
                                 .fillMaxWidth()
@@ -155,19 +177,13 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                                         onClick = {
                                             // TODO: PhysInvUploadScreen is only called if successful
                                             // connection to network other wise error.
-                                            // Nee to add network logic call here
+                                            // Need to add network logic call here
                                             // Note selected row is passed to screen
                                             navController.navigate(Screen.PhysInvUploadScreen.withArgs(itemList[index]))
                                         },
                                         onLongClick = {
-                                            // TODO: implement long press to delete this row
-                                            //kotlin.io.println("********* Long Press *********")
-                                            //navController.popBackStack(Screen.MainScreen.route, inclusive = false)
-                                            coroutineScope.launch {
-                                                scaffoldState.snackbarHostState.showSnackbar(
-                                                "Long Press $itemVal"
-                                                )
-                                            }
+                                            delHostCompName = itemList[index]
+                                            showDelHostCompDialog.value = true
                                         }
                                     ),
                                 // TODO: put commented out code back in if @ExperimentalFoundationApi for Text(.combinedClickable)
