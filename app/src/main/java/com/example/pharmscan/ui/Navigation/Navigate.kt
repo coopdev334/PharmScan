@@ -1,10 +1,13 @@
 package com.example.pharmscan.ui.Navigation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.example.pharmscan.ui.Screen.Screen
 
+// TODO: @ExperimentalFoundationApi just for Text(.combinedClick) may go away
+@ExperimentalFoundationApi
 @Composable
 fun Navigate() {
     val navController = rememberNavController()
@@ -17,6 +20,7 @@ fun Navigate() {
         addAboutScreen(navController = navController)
         addViewColDataFNameScreen(navController = navController)
         addViewCancelScreen(navController = navController)
+        addPhysInvUploadScreen(navController = navController)
 
     }
 }

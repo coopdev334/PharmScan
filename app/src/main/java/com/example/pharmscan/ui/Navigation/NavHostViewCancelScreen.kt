@@ -31,13 +31,14 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController) {
                 fontSize = 40.sp,
                 modifier = Modifier.align(alignment = Alignment.Start).padding(start = 20.dp)
                     .clickable {
-                        navController.popBackStack(Screen.MainScreen.route, inclusive = false)
+                        navController.popBackStack()
                     },
                 style = MaterialTheme.typography.h5,
                 color = MaterialTheme.colors.onBackground
             )
             Text(
-                text = "TO DO: finish this screen",
+                // TODO: finish this screen
+                text = "TODO: finish this screen",
                 style = MaterialTheme.typography.h5,
                 color = MaterialTheme.colors.onBackground
             )
