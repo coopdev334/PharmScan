@@ -4,11 +4,13 @@ sealed class Screen(val route: String) {
     object MainScreen : Screen("MainRoute")
     object AboutScreen : Screen("AboutRoute")
     object ViewColDataFNameScreen : Screen("ViewColDataFNameRoute")
+    object ViewCancel : Screen("ViewCancelRoute")
     object Settings : Screen("SettingsRoute")
     object NetFileSend : Screen("NetFileSendRoute")
     object NetID: Screen("NetIDRoute")
     object CostLimit : Screen("CostLimitRoute")
-    object ViewCancel : Screen("ViewCancelRoute")
+    object PhysInvUploadScreen : Screen("PhysInvUploadRoute")
+
     // Helper function to append variable number of arguments to route
     // Note this works for mandatory arguments only
     fun withArgs(vararg args: String) : String {

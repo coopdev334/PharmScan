@@ -35,7 +35,7 @@ fun NavGraphBuilder.addViewColDataFNameScreen(navController: NavController) {
                     .align(alignment = Alignment.Start)
                     .padding(start = 20.dp)
                     .clickable {
-                        navController.popBackStack(Screen.MainScreen.route, inclusive = false)
+                        navController.popBackStack()
                     },
                 style = MaterialTheme.typography.h5,
                 color = MaterialTheme.colors.onBackground

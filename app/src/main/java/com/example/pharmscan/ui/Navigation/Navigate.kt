@@ -16,10 +16,12 @@ fun Navigate() {
         addMainScreen(navController = navController)
         addAboutScreen(navController = navController)
         addViewColDataFNameScreen(navController = navController)
+        addViewCancelScreen(navController = navController)
+        addPhysInvUploadScreen(navController = navController)
         addSettingsScreen(navController = navController)
         addNetFileSendScreen(navController = navController)
         addNetID(navController = navController)
-        addViewCancelScreen(navController = navController)
         addCostLimit(navController = navController)
+
     }
 }

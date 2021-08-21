@@ -18,6 +18,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.input.pointer.pointerInput
 import kotlinx.coroutines.launch
 
+// TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
+@ExperimentalFoundationApi
 fun NavGraphBuilder.addMainScreen(navController: NavController) {
     composable(Screen.MainScreen.route) {
         val scaffoldState = rememberScaffoldState()
@@ -148,26 +150,48 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                             Text(
                                 text = itemList[index],
                                 modifier = Modifier
-                                    .clickable {
-                                        coroutineScope.launch {
-                                            scaffoldState.snackbarHostState.showSnackbar(
-                                                "Item: $itemVal"
-                                            )
-                                        }
-                                    }
-                                    .pointerInput(Unit) {
-                                        detectTapGestures(
-                                            onLongPress = {
-                                                //kotlin.io.println("********* Long Press *********")
-                                                //navController.popBackStack(Screen.MainScreen.route, inclusive = false)
-                                                coroutineScope.launch {
-                                                    scaffoldState.snackbarHostState.showSnackbar(
-                                                        "Long Press $itemVal"
-                                                    )
-                                                }
+                                    // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
+                                    .combinedClickable(
+                                        onClick = {
+                                            // TODO: PhysInvUploadScreen is only called if successful
+                                            // connection to network other wise error.
+                                            // Nee to add network logic call here
+                                            // Note selected row is passed to screen
+                                            navController.navigate(Screen.PhysInvUploadScreen.withArgs(itemList[index]))
+                                        },
+                                        onLongClick = {
+                                            // TODO: implement long press to delete this row
+                                            //kotlin.io.println("********* Long Press *********")
+                                            //navController.popBackStack(Screen.MainScreen.route, inclusive = false)
+                                            coroutineScope.launch {
+                                                scaffoldState.snackbarHostState.showSnackbar(
+                                                "Long Press $itemVal"
+                                                )
                                             }
-                                        )
-                                    },
+                                        }
+                                    ),
+                                // TODO: put commented out code back in if @ExperimentalFoundationApi for Text(.combinedClickable)
+                                //  above is deprecated
+//                                    .clickable {
+//                                        coroutineScope.launch {
+//                                            scaffoldState.snackbarHostState.showSnackbar(
+//                                                "Item: $itemVal"
+//                                            )
+//                                        }
+//                                    }
+//                                    .pointerInput(Unit) {
+//                                        detectTapGestures(
+//                                            onLongPress = {
+//                                                //kotlin.io.println("********* Long Press *********")
+//                                                //navController.popBackStack(Screen.MainScreen.route, inclusive = false)
+//                                                coroutineScope.launch {
+//                                                    scaffoldState.snackbarHostState.showSnackbar(
+//                                                        "Long Press $itemVal"
+//                                                    )
+//                                                }
+//                                            }
+//                                        )
+//                                    },
                                 style = MaterialTheme.typography.h4,
                                 color = MaterialTheme.colors.onBackground
                             )
