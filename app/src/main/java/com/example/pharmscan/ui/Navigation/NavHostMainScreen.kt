@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import com.example.pharmscan.ui.Dialog.AddHostComputer
 //import androidx.compose.ui.input.pointer.pointerInput
 import com.example.pharmscan.ui.Dialog.DeleteHostComputerAlert
 import kotlinx.coroutines.launch
@@ -24,22 +25,30 @@ import kotlinx.coroutines.launch
 // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
 @ExperimentalFoundationApi
 fun NavGraphBuilder.addMainScreen(navController: NavController) {
-    var hostCompName = ""
+    var delHostCompName = ""
+    var addHostCompName = ""
 
     composable(Screen.MainScreen.route) {
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
         val listState = rememberLazyListState()
-        val showDialog = remember { mutableStateOf(false) }
+        val showDelHostCompDialog = remember { mutableStateOf(false) }
+        val showAddHostCompDialog = remember { mutableStateOf(false) }
 
         // Use for testing
         val itemList = listOf("coopcomp1", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp1", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4")
 
-        if (showDialog.value) {
+        if (showDelHostCompDialog.value) {
             DeleteHostComputerAlert(
-                hostComp = hostCompName,
-                showDialog = showDialog.value,
-                onDismiss = {showDialog.value = false})
+                hostComp = delHostCompName,
+                showDialog = showDelHostCompDialog.value,
+                onDismiss = {showDelHostCompDialog.value = false})
+        }
+
+        if (showAddHostCompDialog.value) {
+            AddHostComputer(
+                showDialog = showAddHostCompDialog.value,
+                onDismiss = {showAddHostCompDialog.value = false})
         }
 
         Scaffold(
@@ -118,7 +127,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                 ExtendedFloatingActionButton(
                     text = { Text("+") },
                     onClick = {
-                        coroutineScope.launch { scaffoldState.snackbarHostState.showSnackbar("Snackbar") }
+                        showAddHostCompDialog.value = true
                     }
                 )
             },
@@ -173,8 +182,8 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                                             navController.navigate(Screen.PhysInvUploadScreen.withArgs(itemList[index]))
                                         },
                                         onLongClick = {
-                                            hostCompName = itemList[index]
-                                            showDialog.value = true
+                                            delHostCompName = itemList[index]
+                                            showDelHostCompDialog.value = true
                                         }
                                     ),
                                 // TODO: put commented out code back in if @ExperimentalFoundationApi for Text(.combinedClickable)
