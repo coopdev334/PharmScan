@@ -12,6 +12,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.pharmscan.ui.Screen.Screen
+import com.example.pharmscan.BuildConfig
 
 fun NavGraphBuilder.addAboutScreen(navController: NavController) {
     composable(Screen.AboutScreen.route) {
@@ -43,13 +44,7 @@ fun NavGraphBuilder.addAboutScreen(navController: NavController) {
             )
             Spacer(modifier = Modifier.height(height = 10.dp))
             Text(
-                text = "Version: 1.0",
-                style = MaterialTheme.typography.body1,
-                color = MaterialTheme.colors.onBackground
-            )
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Text(
-                text = "Build: 1.0",
+                text = "Version: " + BuildConfig.VERSION_NAME,
                 style = MaterialTheme.typography.body1,
                 color = MaterialTheme.colors.onBackground
             )
@@ -65,7 +60,6 @@ fun NavGraphBuilder.addAboutScreen(navController: NavController) {
                 style = MaterialTheme.typography.body1,
                 color = MaterialTheme.colors.onBackground
             )
-
         }
     }
 }

@@ -52,7 +52,8 @@ fun AddHostComputer(
                             )
                         }
                     },
-                    singleLine = true
+                    singleLine = true,
+                    textStyle = MaterialTheme.typography.h6
                 )
             },
             buttons = {
