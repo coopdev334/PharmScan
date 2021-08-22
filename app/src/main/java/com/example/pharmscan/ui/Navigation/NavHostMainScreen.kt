@@ -26,7 +26,6 @@ import kotlinx.coroutines.launch
 @ExperimentalFoundationApi
 fun NavGraphBuilder.addMainScreen(navController: NavController) {
     var delHostCompName = ""
-    var addHostCompName = ""
 
     composable(Screen.MainScreen.route) {
         val scaffoldState = rememberScaffoldState()
@@ -36,6 +35,8 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
         val showAddHostCompDialog = remember { mutableStateOf(false) }
 
         // Use for testing
+        // TODO: Remove this hard coded string after database is created. Get and set to database for
+        // host computer name list. Also need to set new added computer name in add dialog
         val itemList = listOf("coopcomp1", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp1", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4")
 
         if (showDelHostCompDialog.value) {
