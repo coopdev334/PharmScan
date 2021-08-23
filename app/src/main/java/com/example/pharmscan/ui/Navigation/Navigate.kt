@@ -1,10 +1,12 @@
 package com.example.pharmscan.ui.Navigation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.example.pharmscan.ui.Screen.Screen
 
+@ExperimentalFoundationApi
 @Composable
 fun Navigate() {
     val navController = rememberNavController()
