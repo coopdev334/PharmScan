@@ -79,7 +79,6 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(height = 10.dp))
             Text(
                 text = "Reccnt",
-                fontSize = 40.sp,
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
                     .padding(start = 20.dp),

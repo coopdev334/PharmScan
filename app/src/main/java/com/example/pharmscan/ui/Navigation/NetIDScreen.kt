@@ -66,7 +66,6 @@ fun NavGraphBuilder.addNetID(navController: NavController) {
             Spacer(modifier = Modifier.height(height = 10.dp))
             Text(
                 text = "Host Computer Password",
-                fontSize = 40.sp,
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
                     .padding(start = 20.dp),
@@ -77,7 +76,6 @@ fun NavGraphBuilder.addNetID(navController: NavController) {
             Spacer(modifier = Modifier.height(height = 10.dp))
             Text(
                 text = "OK",
-                fontSize = 50.sp,
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
                     .padding(start = 150.dp) // Change this value
