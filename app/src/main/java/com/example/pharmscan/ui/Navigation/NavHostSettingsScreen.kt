@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.sp
 import com.example.pharmscan.ui.theme.PharmScanTheme
 import com.example.pharmscan.ui.theme.Typography
 import kotlinx.coroutines.launch
-
+// Notes: Trying before spacer style.
 fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
     composable(Screen.Settings.route) {
         val scaffoldState = rememberScaffoldState()
@@ -75,6 +75,13 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
                 style = MaterialTheme.typography.h2,
                 color = MaterialTheme.colors.onBackground
             )
+            // Before spacer
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(MaterialTheme.colors.secondary)
+            )
             Spacer(modifier = Modifier.height(height = 30.dp))
 
             Text(
@@ -88,6 +95,12 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
                 style = MaterialTheme.typography.h2,
                 color = MaterialTheme.colors.onBackground
             )
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(MaterialTheme.colors.secondary)
+            )
             Spacer(modifier = Modifier.height(height = 30.dp))
 
             Text(
@@ -100,6 +113,12 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
                     },
                 style = MaterialTheme.typography.h2,
                 color = MaterialTheme.colors.onBackground
+            )
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(MaterialTheme.colors.secondary)
             )
             Spacer(modifier = Modifier.height(height = 30.dp))
 
