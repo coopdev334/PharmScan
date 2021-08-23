@@ -4,11 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +20,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
+import com.example.pharmscan.ui.Dialog.GetOpId
 import com.example.pharmscan.ui.Screen.Screen
 import kotlinx.coroutines.launch
 
@@ -40,6 +41,13 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController) {
         val argTextHostComputer = it.arguments!!.getString("hostCompName")
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
+        val showEnterOpIdDialog = remember { mutableStateOf(false) }
+
+        if (showEnterOpIdDialog.value) {
+            GetOpId(
+                showDialog = showEnterOpIdDialog.value,
+                onDismiss = {showEnterOpIdDialog.value = false})
+        }
 
         Scaffold(
             scaffoldState = scaffoldState,
@@ -154,8 +162,7 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController) {
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Button(onClick = {
-                            // TODO: Enter op id someway
-                            //navController.navigate(Screen.xxxxxxxxx.route)
+                            showEnterOpIdDialog.value = true
                         }) {
                             Text(
                                 text = "Physical Inventory",
