@@ -28,5 +28,6 @@ fun Navigate() {
         addNetID(navController = navController)
         addCostLimit(navController = navController)
         addNavMatchScreen(navController = navController)
+        addNavNoMatchScreen(navController = navController)
     }
 }
