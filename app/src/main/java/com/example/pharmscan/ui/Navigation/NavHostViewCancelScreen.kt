@@ -31,16 +31,11 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController) {
 
     composable(Screen.ViewCancel.route) {
 
+        var itemList: List<String> by remember {mutableStateOf(listOf("::::::"))}
         var hintLabel by remember {mutableStateOf("Rec#")}
-        //var text by remember {mutableStateOf("")}
         val listState = rememberLazyListState()
         var clearTxt by remember {mutableStateOf(false)}
         val showCancelCollDataDialog = remember { mutableStateOf(false) }
-
-        // Use for testing
-        // TODO: Remove this hard coded string after database is created. Get and set to database for
-        // host computer name list. Also need to set new added computer name in add dialog
-        val itemList = listOf("ABC", "CDE", "FGH", "IJK", "LMN", "OPQ", "RST", "ABC", "CDE", "FGH", "IJK", "LMN", "OPQ", "RST")
 
         if (showCancelCollDataDialog.value) {
             CancelCollDataRecord(
@@ -80,14 +75,17 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController) {
                     .fillMaxWidth()
                     .padding(all = 18.dp),
             ) {
+                // This lamda function gets called when soft keyboard popup search button is pressed
                 // TODO: add database search logic
+                // Use for testing
+                // TODO: Remove this hard coded string after database is created. Get and set to database for
+                // host computer name list. Also need to set new added computer name in add dialog
+                itemList = listOf("99999999999:123456:12345678:12345678:R:4444:1111","99999999999:123456:12345678:12345678:R:4444:1111","99999999999:123456:12345678:12345678:R:4444:1111","99999999999:123456:12345678:12345678:R:4444:1111","99999999999:123456:12345678:12345678:R:4444:1111","99999999999:123456:12345678:12345678:R:4444:1111")
             }
 
             clearTxt = false
-            Spacer(
-                modifier = Modifier
-                    .height(height = 5.dp)
-            )
+            Spacer(modifier = Modifier.height(height = 5.dp))
+
             Row(horizontalArrangement = Arrangement.SpaceEvenly) {
                 OutlinedButton(
                     onClick = {
@@ -138,8 +136,6 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController) {
                 }
             }
 
-            //Spacer(modifier = Modifier.height(5.dp))
-
             LazyColumn(
                 modifier = Modifier.padding(top = 20.dp, bottom = 5.dp, start = 5.dp),
                 state = listState,
@@ -147,6 +143,8 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController) {
                 horizontalAlignment = Alignment.Start
             ) {
                 items(itemList.size) { index ->
+                    var separatedStr = itemList[index].split(":").toTypedArray()
+
                     Box(
                         modifier = Modifier
                             //.height(80.dp)
@@ -165,13 +163,13 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController) {
                                 horizontalArrangement = Arrangement.Start
                             ) {
                                 Text(
-                                    text = "Tag: " + itemList[index],
+                                    text = "Tag: " + separatedStr[5],
                                     style = MaterialTheme.typography.h6,
                                     color = MaterialTheme.colors.onBackground,
-                                    modifier = Modifier.width(150.dp)
+                                    modifier = Modifier.width(156.dp)
                                 )
                                 Text(
-                                    text = "Qty: " + itemList[index],
+                                    text = "Qty: " + separatedStr[1],
                                     style = MaterialTheme.typography.h6,
                                     color = MaterialTheme.colors.onBackground
                                 )
@@ -180,18 +178,18 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                .padding(start = 5.dp),
+                                    .padding(start = 5.dp),
                                 //.background(Color.),
                                 horizontalArrangement = Arrangement.Start
                             ) {
                                 Text(
-                                    text = "Rec#: " + itemList[index],
+                                    text = "Rec#: " + separatedStr[6],
                                     style = MaterialTheme.typography.h6,
                                     color = MaterialTheme.colors.onBackground,
-                                    modifier = Modifier.width(150.dp)
+                                    modifier = Modifier.width(156.dp)
                                 )
                                 Text(
-                                    text = "Match: " + itemList[index],
+                                    text = "Match: " + separatedStr[4],
                                     style = MaterialTheme.typography.h6,
                                     color = MaterialTheme.colors.onBackground
                                 )
@@ -205,13 +203,13 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController) {
                                 horizontalArrangement = Arrangement.Start
                             ) {
                                 Text(
-                                    text = "Price: " + itemList[index],
+                                    text = "Price: " + separatedStr[2],
                                     style = MaterialTheme.typography.h6,
                                     color = MaterialTheme.colors.onBackground,
-                                    modifier = Modifier.width(150.dp)
+                                    modifier = Modifier.width(156.dp)
                                 )
                                 Text(
-                                    text = "PkSz: " + itemList[index],
+                                    text = "PkSz: " + separatedStr[3],
                                     style = MaterialTheme.typography.h6,
                                     color = MaterialTheme.colors.onBackground
                                 )
@@ -225,7 +223,7 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController) {
                                 horizontalArrangement = Arrangement.Start
                             ) {
                                 Text(
-                                    text = "Ndc: " + itemList[index],
+                                    text = "Ndc: " + itemList[index].split(":")[0],
                                     style = MaterialTheme.typography.h6,
                                     color = MaterialTheme.colors.onBackground
                                 )

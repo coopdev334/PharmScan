@@ -25,50 +25,20 @@ fun SearchBar(
     clear: Boolean = false,
     hintLabel: String = "",
     modifier: Modifier = Modifier,
-    onSearch: (String) -> Unit = {}
+    doSearch: (String) -> Unit = {}
 ) {
-    var text by remember {
-        mutableStateOf("")
-    }
-
+    var text by remember {mutableStateOf("")}
     val keyboardController = LocalSoftwareKeyboardController.current
-
-//    var isHintDisplayed by remember {
-//        mutableStateOf(true)
-//    }
 
     if (clear) {
         text = ""
     }
 
     Box(modifier = modifier) {
-//        BasicTextField(
-//            value = text,
-//            onValueChange = {
-//                text = it
-//                onSearch(it)
-//            },
-//            maxLines = 1,
-//            singleLine = true,
-//            textStyle = MaterialTheme.typography.h5,
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .shadow(5.dp, CircleShape)
-//                .background(Color.White, CircleShape)
-//                .padding(horizontal = 20.dp, vertical = 12.dp)
-//                .onFocusChanged {
-//                    isHintDisplayed = if (it.isFocused) false else true
-//                },
-//            keyboardOptions = KeyboardOptions(
-//                imeAction = ImeAction.Search
-//            )
-//        )
-
         TextField(
             value = text,
             onValueChange = {
                 text = it
-                onSearch(it)
             },
             label = {
                 Text(text = hintLabel)
@@ -91,24 +61,12 @@ fun SearchBar(
             keyboardActions = KeyboardActions(
                 onSearch = {
                     keyboardController?.hide()
-                    text = ""
-                    // TODO: execute search of collect data table
+                    doSearch(text)
                 }
             ),
             trailingIcon = {
                 Icon(Icons.Filled.Search, contentDescription = "Localized description")
             },
         )
-
-//        if(isHintDisplayed) {
-//            Text(
-//                text = hint,
-//                style = MaterialTheme.typography.h5,
-//                color = MaterialTheme.colors.onBackground,
-//                modifier = Modifier
-//                    .padding(horizontal = 20.dp, vertical = 12.dp)
-//            )
-//        }
     }
-
 }
