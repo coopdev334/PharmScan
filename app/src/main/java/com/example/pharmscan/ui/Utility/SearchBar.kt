@@ -1,7 +1,9 @@
 package com.example.pharmscan.ui.Utility
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -11,6 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -18,13 +22,13 @@ import androidx.compose.ui.text.input.ImeAction
 @ExperimentalComposeUiApi
 @Composable
 fun SearchBar(
-    text1: String = "",  // TODO: not clearing search bar. Needs to clear on search item
+    clear: Boolean = false,
     hintLabel: String = "",
     modifier: Modifier = Modifier,
     onSearch: (String) -> Unit = {}
 ) {
     var text by remember {
-        mutableStateOf(text1)
+        mutableStateOf("")
     }
 
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -32,6 +36,10 @@ fun SearchBar(
 //    var isHintDisplayed by remember {
 //        mutableStateOf(true)
 //    }
+
+    if (clear) {
+        text = ""
+    }
 
     Box(modifier = modifier) {
 //        BasicTextField(
@@ -83,22 +91,14 @@ fun SearchBar(
             keyboardActions = KeyboardActions(
                 onSearch = {
                     keyboardController?.hide()
+                    text = ""
                     // TODO: execute search of collect data table
                 }
             ),
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .shadow(5.dp, CircleShape)
-//                .background(Color.White, CircleShape)
-//                .padding(horizontal = 20.dp, vertical = 12.dp),
-//                .onFocusChanged {
-//                    isHintDisplayed = if (it.isFocused) false else true
-//                },
             trailingIcon = {
                 Icon(Icons.Filled.Search, contentDescription = "Localized description")
-            }
+            },
         )
-
 
 //        if(isHintDisplayed) {
 //            Text(
@@ -110,4 +110,5 @@ fun SearchBar(
 //            )
 //        }
     }
+
 }

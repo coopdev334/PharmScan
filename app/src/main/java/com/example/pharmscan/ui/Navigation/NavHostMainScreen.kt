@@ -152,7 +152,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                 }
 
                 LazyColumn(
-                    Modifier.padding(top = 30.dp, bottom = 70.dp),
+                    modifier = Modifier.padding(top = 30.dp, bottom = 70.dp),
                     state = listState,
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
