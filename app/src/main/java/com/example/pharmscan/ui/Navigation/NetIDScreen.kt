@@ -47,13 +47,6 @@ fun NavGraphBuilder.addNetID(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Row( //MAYBE I DONT NEED THIS
-                modifier = Modifier
-                    .fillMaxWidth(),
-                //.background(Color.Yellow),
-                horizontalArrangement = Arrangement.Center
-            ) {
-            }
             Text(
                 text = "Host Computer Account",
                 modifier = Modifier

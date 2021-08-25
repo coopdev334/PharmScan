@@ -65,6 +65,17 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
                 color = MaterialTheme.colors.onBackground
             )
             Text(
+                text = "Testing Match Screen",
+                modifier = Modifier
+                    .align(alignment = Alignment.Start)
+                    .padding(start = 20.dp)
+                    .clickable {
+                        navController.navigate(Screen.NavMatch.route)
+                    },
+                style = MaterialTheme.typography.h2,
+                color = MaterialTheme.colors.onBackground
+            )
+            Text(
                 text = "Network File Send",
                 modifier = Modifier
                     .align(alignment = Alignment.Start)

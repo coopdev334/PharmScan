@@ -10,6 +10,8 @@ sealed class Screen(val route: String) {
     object NetID: Screen("NetIDRoute")
     object CostLimit : Screen("CostLimitRoute")
     object PhysInvUploadScreen : Screen("PhysInvUploadRoute")
+    object NavMatch : Screen("NavMatchRoute")
+    object NavNoMatch : Screen("NavNoMatchRoute")
 
     // Helper function to append variable number of arguments to route
     // Note this works for mandatory arguments only
