@@ -27,5 +27,6 @@ fun Navigate() {
         addNetFileSendScreen(navController = navController)
         addNetID(navController = navController)
         addCostLimit(navController = navController)
+        addNavMatchScreen(navController = navController)
     }
 }
