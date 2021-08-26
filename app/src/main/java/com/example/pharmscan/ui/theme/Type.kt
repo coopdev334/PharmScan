@@ -30,7 +30,7 @@ val Typography = Typography(
     h2 = TextStyle( // use for the main text for settings
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        fontSize = 30.sp
+        fontSize = 25.sp
     ),
     body2 = TextStyle ( // Use for the smaller text for settings
         fontFamily = FontFamily.Default,

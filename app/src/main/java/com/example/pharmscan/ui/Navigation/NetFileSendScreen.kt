@@ -47,22 +47,28 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(
-                text = "Tag",
+            Row( //MAYBE I DONT NEED THIS
                 modifier = Modifier
-                    .align(alignment = Alignment.Start)
-                    .padding(start = 20.dp),
-                style = MaterialTheme.typography.h2,
-                color = MaterialTheme.colors.onBackground
-            )
-            TagCheckBox()
+                    .fillMaxWidth(),
+                //.background(Color.Yellow),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Text(
+                    text = "Tag",
+                    modifier = Modifier
+                        .padding(start = 20.dp),
+                    style = MaterialTheme.typography.body2,
+                    color = MaterialTheme.colors.onBackground
+                )
+                TagCheckBox()
+            }
             Spacer(modifier = Modifier.height(height = 10.dp))
             Text(
                 text = "Changes",
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
                     .padding(start = 20.dp),
-                style = MaterialTheme.typography.h2,
+                style = MaterialTheme.typography.body2,
                 color = MaterialTheme.colors.onBackground
             )
             ChangesTextField()
@@ -72,7 +78,7 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
                     .padding(start = 20.dp),
-                style = MaterialTheme.typography.h2,
+                style = MaterialTheme.typography.body2,
                 color = MaterialTheme.colors.onBackground
             )
             IntervalTextField()
@@ -82,7 +88,7 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
                     .padding(start = 20.dp),
-                style = MaterialTheme.typography.h2,
+                style = MaterialTheme.typography.body2,
                 color = MaterialTheme.colors.onBackground
             )
             ReccntTextField()
@@ -97,7 +103,7 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
                     modifier = Modifier
                         .align(alignment = Alignment.Start)
                         .padding(start = 20.dp),
-                    style = MaterialTheme.typography.h2,
+                    style = MaterialTheme.typography.body2,
                     color = MaterialTheme.colors.onBackground
                 )
             }
@@ -112,22 +118,15 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
                     text = "Tag",
                     modifier = Modifier
                         .padding(start = 20.dp),
-                    style = MaterialTheme.typography.body2,
+                    style = MaterialTheme.typography.body1,
                     color = MaterialTheme.colors.onBackground
                 )
                 TagTextField()
-            /*}
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                //.background(Color.Yellow),
-                horizontalArrangement = Arrangement.Center
-            ) { */
                 Text(
                     text = "Interval",
                     modifier = Modifier
                         .padding(start = 20.dp),
-                    style = MaterialTheme.typography.body2,
+                    style = MaterialTheme.typography.body1,
                     color = MaterialTheme.colors.onBackground
                 )
                 IntervalTextFieldOther() // Change Name?
@@ -142,7 +141,7 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
                     .clickable {
                         navController.popBackStack(Screen.Settings.route, inclusive = false)
                     },
-                style = MaterialTheme.typography.h2,
+                style = MaterialTheme.typography.body2,
                 color = MaterialTheme.colors.onBackground
             )
         }
@@ -164,7 +163,7 @@ fun ChangesTextField() {
             value = textState.value,
             onValueChange = { textState.value = it },
             modifier = Modifier
-                    .height(50.dp)
+                    .height(30.dp)
         )
 
         //Text("The textfield's text")
@@ -178,7 +177,7 @@ fun IntervalTextField() {
             value = textState.value,
             onValueChange = { textState.value = it },
             modifier = Modifier
-                .height(50.dp)
+                .height(30.dp)
         )
         //Text("The textfield's text")
     }
@@ -191,7 +190,7 @@ fun ReccntTextField() {
             value = textState.value,
             onValueChange = { textState.value = it },
             modifier = Modifier
-                .height(50.dp)
+                .height(30.dp)
         )
         //Text("The textfield's text")
     }
@@ -204,8 +203,8 @@ fun TagTextField() {
             value = textState.value,
             onValueChange = { textState.value = it },
             modifier = Modifier
-                .height(50.dp)
-                .width(50.dp)
+                .height(30.dp)
+                .width(30.dp)
         )
         //Text("The textfield's text")
     }
@@ -218,8 +217,8 @@ fun IntervalTextFieldOther() { // MAYBE FIND A BETTER NAME
             value = textState.value,
             onValueChange = { textState.value = it },
             modifier = Modifier
-                .height(50.dp)
-                .width(50.dp)
+                .height(30.dp)
+                .width(30.dp)
         )
         //Text("The textfield's text")
     }
