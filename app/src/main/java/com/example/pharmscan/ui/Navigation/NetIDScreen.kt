@@ -67,17 +67,15 @@ fun NavGraphBuilder.addNetID(navController: NavController) {
             )
             ComputerPasswordTextField()
             Spacer(modifier = Modifier.height(height = 10.dp))
-            Text(
-                text = "OK",
-                modifier = Modifier
-                    .align(alignment = Alignment.Start)
-                    .padding(start = 150.dp) // Change this value
-                    .clickable {
-                        navController.popBackStack(Screen.Settings.route, inclusive = false)
-                    },
-                style = MaterialTheme.typography.h2,
-                color = MaterialTheme.colors.onBackground
-            )
+            Button(onClick = {
+                navController.popBackStack(Screen.Settings.route, inclusive = false)
+            }) {
+                Text(
+                    text = "OK",
+                    modifier = Modifier.padding(8.dp),
+                    style = MaterialTheme.typography.h2
+                )
+            }
         }
 
     }

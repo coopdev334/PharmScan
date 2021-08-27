@@ -58,32 +58,20 @@ fun NavGraphBuilder.addCostLimit(navController: NavController) {
                 text = "Cost Limit",
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
-                    .padding(start = 120.dp), // MAYBE CHANGE THIS?
+                    .padding(start = 100.dp), // MAYBE CHANGE THIS?
                 style = MaterialTheme.typography.h2,
                 color = MaterialTheme.colors.onBackground
             )
             CostLimitTextField()
-            Text(
-                text = "OK",
-                modifier = Modifier
-                    .align(alignment = Alignment.Start)
-                    .padding(start = 150.dp) // Change this value
-                    .clickable {
-                        navController.popBackStack(Screen.Settings.route, inclusive = false)
-                    },
-                style = MaterialTheme.typography.h2,
-                color = MaterialTheme.colors.onBackground
-            )
+            Button(onClick = {
+                navController.popBackStack(Screen.Settings.route, inclusive = false)
+            }) {
+                Text(
+                    text = "OK",
+                    modifier = Modifier.padding(6.dp),
+                    style = MaterialTheme.typography.h2
+                )
+            }
         }
-        }
-    }
-    @Composable
-    fun CostLimitTextField() {
-        Column(Modifier.padding(16.dp)) {
-            val textState = remember { mutableStateOf(TextFieldValue()) }
-            TextField(
-                value = textState.value,
-                onValueChange = { textState.value = it }
-            )
         }
     }

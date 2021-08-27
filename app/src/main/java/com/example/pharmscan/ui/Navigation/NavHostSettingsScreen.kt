@@ -30,6 +30,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
@@ -46,13 +47,6 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Row( //MAYBE I DONT NEED THIS
-                modifier = Modifier
-                    .fillMaxWidth(),
-                //.background(Color.Yellow),
-                horizontalArrangement = Arrangement.Center
-            ) {
-            }
             Text(
                 text = "<-",
                 modifier = Modifier
@@ -124,18 +118,20 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
                     .background(MaterialTheme.colors.secondary)
             )
             Spacer(modifier = Modifier.height(height = 30.dp))
-
-            Text(
-                text = "Cost Limit",
+            Row(
                 modifier = Modifier
-                    .align(alignment = Alignment.Start)
-                    .padding(start = 20.dp)
-                    .clickable {
-                        navController.navigate(Screen.CostLimit.route)
-                    },
-                style = MaterialTheme.typography.h2,
-                color = MaterialTheme.colors.onBackground
-            )
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Text(
+                    text = "Cost Limit",
+                    modifier = Modifier
+                        .padding(start = 20.dp),
+                    style = MaterialTheme.typography.h2,
+                    color = MaterialTheme.colors.onBackground
+                )
+                CostLimitTextField()
+            }
             Box(
                 Modifier
                     .fillMaxWidth()
@@ -143,16 +139,21 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
                     .background(MaterialTheme.colors.secondary)
             )
             Spacer(modifier = Modifier.height(height = 30.dp))
-
-            Text(
-                text = "Manual Price Entry",
+            Row(
                 modifier = Modifier
-                    .align(alignment = Alignment.Start)
-                    .padding(start = 20.dp),
-                style = MaterialTheme.typography.h2,
-                color = MaterialTheme.colors.onBackground
-            )
-            PriceEntryCheckbox()
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Text(
+                    text = "Manual Price Entry",
+                    modifier = Modifier
+                        .padding(start = 20.dp),
+                    style = MaterialTheme.typography.h2,
+                    color = MaterialTheme.colors.onBackground
+                )
+                Spacer(modifier = Modifier.width(width = 60.dp))
+                PriceEntryCheckbox()
+            }
         }
     }
 }
@@ -164,5 +165,16 @@ fun PriceEntryCheckbox(){
         onCheckedChange = { checkedState.value = it }
     )
 }
+@Composable
+fun CostLimitTextField() {
+    Column(Modifier.padding(16.dp)) {
+        val textState = remember { mutableStateOf(TextFieldValue()) }
+        TextField(
+            value = textState.value,
+            onValueChange = { textState.value = it }
+        )
+    }
+}
+
 
 

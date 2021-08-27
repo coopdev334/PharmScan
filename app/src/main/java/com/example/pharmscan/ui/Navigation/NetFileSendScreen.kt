@@ -1,6 +1,7 @@
 package com.example.pharmscan.ui.Navigation
 
 import android.widget.CheckBox
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -24,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.pointer.pointerInput
@@ -35,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import com.example.pharmscan.ui.theme.PharmScanTheme
+import com.example.pharmscan.ui.theme.Shapes
 import com.example.pharmscan.ui.theme.Typography
 import kotlinx.coroutines.launch
 
@@ -47,7 +50,7 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Row( //MAYBE I DONT NEED THIS
+            Row(
                 modifier = Modifier
                     .fillMaxWidth(),
                 //.background(Color.Yellow),
@@ -60,9 +63,10 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
                     style = MaterialTheme.typography.body2,
                     color = MaterialTheme.colors.onBackground
                 )
+                Spacer(modifier = Modifier.width(width = 190.dp))
                 TagCheckBox()
             }
-            Spacer(modifier = Modifier.height(height = 10.dp))
+            Spacer(modifier = Modifier.height(height = 5.dp))
             Text(
                 text = "Changes",
                 modifier = Modifier
@@ -72,7 +76,7 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
                 color = MaterialTheme.colors.onBackground
             )
             ChangesTextField()
-            Spacer(modifier = Modifier.height(height = 10.dp))
+            Spacer(modifier = Modifier.height(height = 5.dp))
             Text(
                 text = "Interval",
                 modifier = Modifier
@@ -82,7 +86,7 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
                 color = MaterialTheme.colors.onBackground
             )
             IntervalTextField()
-            Spacer(modifier = Modifier.height(height = 10.dp))
+            Spacer(modifier = Modifier.height(height = 5.dp))
             Text(
                 text = "Reccnt",
                 modifier = Modifier
@@ -92,7 +96,7 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
                 color = MaterialTheme.colors.onBackground
             )
             ReccntTextField()
-            Spacer(modifier = Modifier.height(height = 10.dp))
+            Spacer(modifier = Modifier.height(height = 5.dp))
             if (0==0){
                 Text(
                    text = "")
@@ -133,17 +137,17 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
             }
 
             Spacer(modifier = Modifier.height(height = 10.dp))
-            Text(
-                text = "OK",
-                modifier = Modifier
-                    .align(alignment = Alignment.Start)
-                    .padding(start = 150.dp) // Change this value
-                    .clickable {
-                        navController.popBackStack(Screen.Settings.route, inclusive = false)
-                    },
-                style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onBackground
-            )
+            Button(onClick = {
+                navController.popBackStack(Screen.Settings.route, inclusive = false)
+            },
+                modifier = Modifier.height(40.dp)
+            ) {
+                Text(
+                    text = "OK",
+                    modifier = Modifier.padding(2.dp),
+                    style = MaterialTheme.typography.body1
+                )
+            }
         }
     }
 }

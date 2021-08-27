@@ -112,29 +112,28 @@ fun NavGraphBuilder.addNavNoMatchScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth(),
                 //.background(Color.Yellow),
-                horizontalArrangement = Arrangement.Start
+                horizontalArrangement = Arrangement.Center
             ) {
                 Spacer(modifier = Modifier.height(height = 10.dp))
-                Text(
-                    text = "OK",
-                    modifier = Modifier
-                        .padding(start = 90.dp) // Change this value
-                        .clickable {
-                            navController.popBackStack(Screen.Settings.route, inclusive = false)
-                        },
-                    style = MaterialTheme.typography.h2,
-                    color = MaterialTheme.colors.onBackground
-                )
-                Text(
-                    text = "CANCEL",
-                    modifier = Modifier
-                        .padding(start = 40.dp) // Change this value
-                        .clickable {
-                            navController.popBackStack(Screen.Settings.route, inclusive = false)
-                        },
-                    style = MaterialTheme.typography.h2,
-                    color = MaterialTheme.colors.onBackground
-                )
+                Button(onClick = {
+                    navController.popBackStack(Screen.Settings.route, inclusive = false)
+                }) {
+                    Text(
+                        text = "OK",
+                        modifier = Modifier.padding(8.dp),
+                        style = MaterialTheme.typography.h2
+                    )
+                }
+                Spacer(modifier = Modifier.width(width = 30.dp))
+                Button(onClick = {
+                    navController.popBackStack(Screen.Settings.route, inclusive = false)
+                }) {
+                    Text(
+                        text = "CANCEL",
+                        modifier = Modifier.padding(8.dp),
+                        style = MaterialTheme.typography.h2
+                    )
+                }
             }
         }
     }
