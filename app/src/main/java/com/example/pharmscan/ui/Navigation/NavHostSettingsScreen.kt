@@ -171,7 +171,9 @@ fun CostLimitTextField() {
         val textState = remember { mutableStateOf(TextFieldValue()) }
         TextField(
             value = textState.value,
-            onValueChange = { textState.value = it }
+            onValueChange = { textState.value = it },
+            modifier = Modifier
+                .height(30.dp)
         )
     }
 }
