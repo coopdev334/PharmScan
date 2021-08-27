@@ -21,6 +21,7 @@ import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.R
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -45,11 +46,16 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
     composable(Screen.NetFileSend.route) {
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
-
+        Spacer(modifier = Modifier.height(height = 5.dp))
         Column (
+            modifier = Modifier.border(5.dp, MaterialTheme.colors.onBackground, Shapes.small),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            Text(text = "File Send",
+                style = MaterialTheme.typography.h2,
+                color = MaterialTheme.colors.onBackground)
+            Spacer(modifier = Modifier.height(height = 5.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -57,86 +63,100 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
                 horizontalArrangement = Arrangement.Start
             ) {
                 Text(
-                    text = "Tag",
+                    text = "Tag Changes",
                     modifier = Modifier
                         .padding(start = 20.dp),
                     style = MaterialTheme.typography.body2,
                     color = MaterialTheme.colors.onBackground
                 )
-                Spacer(modifier = Modifier.width(width = 190.dp))
+                Spacer(modifier = Modifier.width(width = 20.dp))
+                TagChangesTextField()
+                Spacer(modifier = Modifier.width(width = 20.dp))
                 TagCheckBox()
             }
             Spacer(modifier = Modifier.height(height = 5.dp))
-            Text(
-                text = "Changes",
-                modifier = Modifier
-                    .align(alignment = Alignment.Start)
-                    .padding(start = 20.dp),
-                style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onBackground
-            )
-            ChangesTextField()
-            Spacer(modifier = Modifier.height(height = 5.dp))
-            Text(
-                text = "Interval",
-                modifier = Modifier
-                    .align(alignment = Alignment.Start)
-                    .padding(start = 20.dp),
-                style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onBackground
-            )
-            IntervalTextField()
-            Spacer(modifier = Modifier.height(height = 5.dp))
-            Text(
-                text = "Reccnt",
-                modifier = Modifier
-                    .align(alignment = Alignment.Start)
-                    .padding(start = 20.dp),
-                style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onBackground
-            )
-            ReccntTextField()
-            Spacer(modifier = Modifier.height(height = 5.dp))
-            if (0==0){
-                Text(
-                   text = "")
-            }
-            else { // No Network exists
-                Text(
-                    text = "No Network Warning!",
-                    modifier = Modifier
-                        .align(alignment = Alignment.Start)
-                        .padding(start = 20.dp),
-                    style = MaterialTheme.typography.body2,
-                    color = MaterialTheme.colors.onBackground
-                )
-            }
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
                 //.background(Color.Yellow),
                 horizontalArrangement = Arrangement.Start
             ) {
-
-                Text(
-                    text = "Tag",
-                    modifier = Modifier
-                        .padding(start = 20.dp),
-                    style = MaterialTheme.typography.body1,
-                    color = MaterialTheme.colors.onBackground
-                )
-                TagTextField()
                 Text(
                     text = "Interval",
                     modifier = Modifier
                         .padding(start = 20.dp),
-                    style = MaterialTheme.typography.body1,
+                    style = MaterialTheme.typography.body2,
+                    color = MaterialTheme.colors.onBackground
+                )
+                IntervalTextField()
+                /* Text(
+                    text = " secs",
+                    modifier = Modifier
+                        .padding(start = 20.dp),
+                    style = MaterialTheme.typography.body2,
+                    color = MaterialTheme.colors.onBackground
+                )*/
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                //.background(Color.Yellow),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Spacer(modifier = Modifier.height(height = 5.dp))
+                Text(
+                    text = "Record Count",
+                    modifier = Modifier
+                        .padding(start = 20.dp),
+                    style = MaterialTheme.typography.body2,
+                    color = MaterialTheme.colors.onBackground
+                )
+                RecordCountTextField()
+            }
+        //Spacer(modifier = Modifier.height(height = 5.dp))
+        //Text(text = "No Network Warning")
+        //Spacer(modifier = Modifier.height(height = 5.dp))
+        Box (
+            Modifier
+                .fillMaxWidth()
+                .height(5.dp)
+                .background(MaterialTheme.colors.onBackground)
+        ) {}
+            Text(text = "No Network Warning",
+                style = MaterialTheme.typography.h2,
+                color = MaterialTheme.colors.onBackground)
+            Spacer(modifier = Modifier.height(height = 5.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Text(
+                    text = "Tags",
+                    modifier = Modifier
+                        .padding(start = 20.dp),
+                    style = MaterialTheme.typography.body2,
+                    color = MaterialTheme.colors.onBackground
+                )
+                TagTextField()
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                //.background(Color.Yellow),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Text(
+                    text = "Interval",
+                    modifier = Modifier
+                        .padding(start = 20.dp),
+                    style = MaterialTheme.typography.body2,
                     color = MaterialTheme.colors.onBackground
                 )
                 IntervalTextFieldOther() // Change Name?
             }
 
-            Spacer(modifier = Modifier.height(height = 10.dp))
+            Spacer(modifier = Modifier.height(height = 5.dp))
             Button(onClick = {
                 navController.popBackStack(Screen.Settings.route, inclusive = false)
             },
@@ -148,6 +168,7 @@ fun NavGraphBuilder.addNetFileSendScreen(navController: NavController) {
                     style = MaterialTheme.typography.body1
                 )
             }
+            Spacer(modifier = Modifier.height(height = 5.dp))
         }
     }
 }
@@ -156,21 +177,22 @@ fun TagCheckBox(){
     val checkedState = remember {  mutableStateOf(true)  }
     Checkbox(
         checked = checkedState.value,
-        onCheckedChange = { checkedState.value = it }
+        onCheckedChange = { checkedState.value = it },
+        modifier = Modifier.padding(8.dp)
     )
 }
 @Composable
-fun ChangesTextField() {
+fun TagChangesTextField() {
     Column(Modifier.padding(16.dp)) {
         val textState = remember {  mutableStateOf(TextFieldValue())   }
         TextField(
             value = textState.value,
             onValueChange = { textState.value = it },
             modifier = Modifier
-                    .height(30.dp)
+                .height(30.dp)
+                .width(70.dp)
         )
 
-        //Text("The textfield's text")
     }
 }
 @Composable
@@ -183,11 +205,10 @@ fun IntervalTextField() {
             modifier = Modifier
                 .height(30.dp)
         )
-        //Text("The textfield's text")
     }
 }
 @Composable
-fun ReccntTextField() {
+fun RecordCountTextField() {
     Column(Modifier.padding(16.dp)) {
         val textState = remember {  mutableStateOf(TextFieldValue())   }
         TextField(
@@ -196,7 +217,6 @@ fun ReccntTextField() {
             modifier = Modifier
                 .height(30.dp)
         )
-        //Text("The textfield's text")
     }
 }
 @Composable
@@ -208,13 +228,12 @@ fun TagTextField() {
             onValueChange = { textState.value = it },
             modifier = Modifier
                 .height(30.dp)
-                .width(30.dp)
         )
         //Text("The textfield's text")
     }
 }
 @Composable
-fun IntervalTextFieldOther() { // MAYBE FIND A BETTER NAME
+fun IntervalTextFieldOther() {
     Column(Modifier.padding(16.dp)) {
         val textState = remember {  mutableStateOf(TextFieldValue())   }
         TextField(
@@ -222,8 +241,6 @@ fun IntervalTextFieldOther() { // MAYBE FIND A BETTER NAME
             onValueChange = { textState.value = it },
             modifier = Modifier
                 .height(30.dp)
-                .width(30.dp)
         )
-        //Text("The textfield's text")
     }
 }
