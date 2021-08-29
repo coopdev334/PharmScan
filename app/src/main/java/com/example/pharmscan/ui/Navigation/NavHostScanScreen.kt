@@ -1,56 +1,60 @@
 package com.example.pharmscan.ui.Navigation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.*
+//import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-//import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
-import com.example.pharmscan.ui.Dialog.GetOpId
 import com.example.pharmscan.ui.Screen.Screen
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.*
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavType
+import androidx.navigation.compose.navArgument
+import kotlinx.coroutines.Dispatchers
+//import androidx.compose.ui.input.pointer.pointerInput
 import kotlinx.coroutines.launch
 
-fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController) {
+// TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
+@ExperimentalFoundationApi
+fun NavGraphBuilder.addScanScreen(navController: NavController) {
+
     composable(
-        route = Screen.PhysInvUploadScreen.route + "/{hostCompName}",
+        route = Screen.ScanScreen.route + "/{statusBar}/{bkgrColor}",
         // Define argument list to pass to this composable in composable constructor
         // arguments parameter which is a list of navArguments.
         arguments = listOf(
-            navArgument("hostCompName") {
+            navArgument("statusBar") {
+                type = NavType.StringType
+                nullable = false
+            },
+            navArgument("bkgrColor") {
                 type = NavType.StringType
                 nullable = false
             }
         )
     ) {
         // Get the arguments passed to this composable by key name
-        // arg must be present
-        val argTextHostComputer = it.arguments!!.getString("hostCompName")
+        // args must be present
+        var argTextstatusBar by remember { mutableStateOf(it.arguments!!.getString("statusBar")) }
+        val argStatusBarBkGrColor = it.arguments!!.getString("bkgrColor")
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
-        val showEnterOpIdDialog = remember { mutableStateOf(false) }
+        var statusBarBkgrColor by remember { mutableStateOf(Color.White) }
 
-        if (showEnterOpIdDialog.value) {
-            GetOpId(
-                showDialog = showEnterOpIdDialog.value,
-                onDismiss = {
-                    showEnterOpIdDialog.value = false
-                    navController.navigate(Screen.ScanScreen.withArgs("*** Scan Tag ***", "yellow"))
-                })
+        // Convert status bar string arg to Color object
+        when (argStatusBarBkGrColor) {
+            "yellow" -> statusBarBkgrColor = Color.Yellow
         }
 
         Scaffold(
@@ -126,72 +130,73 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController) {
             },
             content = {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 10.dp),
-                    verticalArrangement = Arrangement.Top
-                ){
-                    Text(
-                        text = "<-",
-                        fontSize = 40.sp,
-                        modifier = Modifier
-                            .align(alignment = Alignment.Start)
-                            .padding(start = 20.dp)
-                            .clickable {
-                                navController.popBackStack()
-                            },
-                        style = MaterialTheme.typography.h5,
-                        color = MaterialTheme.colors.onBackground
-                    )
-                    Text(
-                        text = argTextHostComputer!!,
-                        fontSize = 40.sp,
-                        modifier = Modifier
-                            .align(alignment = Alignment.CenterHorizontally)
-                            .padding(start = 10.dp),
-                        style = MaterialTheme.typography.h5,
-                        color = MaterialTheme.colors.onBackground
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Box(
-                        Modifier
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .background(MaterialTheme.colors.secondary)
-                    )
+                    modifier = Modifier.fillMaxSize()
+                ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 30.dp),
+                            .background(statusBarBkgrColor),
                         horizontalArrangement = Arrangement.Center
-                    ) {
-                        Button(onClick = {
-                            showEnterOpIdDialog.value = true
-                        }) {
-                            Text(
-                                text = "Physical Inventory",
-                                style = MaterialTheme.typography.h5,
-                                color = MaterialTheme.colors.background
-                            )
-                        }
+                    ){
+                        Text(
+                            text = argTextstatusBar!!,
+                            style = MaterialTheme.typography.h5,
+                            color = MaterialTheme.colors.onBackground
+                        )
                     }
-                    Row(
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 50.dp),
-                        horizontalArrangement = Arrangement.Center
+                            .fillMaxSize()
+                            .padding(all = 4.dp),
+                        verticalArrangement = Arrangement.Bottom
                     ) {
-                        Button(onClick = {
-                            // TODO: Enter op id someway
-                            //navController.navigate(Screen.xxxxxxxxx.route)
-                        }) {
-                            Text(
-                                text = "Upload Collected Data",
-                                style = MaterialTheme.typography.h5,
-                                color = MaterialTheme.colors.background
-                            )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ){
+                            // TODO: Button just for testing status bar color and text change
+                            // use this to change info on this screen as user selects options
+                            // and status or other displays.
+                            Button(onClick = {
+                                statusBarBkgrColor = Color.Yellow
+                                argTextstatusBar = "*** Scan Tag ***"
+                                coroutineScope.launch(Dispatchers.Default) {
+                                    // supend fun ChangeTagScan()
+                                    println("coop change tag start")
+                                }
+                            }
+                            ) {
+                                Text(text = "Change Tag")
+
+                            }
+                            Button(onClick = {
+                                statusBarBkgrColor = Color.Cyan
+                                argTextstatusBar = "*** Hold ***"
+                                // ChangeTagScan()
+                            }
+                            ) {
+                                Text(text = "Hold")
+
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(height = 10.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ){
+                            // TODO: Button just for testing status bar color and text change
+                            // use this to change info on this screen as user selects options
+                            // and status or other displays.
+                            Button(onClick = {
+                                  navController.popBackStack(Screen.PhysInvUploadScreen.route, inclusive = false)
+                            }
+                            ) {
+                                Text(text = "Quit")
+
+                            }
                         }
                     }
+
                 }
             }
         )

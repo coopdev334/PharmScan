@@ -23,6 +23,7 @@ fun Navigate() {
         addViewColDataFNameScreen(navController = navController)
         addViewCancelScreen(navController = navController)
         addPhysInvUploadScreen(navController = navController)
+        addScanScreen(navController = navController)
 
     }
 }

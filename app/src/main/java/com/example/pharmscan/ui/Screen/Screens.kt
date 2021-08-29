@@ -6,6 +6,7 @@ sealed class Screen(val route: String) {
     object ViewColDataFNameScreen : Screen("ViewColDataFNameRoute")
     object ViewCancel : Screen("ViewCancelRoute")
     object PhysInvUploadScreen : Screen("PhysInvUploadRoute")
+    object ScanScreen : Screen("ScanRoute")
 
     // Helper function to append variable number of arguments to route
     // Note this works for mandatory arguments only
