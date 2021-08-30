@@ -12,7 +12,7 @@ sealed class Screen(val route: String) {
     object PhysInvUploadScreen : Screen("PhysInvUploadRoute")
     object NavMatch : Screen("NavMatchRoute")
     object NavNoMatch : Screen("NavNoMatchRoute")
-
+    object ScanScreen : Screen("ScanRoute")
     // Helper function to append variable number of arguments to route
     // Note this works for mandatory arguments only
     fun withArgs(vararg args: String) : String {

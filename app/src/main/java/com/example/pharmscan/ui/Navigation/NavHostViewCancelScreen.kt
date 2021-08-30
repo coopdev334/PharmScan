@@ -23,24 +23,21 @@ import com.example.pharmscan.ui.Utility.SearchBar
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
 import com.example.pharmscan.ui.Dialog.CancelCollDataRecord
+import kotlinx.coroutines.launch
 
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.addViewCancelScreen(navController: NavController) {
-    var delHostCompName = ""
+    val delHostCompName = ""
 
     composable(Screen.ViewCancel.route) {
 
+        var itemList: List<String> by remember {mutableStateOf(listOf("0"))}
         var hintLabel by remember {mutableStateOf("Rec#")}
-        //var text by remember {mutableStateOf("")}
         val listState = rememberLazyListState()
         var clearTxt by remember {mutableStateOf(false)}
         val showCancelCollDataDialog = remember { mutableStateOf(false) }
-
-        // Use for testing
-        // TODO: Remove this hard coded string after database is created. Get and set to database for
-        // host computer name list. Also need to set new added computer name in add dialog
-        val itemList = listOf("ABC", "CDE", "FGH", "IJK", "LMN", "OPQ", "RST", "ABC", "CDE", "FGH", "IJK", "LMN", "OPQ", "RST")
+        val coroutineScope = rememberCoroutineScope()
 
         if (showCancelCollDataDialog.value) {
             CancelCollDataRecord(
@@ -80,14 +77,19 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController) {
                     .fillMaxWidth()
                     .padding(all = 18.dp),
             ) {
+                // This lamda function gets called when soft keyboard popup search button is pressed
                 // TODO: add database search logic
+                // Use for testing
+                // TODO: Remove this hard coded string after database is created. Get and set to database for
+                // host computer name list. Also need to set new added computer name in add dialog
+                // First element of list contains 0 based row to seek to show first match.
+                // This allows scrolling of all records in collected data table.
+                itemList = listOf("2", "99999999999:123456:12345678:12345678:R:4444:1111","99999999999:123456:12345678:12345678:R:4444:2222","99999999999:123456:12345678:12345678:R:4444:3333","99999999999:123456:12345678:12345678:R:4444:4444","99999999999:123456:12345678:12345678:R:4444:5555","99999999999:123456:12345678:12345678:R:4444:6666")
             }
 
             clearTxt = false
-            Spacer(
-                modifier = Modifier
-                    .height(height = 5.dp)
-            )
+            Spacer(modifier = Modifier.height(height = 5.dp))
+
             Row(horizontalArrangement = Arrangement.SpaceEvenly) {
                 OutlinedButton(
                     onClick = {
@@ -138,97 +140,108 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController) {
                 }
             }
 
-            //Spacer(modifier = Modifier.height(5.dp))
 
-            LazyColumn(
+                LazyColumn(
                 modifier = Modifier.padding(top = 20.dp, bottom = 5.dp, start = 5.dp),
                 state = listState,
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 horizontalAlignment = Alignment.Start
             ) {
-                items(itemList.size) { index ->
-                    Box(
-                        modifier = Modifier
-                            //.height(80.dp)
-                            .clickable {
-                                showCancelCollDataDialog.value = true
-                                println("mike ${itemList[index]}")
-                            }
-                            .background(color = Color.LightGray)
 
-                    ) {
-                        Column {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 5.dp),
-                                horizontalArrangement = Arrangement.Start
-                            ) {
-                                Text(
-                                    text = "Tag: " + itemList[index],
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onBackground,
-                                    modifier = Modifier.width(150.dp)
-                                )
-                                Text(
-                                    text = "Qty: " + itemList[index],
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onBackground
-                                )
+                items(itemList.size) { index ->
+                    // Check if itemList has been populated
+                    if (itemList[0] != "0") {
+                        if (index == 0) {
+                            coroutineScope.launch {
+                                listState.scrollToItem(index = itemList[0].toInt())
                             }
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Row(
+                        }else {
+                            val separatedStr = itemList[index].split(":").toTypedArray()
+
+                            Box(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                .padding(start = 5.dp),
-                                //.background(Color.),
-                                horizontalArrangement = Arrangement.Start
+                                    //.height(80.dp)
+                                    .clickable {
+                                        showCancelCollDataDialog.value = true
+                                        println("mike ${itemList[index]}")
+                                    }
+                                    .background(color = Color.LightGray)
+
                             ) {
-                                Text(
-                                    text = "Rec#: " + itemList[index],
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onBackground,
-                                    modifier = Modifier.width(150.dp)
-                                )
-                                Text(
-                                    text = "Match: " + itemList[index],
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onBackground
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 5.dp),
-                                //.background(Color.Yellow),
-                                horizontalArrangement = Arrangement.Start
-                            ) {
-                                Text(
-                                    text = "Price: " + itemList[index],
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onBackground,
-                                    modifier = Modifier.width(150.dp)
-                                )
-                                Text(
-                                    text = "PkSz: " + itemList[index],
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onBackground
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 5.dp),
-                                //.background(Color.Yellow),
-                                horizontalArrangement = Arrangement.Start
-                            ) {
-                                Text(
-                                    text = "Ndc: " + itemList[index],
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onBackground
-                                )
+                                Column {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(start = 5.dp),
+                                        horizontalArrangement = Arrangement.Start
+                                    ) {
+                                        Text(
+                                            text = "Tag: " + separatedStr[5],
+                                            style = MaterialTheme.typography.h6,
+                                            color = MaterialTheme.colors.onBackground,
+                                            modifier = Modifier.width(156.dp)
+                                        )
+                                        Text(
+                                            text = "Qty: " + separatedStr[1],
+                                            style = MaterialTheme.typography.h6,
+                                            color = MaterialTheme.colors.onBackground
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(start = 5.dp),
+                                        //.background(Color.),
+                                        horizontalArrangement = Arrangement.Start
+                                    ) {
+                                        Text(
+                                            text = "Rec#: " + separatedStr[6],
+                                            style = MaterialTheme.typography.h6,
+                                            color = MaterialTheme.colors.onBackground,
+                                            modifier = Modifier.width(156.dp)
+                                        )
+                                        Text(
+                                            text = "Match: " + separatedStr[4],
+                                            style = MaterialTheme.typography.h6,
+                                            color = MaterialTheme.colors.onBackground
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(start = 5.dp),
+                                        //.background(Color.Yellow),
+                                        horizontalArrangement = Arrangement.Start
+                                    ) {
+                                        Text(
+                                            text = "Price: " + separatedStr[2],
+                                            style = MaterialTheme.typography.h6,
+                                            color = MaterialTheme.colors.onBackground,
+                                            modifier = Modifier.width(156.dp)
+                                        )
+                                        Text(
+                                            text = "PkSz: " + separatedStr[3],
+                                            style = MaterialTheme.typography.h6,
+                                            color = MaterialTheme.colors.onBackground
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(start = 5.dp),
+                                        //.background(Color.Yellow),
+                                        horizontalArrangement = Arrangement.Start
+                                    ) {
+                                        Text(
+                                            text = "Ndc: " + itemList[index].split(":")[0],
+                                            style = MaterialTheme.typography.h6,
+                                            color = MaterialTheme.colors.onBackground
+                                        )
+                                    }
+                                }
                             }
                         }
                     }

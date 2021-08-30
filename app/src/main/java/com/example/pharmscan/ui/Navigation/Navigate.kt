@@ -29,5 +29,6 @@ fun Navigate() {
         addCostLimit(navController = navController)
         addNavMatchScreen(navController = navController)
         addNavNoMatchScreen(navController = navController)
+        addScanScreen(navController = navController)
     }
 }
