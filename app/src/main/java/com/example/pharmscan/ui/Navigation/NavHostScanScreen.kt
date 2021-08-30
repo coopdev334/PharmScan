@@ -154,7 +154,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController) {
                             .fillMaxWidth()
                             .height(height = 80.dp)
                             .clip(RoundedCornerShape(50.dp))
-                            .background(MaterialTheme.colors.secondary)
+                            .background(Color.LightGray)
                     ){
                         Column() {
                             Row(
@@ -195,7 +195,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController) {
                             .fillMaxWidth()
                             .height(height = 80.dp)
                             .clip(RoundedCornerShape(50.dp))
-                            .background(MaterialTheme.colors.secondaryVariant)
+                            .background(Color.LightGray)
                     ){
                         Column() {
                             Row(
@@ -228,7 +228,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController) {
                             .fillMaxWidth()
                             .height(height = 80.dp)
                             .clip(RoundedCornerShape(50.dp))
-                            .background(MaterialTheme.colors.secondaryVariant)
+                            .background(Color.LightGray)
                     ){
                         Column() {
                             Row(
@@ -312,7 +312,10 @@ fun NavGraphBuilder.addScanScreen(navController: NavController) {
                                   navController.popBackStack()
                             }
                             ) {
-                                Text(text = "Quit")
+                                Text(
+                                    text = "Quit",
+                                    color = Color.White
+                                )
 
                             }
                         }
