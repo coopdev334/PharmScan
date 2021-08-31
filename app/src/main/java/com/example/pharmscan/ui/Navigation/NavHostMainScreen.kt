@@ -37,7 +37,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
         // Use for testing
         // TODO: Remove this hard coded string after database is created. Get and set to database for
         // host computer name list. Also need to set new added computer name in add dialog
-        val itemList = listOf("coopcomp1", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp1", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4")
+        val hostCompNameList = listOf("coopcomp1", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp1", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4")
 
         if (showDelHostCompDialog.value) {
             DeleteHostComputerAlert(
@@ -156,7 +156,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                     state = listState,
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    items(itemList.size) { index ->
+                    items(hostCompNameList.size) { index ->
                         Box(
                             Modifier
                                 .fillMaxWidth()
@@ -171,7 +171,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                text = itemList[index],
+                                text = hostCompNameList[index],
                                 modifier = Modifier
                                     // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
                                     .combinedClickable(
@@ -180,10 +180,10 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                                             // connection to network other wise error.
                                             // Need to add network logic call here
                                             // Note selected row is passed to screen
-                                            navController.navigate(Screen.PhysInvUploadScreen.withArgs(itemList[index]))
+                                            navController.navigate(Screen.PhysInvUploadScreen.withArgs(hostCompNameList[index]))
                                         },
                                         onLongClick = {
-                                            delHostCompName = itemList[index]
+                                            delHostCompName = hostCompNameList[index]
                                             showDelHostCompDialog.value = true
                                         }
                                     ),

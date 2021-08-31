@@ -11,6 +11,8 @@ class PharmScanViewModel(
     private val repo: PharmScanRepo
 ): ViewModel() {
     // HostCompName viewModel db interace
+    // These functions will be called by the composable views to get and set database information
+    // Suspend function modifier is not used here but in repo and dao
     fun insertHostCompName(hostCompName: HostCompName) = CoroutineScope(Dispatchers.Main).launch {
         repo.insertHostCompName(hostCompName)
     }

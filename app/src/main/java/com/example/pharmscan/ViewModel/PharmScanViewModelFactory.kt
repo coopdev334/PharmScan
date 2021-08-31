@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.pharmscan.Repository.PharmScanRepo
 
-@Suppress("UNCHECKED_NAMES")
-class ParmScanViewModelFactory(
+@Suppress("UNCHECKED_CAST")
+class PharmScanViewModelFactory(
     private val repo: PharmScanRepo
 ): ViewModelProvider.NewInstanceFactory() {
 
