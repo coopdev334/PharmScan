@@ -62,7 +62,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                     modifier = Modifier.clickable {
                         coroutineScope.launch {
                             scaffoldState.drawerState.close()
-                            navController.navigate(Screen.Settings.route) } // FUTURE MERGE CONFLICT HERE
+                            scaffoldState.snackbarHostState.showSnackbar("Drawer Settings") }
                     },
                     style = MaterialTheme.typography.caption,
                     color = MaterialTheme.colors.onBackground
