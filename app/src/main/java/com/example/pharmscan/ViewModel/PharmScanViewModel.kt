@@ -24,7 +24,7 @@ class PharmScanViewModel(
     // This gets all rows from database and updates live data
     // which is observed buy hostCompNameList in NavHostMainScreen
     // to recompose LazyColumn list
-    fun onNameAdd() {
+    fun updateLiveData() {
         _hostCompName.value = getAllHostCompName()
     }
 
