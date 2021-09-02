@@ -1,5 +1,6 @@
 package com.example.pharmscan.ui.Navigation
 
+import android.content.Context
 import androidx.compose.foundation.*
 //import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -14,17 +15,24 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import com.example.pharmscan.Data.Tables.HostCompName
+import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.AddHostComputer
 //import androidx.compose.ui.input.pointer.pointerInput
 import com.example.pharmscan.ui.Dialog.DeleteHostComputerAlert
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
 @ExperimentalFoundationApi
-fun NavGraphBuilder.addMainScreen(navController: NavController) {
+fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     var delHostCompName = ""
 
     composable(Screen.MainScreen.route) {
@@ -37,19 +45,55 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
         // Use for testing
         // TODO: Remove this hard coded string after database is created. Get and set to database for
         // host computer name list. Also need to set new added computer name in add dialog
-        val hostCompNameList = listOf("coopcomp1", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp1", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4")
+        //val hostCompNameList = listOf("coopcomp1", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp1", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4")
+
+        //val hostCompNameList = pharmScanViewModel.getAllHostCompName()
+        //val hostCompNameList: List<HostCompName> by pharmScanViewModel.hostCompName.observeAsState(listOf())
+        //var hostCompNameList = MutableLiveData(listOf<HostCompName>())
+
+//        var listtest = pharmScanViewModel.getAllHostCompName()
+//        println("coop $listtest")
+
+       // val namelist = pharmScanViewModel.getAllHostCompName()
+        //var hostCompNameList = remember { mutableStateOf(pharmScanViewModel.getAllHostCompName()) }
+        //var hostCompNameList = remember { mutableStateOf(listOf<HostCompName>()) }
+
+
+//        pharmScanViewModel.hostCompName.observe(it, Observer {nameList ->
+//            hostCompNameList.value = nameList
+//            println("coop $nameList")
+//            }
+//        )
+
+        val hostCompNameList: List<HostCompName> by pharmScanViewModel.hostCompName.observeAsState(pharmScanViewModel.getAllHostCompName())
+
+
+
 
         if (showDelHostCompDialog.value) {
             DeleteHostComputerAlert(
                 hostComp = delHostCompName,
                 showDialog = showDelHostCompDialog.value,
-                onDismiss = {showDelHostCompDialog.value = false})
+                onDismiss = {
+                    showDelHostCompDialog.value = false
+                    pharmScanViewModel.deleteHostCompName(HostCompName(delHostCompName))
+                }
+            )
         }
 
         if (showAddHostCompDialog.value) {
             AddHostComputer(
                 showDialog = showAddHostCompDialog.value,
-                onDismiss = {showAddHostCompDialog.value = false})
+                onDismiss = {
+                    showAddHostCompDialog.value = false
+                    runBlocking {
+                        val job = pharmScanViewModel.insertHostCompName(HostCompName(it))
+                        // Wait for the insert coroutine to finish then update the livedata
+                        job.join()
+                        pharmScanViewModel.onNameAdd()
+                    }
+                }
+            )
         }
 
         Scaffold(
@@ -171,7 +215,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                text = hostCompNameList[index],
+                                text = hostCompNameList[index].name!!,
                                 modifier = Modifier
                                     // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
                                     .combinedClickable(
@@ -180,10 +224,10 @@ fun NavGraphBuilder.addMainScreen(navController: NavController) {
                                             // connection to network other wise error.
                                             // Need to add network logic call here
                                             // Note selected row is passed to screen
-                                            navController.navigate(Screen.PhysInvUploadScreen.withArgs(hostCompNameList[index]))
+                                            navController.navigate(Screen.PhysInvUploadScreen.withArgs(hostCompNameList[index].name!!))
                                         },
                                         onLongClick = {
-                                            delHostCompName = hostCompNameList[index]
+                                            delHostCompName = hostCompNameList[index].name!!
                                             showDelHostCompDialog.value = true
                                         }
                                     ),

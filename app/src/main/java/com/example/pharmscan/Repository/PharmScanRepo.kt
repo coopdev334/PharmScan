@@ -1,13 +1,14 @@
 package com.example.pharmscan.Repository
 
+import com.example.pharmscan.Data.DAO.HostCompNameDao
 import com.example.pharmscan.Data.PharmScanDb
 import com.example.pharmscan.Data.Tables.HostCompName
 
 class PharmScanRepo(
-    private val db: PharmScanDb
+    private val dao: HostCompNameDao
 ) {
     // HostCompName db SQL
-    suspend fun insertHostCompName(hostCompName: HostCompName) = db.getHostCompNameDaoDao().insert(hostCompName)
-    suspend fun deleteHostCompName(hostCompName: HostCompName) = db.getHostCompNameDaoDao().delete(hostCompName)
-    fun getAllHostCompName() = db.getHostCompNameDaoDao().getAll()
+    suspend fun insert(hostCompName: HostCompName) = dao.insert(hostCompName)
+    suspend fun delete(hostCompName: HostCompName) = dao.delete(hostCompName)
+    fun getAll() = dao.getAll()
 }
