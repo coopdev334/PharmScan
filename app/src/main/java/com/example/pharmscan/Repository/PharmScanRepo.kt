@@ -10,5 +10,6 @@ class PharmScanRepo(
     // HostCompName db SQL
     suspend fun insert(hostCompName: HostCompName) = dao.insert(hostCompName)
     suspend fun delete(hostCompName: HostCompName) = dao.delete(hostCompName)
+
     fun getAll() = dao.getAll()
 }

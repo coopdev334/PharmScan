@@ -17,7 +17,7 @@ fun DeleteHostComputerAlert(
     if (showDialog) {
         AlertDialog(
             onDismissRequest = {
-                onDismiss()
+                //onDismiss()
             },
             modifier = Modifier.size(200.dp, 200.dp),
             title = {
@@ -44,7 +44,7 @@ fun DeleteHostComputerAlert(
                         verticalAlignment = Alignment.Bottom
                     ) {
                         TextButton(
-                            onClick = { onDismiss() }
+                            onClick = {  }
                         ) {
                             Text(
                                 text = "Cancel",

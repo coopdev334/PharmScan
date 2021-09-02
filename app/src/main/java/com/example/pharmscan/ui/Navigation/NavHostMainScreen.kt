@@ -33,7 +33,7 @@ import kotlinx.coroutines.runBlocking
 // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
 @ExperimentalFoundationApi
 fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
-    var delHostCompName = ""
+    var delHostCompName: HostCompName = HostCompName("")
 
     composable(Screen.MainScreen.route) {
         val scaffoldState = rememberScaffoldState()
@@ -72,12 +72,12 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
 
         if (showDelHostCompDialog.value) {
             DeleteHostComputerAlert(
-                hostComp = delHostCompName,
+                hostComp = delHostCompName.name!!,
                 showDialog = showDelHostCompDialog.value,
                 onDismiss = {
                     showDelHostCompDialog.value = false
                     runBlocking {
-                        val job = pharmScanViewModel.deleteHostCompName(HostCompName(delHostCompName))
+                        val job = pharmScanViewModel.deleteHostCompName(delHostCompName)
                         // Wait for the insert coroutine to finish then update the livedata
                         job.join()
                         pharmScanViewModel.updateLiveData()
@@ -232,7 +232,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                                             navController.navigate(Screen.PhysInvUploadScreen.withArgs(hostCompNameList[index].name!!))
                                         },
                                         onLongClick = {
-                                            delHostCompName = hostCompNameList[index].name!!
+                                            delHostCompName = hostCompNameList[index]
                                             showDelHostCompDialog.value = true
                                         }
                                     ),
