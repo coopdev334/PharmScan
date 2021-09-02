@@ -65,7 +65,8 @@ abstract class PharmScanDb: RoomDatabase() {
                     PharmScanDb::class.java,
                     "PharmScan.db"
                 )
-                    .createFromAsset("PharmScan.db")
+                    //.createFromAsset("PharmScan.db")// NEED TO COMMENT THIS OUT TO GET PROGRAM TO WORK
+                        //Must check if the database exists before using the above line
                     .allowMainThreadQueries()
                     .build()
                 INSTANCE = instance
