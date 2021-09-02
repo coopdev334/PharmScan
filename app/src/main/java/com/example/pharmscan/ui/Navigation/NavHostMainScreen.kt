@@ -65,9 +65,9 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
 //            }
 //        )
 
-        val hostCompNameList: List<HostCompName> by pharmScanViewModel.hostCompName.observeAsState(pharmScanViewModel.getAllHostCompName())
+        val hostCompNameList: List<HostCompName> by pharmScanViewModel.hostCompName.observeAsState(listOf<HostCompName>())
 
-
+        pharmScanViewModel.onNameAdd()
 
 
         if (showDelHostCompDialog.value) {
@@ -76,7 +76,12 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                 showDialog = showDelHostCompDialog.value,
                 onDismiss = {
                     showDelHostCompDialog.value = false
-                    pharmScanViewModel.deleteHostCompName(HostCompName(delHostCompName))
+                    runBlocking {
+                        val job = pharmScanViewModel.deleteHostCompName(HostCompName(delHostCompName))
+                        // Wait for the insert coroutine to finish then update the livedata
+                        job.join()
+                        pharmScanViewModel.onNameAdd()
+                    }
                 }
             )
         }
