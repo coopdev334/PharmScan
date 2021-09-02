@@ -14,6 +14,5 @@ interface HostCompNameDao {
     suspend fun delete(hostCompName: HostCompName)
 
     @Query("SELECT * FROM HostCompName")
-
     fun getAll(): List<HostCompName>
 }

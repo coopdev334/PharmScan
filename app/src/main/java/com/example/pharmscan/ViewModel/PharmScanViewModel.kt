@@ -24,12 +24,12 @@ class PharmScanViewModel(
     // This gets all rows from database and updates live data
     // which is observed buy hostCompNameList in NavHostMainScreen
     // to recompose LazyColumn list
-    fun onNameAdd() {
+    fun updateLiveData() {
         _hostCompName.value = getAllHostCompName()
     }
 
 
-    // HostCompName viewModel db interace
+    // HostCompName viewModel db interface
     // These functions will be called by the composable views to get and set database information
     // Suspend function modifier is not used here but in repo and dao
     fun insertHostCompName(hostCompName: HostCompName) = CoroutineScope(Dispatchers.IO).launch {
@@ -39,6 +39,6 @@ class PharmScanViewModel(
         repo.delete(hostCompName)
     }
 
-    fun getAllHostCompName() = repo.getAll()
+    private fun getAllHostCompName() = repo.getAll()
 
  }
