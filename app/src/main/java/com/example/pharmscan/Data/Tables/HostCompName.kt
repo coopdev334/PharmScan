@@ -1,5 +1,6 @@
 package com.example.pharmscan.Data.Tables
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -8,8 +9,8 @@ import androidx.room.PrimaryKey
 // the rows for SQL operations defined in the DAO.
 @Entity(tableName = "HostCompName")
 data class HostCompName (
-    val hostCompName: String?
+    val name: String?
 ) {
     @PrimaryKey(autoGenerate = true)
-    private val id: Int? = null
+    var iD: Int? = null
 }

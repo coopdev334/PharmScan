@@ -16,14 +16,14 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AddHostComputer(
     showDialog: Boolean,
-    onDismiss: () -> Unit
+    onDismiss: (name: String) -> Unit
 ) {
     var text by rememberSaveable { mutableStateOf("") }
 
     if (showDialog) {
         AlertDialog(
             onDismissRequest = {
-                onDismiss()
+                onDismiss(text)
             },
             modifier = Modifier.size(200.dp, 200.dp),
             title = {
@@ -68,7 +68,7 @@ fun AddHostComputer(
                         verticalAlignment = Alignment.Bottom
                     ) {
                         TextButton(
-                            onClick = { onDismiss() }
+                            onClick = { onDismiss(text) }
                         ) {
                             Text(
                                 text = "Cancel",
@@ -76,7 +76,7 @@ fun AddHostComputer(
                             )
                         }
                         Button(
-                            onClick = { onDismiss() }
+                            onClick = { onDismiss(text) }
                         ) {
                             Text(
                                 text = " Add ",
