@@ -11,13 +11,14 @@ import androidx.compose.ui.unit.dp
 fun DeleteHostComputerAlert(
         hostComp: String,
         showDialog: Boolean,
-        onDismiss: () -> Unit
+        onDismiss: () -> Unit,
+        onCancel: () -> Unit
     ) {
 
     if (showDialog) {
         AlertDialog(
             onDismissRequest = {
-                //onDismiss()
+                onCancel()
             },
             modifier = Modifier.size(200.dp, 200.dp),
             title = {
@@ -44,7 +45,7 @@ fun DeleteHostComputerAlert(
                         verticalAlignment = Alignment.Bottom
                     ) {
                         TextButton(
-                            onClick = {  }
+                            onClick = { onCancel() }
                         ) {
                             Text(
                                 text = "Cancel",

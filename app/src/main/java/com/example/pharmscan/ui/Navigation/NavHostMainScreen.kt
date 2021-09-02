@@ -82,6 +82,9 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                         job.join()
                         pharmScanViewModel.updateLiveData()
                     }
+                },
+                onCancel = {
+                    showDelHostCompDialog.value = false
                 }
             )
         }
