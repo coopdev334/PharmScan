@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -22,17 +23,21 @@ import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ui.Utility.SearchBar
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
+import com.example.pharmscan.Data.Tables.CollectedData
+import com.example.pharmscan.Data.Tables.HostCompName
+import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.CancelCollDataRecord
 import kotlinx.coroutines.launch
 
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
-fun NavGraphBuilder.addViewCancelScreen(navController: NavController) {
+fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     val delHostCompName = ""
 
-    composable(Screen.ViewCancel.route) {
+        composable(Screen.ViewCancel.route) {
 
-        var itemList: List<String> by remember {mutableStateOf(listOf("0"))}
+        var itemList: MutableList<CollectedDataViewCancelSearch> by remember {mutableStateOf(mutableListOf<CollectedDataViewCancelSearch>())}
+        var startIndex: Int by remember {mutableStateOf(0)}
         var hintLabel by remember {mutableStateOf("Rec#")}
         val listState = rememberLazyListState()
         var clearTxt by remember {mutableStateOf(false)}
@@ -65,27 +70,21 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController) {
             )
             Spacer(modifier = Modifier.height(height = 5.dp))
             Text(
-                // TODO: finish this screen
                 text = "Collected Data File Search",
                 style = MaterialTheme.typography.subtitle1,
                 color = MaterialTheme.colors.onBackground
             )
-            SearchBar(
-                clear = clearTxt,
-                hintLabel = hintLabel,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(all = 18.dp),
-            ) {
-                // This lamda function gets called when soft keyboard popup search button is pressed
-                // TODO: add database search logic
-                // Use for testing
-                // TODO: Remove this hard coded string after database is created. Get and set to database for
-                // host computer name list. Also need to set new added computer name in add dialog
-                // First element of list contains 0 based row to seek to show first match.
-                // This allows scrolling of all records in collected data table.
-                itemList = listOf("2", "99999999999:123456:12345678:12345678:R:4444:1111","99999999999:123456:12345678:12345678:R:4444:2222","99999999999:123456:12345678:12345678:R:4444:3333","99999999999:123456:12345678:12345678:R:4444:4444","99999999999:123456:12345678:12345678:R:4444:5555","99999999999:123456:12345678:12345678:R:4444:6666")
-            }
+//            SearchBar(
+//                clear = clearTxt,
+//                hintLabel = hintLabel,
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(all = 18.dp),
+//            ) {searchText ->
+//                // This lamda function gets called when soft keyboard popup search button is pressed
+//                itemList = pharmScanViewModel.getAllCollectedDataOrderByRecCnt()
+//                startIndex = itemList.indexOfFirst { it.recount == searchText }
+//            }
 
             clearTxt = false
             Spacer(modifier = Modifier.height(height = 5.dp))
@@ -140,113 +139,143 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController) {
                 }
             }
 
+            SearchBar(
+                clear = clearTxt,
+                hintLabel = hintLabel,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(all = 5.dp),
+            ) {searchText ->
+                // This lamda function gets called when soft keyboard popup search button is pressed
+                if (hintLabel == "Rec#") {
+                    itemList = pharmScanViewModel.getAllCollectedDataOrderByRecCnt()
+                    startIndex = itemList.indexOfFirst { it.recount == searchText }
+                }
+                if (hintLabel == "Tag") {
+                    itemList = pharmScanViewModel.getAllCollectedDataOrderByTag()
+                    startIndex = itemList.indexOfFirst { it.loc == searchText }
+                }
+                if (hintLabel == "Ndc") {
+                    itemList = pharmScanViewModel.getAllCollectedDataOrderByNdc()
+                    startIndex = itemList.indexOfFirst { it.ndc == searchText }
+                }
+            }
 
-                LazyColumn(
-                modifier = Modifier.padding(top = 20.dp, bottom = 5.dp, start = 5.dp),
+            LazyColumn(
+                modifier = Modifier.padding(top = 5.dp, bottom = 5.dp, start = 5.dp),
                 state = listState,
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 horizontalAlignment = Alignment.Start
             ) {
+                // If startIndex is -1 then search did find a match. Clear itemlist
+                if (startIndex == -1) {
+                    itemList.clear()
+                    itemList.add(CollectedDataViewCancelSearch("","","","","","",""))
+                    startIndex = 0
+                }
 
                 items(itemList.size) { index ->
-                    // Check if itemList has been populated
-                    if (itemList[0] != "0") {
-                        if (index == 0) {
-                            coroutineScope.launch {
-                                listState.scrollToItem(index = itemList[0].toInt())
+                    Box(
+                        modifier = Modifier
+                            //.height(80.dp)
+                            .clickable {
+                                showCancelCollDataDialog.value = true
                             }
-                        }else {
-                            val separatedStr = itemList[index].split(":").toTypedArray()
+                            .background(color = Color.LightGray)
 
-                            Box(
+                    ) {
+                        Column {
+                            Row(
                                 modifier = Modifier
-                                    //.height(80.dp)
-                                    .clickable {
-                                        showCancelCollDataDialog.value = true
-                                        println("mike ${itemList[index]}")
-                                    }
-                                    .background(color = Color.LightGray)
-
+                                    .fillMaxWidth()
+                                    .padding(start = 5.dp),
+                                horizontalArrangement = Arrangement.Start
                             ) {
-                                Column {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(start = 5.dp),
-                                        horizontalArrangement = Arrangement.Start
-                                    ) {
-                                        Text(
-                                            text = "Tag: " + separatedStr[5],
-                                            style = MaterialTheme.typography.h6,
-                                            color = MaterialTheme.colors.onBackground,
-                                            modifier = Modifier.width(156.dp)
-                                        )
-                                        Text(
-                                            text = "Qty: " + separatedStr[1],
-                                            style = MaterialTheme.typography.h6,
-                                            color = MaterialTheme.colors.onBackground
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.height(2.dp))
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(start = 5.dp),
-                                        //.background(Color.),
-                                        horizontalArrangement = Arrangement.Start
-                                    ) {
-                                        Text(
-                                            text = "Rec#: " + separatedStr[6],
-                                            style = MaterialTheme.typography.h6,
-                                            color = MaterialTheme.colors.onBackground,
-                                            modifier = Modifier.width(156.dp)
-                                        )
-                                        Text(
-                                            text = "Match: " + separatedStr[4],
-                                            style = MaterialTheme.typography.h6,
-                                            color = MaterialTheme.colors.onBackground
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.height(2.dp))
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(start = 5.dp),
-                                        //.background(Color.Yellow),
-                                        horizontalArrangement = Arrangement.Start
-                                    ) {
-                                        Text(
-                                            text = "Price: " + separatedStr[2],
-                                            style = MaterialTheme.typography.h6,
-                                            color = MaterialTheme.colors.onBackground,
-                                            modifier = Modifier.width(156.dp)
-                                        )
-                                        Text(
-                                            text = "PkSz: " + separatedStr[3],
-                                            style = MaterialTheme.typography.h6,
-                                            color = MaterialTheme.colors.onBackground
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.height(2.dp))
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(start = 5.dp),
-                                        //.background(Color.Yellow),
-                                        horizontalArrangement = Arrangement.Start
-                                    ) {
-                                        Text(
-                                            text = "Ndc: " + itemList[index].split(":")[0],
-                                            style = MaterialTheme.typography.h6,
-                                            color = MaterialTheme.colors.onBackground
-                                        )
-                                    }
-                                }
+                                Text(
+                                    text = "Tag: " + itemList[index].loc,
+                                    style = MaterialTheme.typography.h6,
+                                    color = MaterialTheme.colors.onBackground,
+                                    modifier = Modifier.width(156.dp)
+                                )
+                                Text(
+                                    text = "Qty: " + itemList[index].qty,
+                                    style = MaterialTheme.typography.h6,
+                                    color = MaterialTheme.colors.onBackground
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 5.dp),
+                                //.background(Color.),
+                                horizontalArrangement = Arrangement.Start
+                            ) {
+                                Text(
+                                    text = "Rec#: " + itemList[index].recount,
+                                    style = MaterialTheme.typography.h6,
+                                    color = MaterialTheme.colors.onBackground,
+                                    modifier = Modifier.width(156.dp)
+                                )
+                                Text(
+                                    text = "Match: " + itemList[index].matchflg,
+                                    style = MaterialTheme.typography.h6,
+                                    color = MaterialTheme.colors.onBackground
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 5.dp),
+                                //.background(Color.Yellow),
+                                horizontalArrangement = Arrangement.Start
+                            ) {
+                                Text(
+                                    text = "Price: " + itemList[index].price,
+                                    style = MaterialTheme.typography.h6,
+                                    color = MaterialTheme.colors.onBackground,
+                                    modifier = Modifier.width(156.dp)
+                                )
+                                Text(
+                                    text = "PkSz: " + itemList[index].packsz,
+                                    style = MaterialTheme.typography.h6,
+                                    color = MaterialTheme.colors.onBackground
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 5.dp),
+                                //.background(Color.Yellow),
+                                horizontalArrangement = Arrangement.Start
+                            ) {
+                                Text(
+                                    text = "Ndc: " + itemList[index].ndc,
+                                    style = MaterialTheme.typography.h6,
+                                    color = MaterialTheme.colors.onBackground
+                                )
                             }
                         }
+                    }
+
+                    coroutineScope.launch {
+                        listState.scrollToItem(index = startIndex)
                     }
                 }
             }
         }
     }
 }
+
+
+data class CollectedDataViewCancelSearch(
+    val	ndc: String?,
+    val	qty: String?,
+    val	price: String?,
+    val	packsz: String?,
+    val	matchflg: String?,
+    val	loc: String?,
+    val	recount: String?
+)

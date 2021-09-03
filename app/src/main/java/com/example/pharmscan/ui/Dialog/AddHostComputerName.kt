@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AddHostComputer(
     showDialog: Boolean,
-    onDismiss: (name: String) -> Unit,
+    onAdd: (name: String) -> Unit,
     onCancel: () -> Unit
 ) {
     var text by rememberSaveable { mutableStateOf("") }
@@ -69,9 +69,7 @@ fun AddHostComputer(
                         verticalAlignment = Alignment.Bottom
                     ) {
                         TextButton(
-                            onClick = {
-                                onCancel()
-                            }
+                            onClick = { onCancel() }
                         ) {
                             Text(
                                 text = "Cancel",
@@ -79,7 +77,7 @@ fun AddHostComputer(
                             )
                         }
                         Button(
-                            onClick = { onDismiss(text) }
+                            onClick = { onAdd(text) }
                         ) {
                             Text(
                                 text = " Add ",

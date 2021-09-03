@@ -5,20 +5,24 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.pharmscan.Data.DAO.CollectedDataDao
 import com.example.pharmscan.Data.DAO.HostCompNameDao
+import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.Data.Tables.HostCompName
 
 // List all tables here and update version for each database change
 @Database(
     entities = [
-        HostCompName::class
+        HostCompName::class,
+        CollectedData::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class PharmScanDb: RoomDatabase() {
     // These functions will return the Dao's for each table
     abstract fun getHostCompNameDao(): HostCompNameDao
+    abstract fun getCollectedDataDao(): CollectedDataDao
 
     // companion object is a static object accessed in this class
 //    companion object {
@@ -65,8 +69,7 @@ abstract class PharmScanDb: RoomDatabase() {
                     PharmScanDb::class.java,
                     "PharmScan.db"
                 )
-                    .createFromAsset("PharmScan.db")// NEED TO COMMENT THIS OUT TO GET PROGRAM TO WORK
-                        //Must check if the database exists before using the above line
+                    //.createFromAsset("PharmScan.db")
                     .allowMainThreadQueries()
                     .build()
                 INSTANCE = instance
