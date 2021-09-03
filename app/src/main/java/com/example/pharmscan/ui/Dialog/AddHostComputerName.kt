@@ -16,14 +16,15 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AddHostComputer(
     showDialog: Boolean,
-    onDismiss: (name: String) -> Unit
+    onDismiss: (name: String) -> Unit,
+    onCancel: () -> Unit
 ) {
     var text by rememberSaveable { mutableStateOf("") }
 
     if (showDialog) {
         AlertDialog(
             onDismissRequest = {
-                onDismiss(text)
+                onCancel()
             },
             modifier = Modifier.size(200.dp, 200.dp),
             title = {
@@ -68,7 +69,9 @@ fun AddHostComputer(
                         verticalAlignment = Alignment.Bottom
                     ) {
                         TextButton(
-                            onClick = { onDismiss(text) }
+                            onClick = {
+                                onCancel()
+                            }
                         ) {
                             Text(
                                 text = "Cancel",

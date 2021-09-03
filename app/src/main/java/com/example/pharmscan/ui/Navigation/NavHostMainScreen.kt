@@ -100,6 +100,10 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                         job.join()
                         pharmScanViewModel.updateLiveData()
                     }
+                    // add onCancel here & in the AddhostCDomputername file.
+                },
+                onCancel = {
+                    showDelHostCompDialog.value = false
                 }
             )
         }
