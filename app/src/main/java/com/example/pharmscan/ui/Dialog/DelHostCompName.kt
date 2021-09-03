@@ -1,25 +1,19 @@
 package com.example.pharmscan.ui.Dialog
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun AddHostComputer(
-    showDialog: Boolean,
-    onAdd: (name: String) -> Unit,
-    onCancel: () -> Unit
-) {
-    var text by rememberSaveable { mutableStateOf("") }
+fun DeleteHostComputerAlert(
+        hostComp: String,
+        showDialog: Boolean,
+        onDel: () -> Unit,
+        onCancel: () -> Unit
+    ) {
 
     if (showDialog) {
         AlertDialog(
@@ -28,33 +22,15 @@ fun AddHostComputer(
             },
             modifier = Modifier.size(200.dp, 200.dp),
             title = {
-                Column(
-                    modifier = Modifier.padding(top = 20.dp, bottom = 10.dp)
-                ) {
-                    Text(
-                        text = "Add",
-                        style = MaterialTheme.typography.body1
-                    )
-                }
+                Text(
+                    text = "Delete?",
+                    style = MaterialTheme.typography.h6
+                )
             },
             text = {
-                OutlinedTextField(
-                    value = text,
-                    onValueChange = {
-                        text = it
-                    },
-                    label = {
-                        Column(
-                            modifier = Modifier.padding(bottom = 20.dp)
-                        ) {
-                            Text(
-                                text = "Host Computer",
-                                style = MaterialTheme.typography.body1
-                            )
-                        }
-                    },
-                    singleLine = true,
-                    textStyle = MaterialTheme.typography.h6
+                Text(
+                    text = hostComp,
+                    style = MaterialTheme.typography.h5
                 )
             },
             buttons = {
@@ -77,10 +53,10 @@ fun AddHostComputer(
                             )
                         }
                         Button(
-                            onClick = { onAdd(text) }
+                            onClick = { onDel() }
                         ) {
                             Text(
-                                text = " Add ",
+                                text = " Delete ",
                                 style = MaterialTheme.typography.subtitle1
                             )
                         }
