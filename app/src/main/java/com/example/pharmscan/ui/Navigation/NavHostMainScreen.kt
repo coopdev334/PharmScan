@@ -45,7 +45,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
 
         // Get all records from HostCompName table which will update livedata which will update
         // hostCompNameList which will cause a recompose of LazyColumn list screen
-        pharmScanViewModel.updateLiveData()
+        pharmScanViewModel.updateHostCompNameLiveData()
 
         if (showDelHostCompDialog.value) {
             DeleteHostComputerAlert(
@@ -57,7 +57,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                         val job = pharmScanViewModel.deleteHostCompName(delHostCompName)
                         // Wait for the insert coroutine to finish then update the livedata
                         job.join()
-                        pharmScanViewModel.updateLiveData()
+                        pharmScanViewModel.updateHostCompNameLiveData()
                     }
                 },
                 onCancel = {
@@ -75,7 +75,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                         val job = pharmScanViewModel.insertHostCompName(HostCompName(it))
                         // Wait for the insert coroutine to finish then update the livedata
                         job.join()
-                        pharmScanViewModel.updateLiveData()
+                        pharmScanViewModel.updateHostCompNameLiveData()
                     }
                 },
                 onCancel = {
