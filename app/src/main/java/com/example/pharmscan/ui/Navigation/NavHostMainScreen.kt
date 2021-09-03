@@ -41,40 +41,17 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
         val listState = rememberLazyListState()
         val showDelHostCompDialog = remember { mutableStateOf(false) }
         val showAddHostCompDialog = remember { mutableStateOf(false) }
-
-        // Use for testing
-        // TODO: Remove this hard coded string after database is created. Get and set to database for
-        // host computer name list. Also need to set new added computer name in add dialog
-        //val hostCompNameList = listOf("coopcomp1", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp1", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4", "coopcomp2", "coopcomp3", "coopcomp4")
-
-        //val hostCompNameList = pharmScanViewModel.getAllHostCompName()
-        //val hostCompNameList: List<HostCompName> by pharmScanViewModel.hostCompName.observeAsState(listOf())
-        //var hostCompNameList = MutableLiveData(listOf<HostCompName>())
-
-//        var listtest = pharmScanViewModel.getAllHostCompName()
-//        println("coop $listtest")
-
-       // val namelist = pharmScanViewModel.getAllHostCompName()
-        //var hostCompNameList = remember { mutableStateOf(pharmScanViewModel.getAllHostCompName()) }
-        //var hostCompNameList = remember { mutableStateOf(listOf<HostCompName>()) }
-
-
-//        pharmScanViewModel.hostCompName.observe(it, Observer {nameList ->
-//            hostCompNameList.value = nameList
-//            println("coop $nameList")
-//            }
-//        )
-
         val hostCompNameList: List<HostCompName> by pharmScanViewModel.hostCompName.observeAsState(listOf<HostCompName>())
 
+        // Get all records from HostCompName table which will update livedata which will update
+        // hostCompNameList which will cause a recompose of LazyColumn list screen
         pharmScanViewModel.updateLiveData()
-
 
         if (showDelHostCompDialog.value) {
             DeleteHostComputerAlert(
                 hostComp = delHostCompName.name!!,
                 showDialog = showDelHostCompDialog.value,
-                onDismiss = {
+                onDel = {
                     showDelHostCompDialog.value = false
                     runBlocking {
                         val job = pharmScanViewModel.deleteHostCompName(delHostCompName)
@@ -92,7 +69,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
         if (showAddHostCompDialog.value) {
             AddHostComputer(
                 showDialog = showAddHostCompDialog.value,
-                onDismiss = {
+                onAdd = {
                     showAddHostCompDialog.value = false
                     runBlocking {
                         val job = pharmScanViewModel.insertHostCompName(HostCompName(it))
@@ -100,6 +77,9 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                         job.join()
                         pharmScanViewModel.updateLiveData()
                     }
+                },
+                onCancel = {
+                    showDelHostCompDialog.value = false
                 }
             )
         }
