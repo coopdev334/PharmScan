@@ -24,6 +24,7 @@ import androidx.navigation.compose.navArgument
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.GetOpId
 import com.example.pharmscan.ui.Screen.Screen
+import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import kotlinx.coroutines.launch
 
 fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
@@ -53,13 +54,8 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                 },
                 onToScanScreen = {opid ->
                     showEnterOpIdDialog.value = false
-                    // update opid in SystemInfo table. ONLY 1 row is allowed.
-                    // Save current data, then delete row and then insert row with
-                    // update opid.
-                    val systemInfo = pharmScanViewModel.getAllSystemInfo()
-                    pharmScanViewModel.deleteSystemInfo(systemInfo[0])
-                    systemInfo[0].opid = opid
-                    pharmScanViewModel.insertSystemInfo(systemInfo[0])
+                    val columnValue = mapOf("opid" to opid)
+                    UpdateSystemInfo(pharmScanViewModel, columnValue)
                     navController.navigate(Screen.ScanScreen.withArgs("*** Scan Tag ***", "yellow"))
                 }
             )
