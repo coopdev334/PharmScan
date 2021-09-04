@@ -11,7 +11,8 @@ import androidx.compose.ui.unit.dp
 fun CancelCollDataRecord(
     collDataRec: String,
     showDialog: Boolean,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onCancelRecord: () -> Unit
 ) {
 
     if (showDialog) {
@@ -52,7 +53,7 @@ fun CancelCollDataRecord(
                             )
                         }
                         Button(
-                            onClick = { onDismiss() }
+                            onClick = { onCancelRecord() }
                         ) {
                             Text(
                                 text = " Cancel ",

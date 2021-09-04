@@ -1,7 +1,6 @@
 package com.example.pharmscan.ui.Navigation
 
 import androidx.compose.foundation.*
-//import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.ui.Modifier
@@ -10,7 +9,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.pharmscan.ui.Screen.Screen
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.filled.Menu
@@ -19,13 +17,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavType
 import androidx.navigation.compose.navArgument
 import kotlinx.coroutines.Dispatchers
-//import androidx.compose.ui.input.pointer.pointerInput
 import kotlinx.coroutines.launch
 
 // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
@@ -178,7 +174,6 @@ fun NavGraphBuilder.addScanScreen(navController: NavController) {
                                     style = MaterialTheme.typography.h5,
                                     color = MaterialTheme.colors.onBackground
                                 )
-                                //Spacer(modifier = Modifier.width(width = 10.dp))
                                 Text(
                                     text = "Amount: 2345.33",
                                     style = MaterialTheme.typography.h5,

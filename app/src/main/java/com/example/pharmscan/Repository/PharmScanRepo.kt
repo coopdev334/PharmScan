@@ -1,15 +1,16 @@
 package com.example.pharmscan.Repository
 
-import android.media.CamcorderProfile.getAll
 import com.example.pharmscan.Data.DAO.CollectedDataDao
 import com.example.pharmscan.Data.DAO.HostCompNameDao
-import com.example.pharmscan.Data.PharmScanDb
+import com.example.pharmscan.Data.DAO.SystemInfoDao
 import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.Data.Tables.HostCompName
+import com.example.pharmscan.Data.Tables.SystemInfo
 
 class PharmScanRepo(
     private val daoHostCompName: HostCompNameDao,
-    private val daoCollectedData: CollectedDataDao
+    private val daoCollectedData: CollectedDataDao,
+    private val daoSystemInfo: SystemInfoDao
 ) {
     // HostCompName db SQL
     suspend fun insertHostCompName(hostCompName: HostCompName) = daoHostCompName.insert(hostCompName)
@@ -23,4 +24,9 @@ class PharmScanRepo(
     fun getAllCollectedDataOrderByRecCnt() = daoCollectedData.getAllOrderByRecCnt()
     fun getAllCollectedDataOrderByTag() = daoCollectedData.getAllOrderByTag()
     fun getAllCollectedDataOrderByNdc() = daoCollectedData.getAllOrderByNdc()
+
+    // SystemInfo db SQL
+    suspend fun insertSystemInfo(systemInfo: SystemInfo) = daoSystemInfo.insert(systemInfo)
+    suspend fun deleteSystemInfo(systemInfo: SystemInfo) = daoSystemInfo.delete(systemInfo)
+    fun getAllSystemInfo() = daoSystemInfo.getAll()
 }
