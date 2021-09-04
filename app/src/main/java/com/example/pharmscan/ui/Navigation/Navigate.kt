@@ -23,7 +23,7 @@ fun Navigate(pharmScanViewModel: PharmScanViewModel) {
         addAboutScreen(navController = navController)
         addViewColDataFNameScreen(navController = navController, pharmScanViewModel)
         addViewCancelScreen(navController = navController, pharmScanViewModel)
-        addPhysInvUploadScreen(navController = navController)
+        addPhysInvUploadScreen(navController = navController, pharmScanViewModel)
         addScanScreen(navController = navController)
 
     }

@@ -12,6 +12,7 @@ import com.example.pharmscan.Data.Tables.HostCompName
 import com.example.pharmscan.Data.Tables.SystemInfo
 
 // List all tables here and update version for each database change
+// NOTE: Increament version each time any database changes are made
 @Database(
     entities = [
         HostCompName::class,
@@ -73,6 +74,7 @@ abstract class PharmScanDb: RoomDatabase() {
                     "PharmScan.db"
                 )
                     //.createFromAsset("PharmScan.db")
+                    .fallbackToDestructiveMigration()
                     .allowMainThreadQueries()
                     .build()
                 INSTANCE = instance

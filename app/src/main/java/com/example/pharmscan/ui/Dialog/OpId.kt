@@ -14,7 +14,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun GetOpId(
     showDialog: Boolean,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onToScanScreen: (opid: String) -> Unit
 ) {
     var text by rememberSaveable { mutableStateOf("") }
 
@@ -76,10 +77,7 @@ fun GetOpId(
                         }
                         Button(
                             onClick = {
-                                onDismiss()
-                                // TODO: Do processing for restoring collected data
-                                // file and appending marker record then on to
-                                // scan work screen
+                                onToScanScreen(text)
                             }
                         ) {
                             Text(

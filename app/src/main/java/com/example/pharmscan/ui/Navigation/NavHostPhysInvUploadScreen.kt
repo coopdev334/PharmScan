@@ -21,11 +21,12 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
+import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.GetOpId
 import com.example.pharmscan.ui.Screen.Screen
 import kotlinx.coroutines.launch
 
-fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController) {
+fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     composable(
         route = Screen.PhysInvUploadScreen.route + "/{hostCompName}",
         // Define argument list to pass to this composable in composable constructor
@@ -49,8 +50,19 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController) {
                 showDialog = showEnterOpIdDialog.value,
                 onDismiss = {
                     showEnterOpIdDialog.value = false
+                },
+                onToScanScreen = {opid ->
+                    showEnterOpIdDialog.value = false
+                    // update opid in SystemInfo table. ONLY 1 row is allowed.
+                    // Save current data, then delete row and then insert row with
+                    // update opid.
+                    val systemInfo = pharmScanViewModel.getAllSystemInfo()
+                    pharmScanViewModel.deleteSystemInfo(systemInfo[0])
+                    systemInfo[0].opid = opid
+                    pharmScanViewModel.insertSystemInfo(systemInfo[0])
                     navController.navigate(Screen.ScanScreen.withArgs("*** Scan Tag ***", "yellow"))
-                })
+                }
+            )
         }
 
         Scaffold(
@@ -182,7 +194,7 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController) {
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Button(onClick = {
-                            // TODO: Enter op id someway
+                            // TODO: add funciton to upload data using network wifi to host
                             //navController.navigate(Screen.xxxxxxxxx.route)
                         }) {
                             Text(

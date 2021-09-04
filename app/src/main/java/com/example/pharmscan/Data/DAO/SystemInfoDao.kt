@@ -11,6 +11,6 @@ interface SystemInfoDao {
     @Delete
     suspend fun delete(systemInfo: SystemInfo)
 
-    @Query("SELECT * FROM SystemInfo")
+    @Query("SELECT * FROM SystemInfo LIMIT 1")
     fun getAll(): List<SystemInfo>
 }
