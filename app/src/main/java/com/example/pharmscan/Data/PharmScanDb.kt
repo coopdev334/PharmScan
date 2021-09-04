@@ -82,3 +82,6 @@ abstract class PharmScanDb: RoomDatabase() {
 
 
 }
+
+
+//insert into CollectedData values ("123", "1234567", "11111111111", "123456", "12345678", "12345678", "123", "R", "1111", "123", "1001", "09/03/21", "12345", "P", "12345678", 4)
