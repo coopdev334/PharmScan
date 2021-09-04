@@ -144,7 +144,7 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                 hintLabel = hintLabel,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(all = 5.dp),
+                    .padding(start = 20.dp, top = 5.dp)
             ) {searchText ->
                 // This lamda function gets called when soft keyboard popup search button is pressed
                 if (hintLabel == "Rec#") {

@@ -79,7 +79,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                     }
                 },
                 onCancel = {
-                    showDelHostCompDialog.value = false
+                    showAddHostCompDialog.value = false
                 }
             )
         }
