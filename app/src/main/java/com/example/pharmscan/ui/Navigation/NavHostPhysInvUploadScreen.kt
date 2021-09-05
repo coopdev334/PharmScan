@@ -60,7 +60,6 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
 
         Scaffold(
             scaffoldState = scaffoldState,
-            //drawerShape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp, bottomEnd = 15.dp, bottomStart = 15.dp),
             drawerShape = MaterialTheme.shapes.large,
             drawerContent = {
                 Text(

@@ -1,5 +1,6 @@
 package com.example.pharmscan.ui.Navigation
 
+import android.view.KeyCharacterMap
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -12,23 +13,28 @@ import com.example.pharmscan.ui.Screen.Screen
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.*
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.navigation.NavType
 import androidx.navigation.compose.navArgument
 import com.example.pharmscan.Data.Tables.HostCompName
 import com.example.pharmscan.Data.Tables.SystemInfo
 import com.example.pharmscan.ViewModel.PharmScanViewModel
+import com.example.pharmscan.ui.Dialog.TagKyBrdInput
+import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
+@ExperimentalComposeUiApi
 @ExperimentalFoundationApi
 fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewModel:PharmScanViewModel) {
 
@@ -57,6 +63,9 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         val systemInfo: List<SystemInfo> by pharmScanViewModel.systemInfo.observeAsState(listOf<SystemInfo>())
         var currentStatusBar: String? by remember { mutableStateOf("")}
         var currentBarBkgrColor by remember {mutableStateOf(Color.White)}
+        var tagKyBrdInput by remember {mutableStateOf(0)}
+        val showTagKyBrdInputDialog = remember { mutableStateOf(false) }
+        val focusManager = LocalFocusManager.current
 
         // Get record from SystemInfo table which will update livedata which will update
         // systemInfo which will cause a recompose of screen
@@ -66,10 +75,38 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         when (argStatusBarBkGrColor) {
             "yellow" -> statusBarBkgrColor = Color.Yellow
         }
+        val requester = FocusRequester()
 
+        if (showTagKyBrdInputDialog.value) {
+            focusManager.clearFocus()
+            TagKyBrdInput(
+                tagKyBrdInput,
+                showDialog = showTagKyBrdInputDialog.value,
+                onAdd = {tag ->
+                    showTagKyBrdInputDialog.value = false
+                    val columnValue = mapOf("Tag" to tag)
+                    UpdateSystemInfo(pharmScanViewModel, columnValue)
+                },
+                onCancel = {
+                    showTagKyBrdInputDialog.value = false
+                }
+            )
+        }
+        
         Scaffold(
             scaffoldState = scaffoldState,
-            //drawerShape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp, bottomEnd = 15.dp, bottomStart = 15.dp),
+            modifier = Modifier
+                .onPreviewKeyEvent { KeyEvent ->
+                    println("coop ${KeyEvent.key.nativeKeyCode}")
+                    if (KeyEvent.key.nativeKeyCode in 7..16) {
+                        tagKyBrdInput = KeyEvent.key.nativeKeyCode
+                        showTagKyBrdInputDialog.value = true
+                    }
+                    true
+                }
+                .focusRequester(requester)
+                .focusable(),
+
             drawerShape = MaterialTheme.shapes.large,
             drawerContent = {
                 Text(
@@ -301,6 +338,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                         currentBarBkgrColor = statusBarBkgrColor
                                         statusBarBkgrColor = Color.Cyan
                                         argTextstatusBar = "*** Hold ***"
+                                        focusManager.clearFocus()
                                     }
                                 }
                             ) {
@@ -337,5 +375,11 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                 }
             }
         )
+
+        if (argTextstatusBar == "*** Scan Tag ***") {
+            LaunchedEffect(Unit) {
+                requester.requestFocus()
+            }
+        }
     }
 }
