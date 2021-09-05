@@ -30,7 +30,7 @@ fun UpdateSystemInfo(pharmScanViewModel: PharmScanViewModel, columnValue: Map<St
             "TotQty" -> systemInfo[0].TotQty = item.value
             "TotAmt" -> systemInfo[0].TotAmt = item.value
             "TotRecCount" -> systemInfo[0].TotRecCount = item.value
-            "TotAmt" -> systemInfo[0].Tag = item.value
+            "Tag" -> systemInfo[0].Tag = item.value
         }
     }
 
