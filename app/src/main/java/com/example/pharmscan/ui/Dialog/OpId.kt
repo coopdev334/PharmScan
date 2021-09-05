@@ -77,7 +77,11 @@ fun GetOpId(
                         }
                         Button(
                             onClick = {
-                                onToScanScreen(text)
+                                if (text.isNotEmpty()) {
+                                    onToScanScreen(text)
+                                }else {
+                                    onDismiss()
+                                }
                             }
                         ) {
                             Text(

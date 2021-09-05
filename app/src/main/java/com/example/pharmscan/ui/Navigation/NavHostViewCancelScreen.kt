@@ -166,11 +166,9 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 horizontalAlignment = Alignment.Start
             ) {
-                // If startIndex is -1 then search did find a match. Clear itemlist
+                // If startIndex is -1 then search did not find a match. Clear itemlist
                 if (startIndex == -1) {
                     itemList.clear()
-                    itemList.add(CollectedData("","","","","","","", "", "", "","", "", "", "", ""))
-                    startIndex = 0
                 }
 
                 items(itemList.size) { index ->

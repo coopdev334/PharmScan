@@ -12,7 +12,8 @@ data class SystemInfo(
     var HHDeviceId: String? = null,
     var TotQty: String? = null,
     var TotAmt: String? = null,
-    var TotRecCount: String? = null
+    var TotRecCount: String? = null,
+    var Tag: String? = null
 ) {
     @PrimaryKey(autoGenerate = true)
     var iD: Int? = null

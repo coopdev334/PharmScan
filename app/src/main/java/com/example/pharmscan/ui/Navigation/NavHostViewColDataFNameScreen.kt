@@ -83,7 +83,14 @@ fun NavGraphBuilder.addViewColDataFNameScreen(navController: NavController, phar
 fun GetCollectedDataFileName(
     pharmScanViewModel: PharmScanViewModel
 ) : String {
+    // TODO: tempory file name display since file creation is not completed yet.
     val secs = (LocalDateTime.now().second + (LocalDateTime.now().minute*60) + (LocalDateTime.now().hour*3600))
-    val systemInfo: List<SystemInfo> = pharmScanViewModel.getAllSystemInfo()
-    return "pharmscan_" + systemInfo[0].opid + "_" + LocalDateTime.now().monthValue + "-" + LocalDateTime.now().dayOfMonth + "-" + LocalDateTime.now().year + "_" + secs + "_" + systemInfo[0].HHDeviceId + ".new"
+    val systemInfo = pharmScanViewModel.getAllSystemInfo()
+
+    if (systemInfo.isNotEmpty()) {
+        return "pharmscan_" + systemInfo[0].opid + "_" + LocalDateTime.now().monthValue + "-" + LocalDateTime.now().dayOfMonth + "-" + LocalDateTime.now().year + "_" + secs + "_" + systemInfo[0].HHDeviceId + ".new"
+    }
+    else {
+        return "No data in SystemInfo Table"
+    }
 }
