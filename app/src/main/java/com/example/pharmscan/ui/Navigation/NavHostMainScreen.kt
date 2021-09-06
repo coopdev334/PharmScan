@@ -1,8 +1,6 @@
 package com.example.pharmscan.ui.Navigation
 
-import android.content.Context
 import androidx.compose.foundation.*
-//import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.ui.Modifier
@@ -20,12 +18,9 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import com.example.pharmscan.Data.Tables.HostCompName
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.AddHostComputer
-//import androidx.compose.ui.input.pointer.pointerInput
 import com.example.pharmscan.ui.Dialog.DeleteHostComputerAlert
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking

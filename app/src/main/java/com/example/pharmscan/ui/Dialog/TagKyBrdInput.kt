@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -21,7 +20,6 @@ fun TagKyBrdInput(
     onCancel: () -> Unit
 ) {
     var text by remember { mutableStateOf(ConvertNumNativeKeyCodeToString(tagKyBrdInput)) }
-    //text = ConvertNumNativeKeyCodeToString(tagKyBrdInput)
     val requester = FocusRequester()
 
     if (showDialog) {

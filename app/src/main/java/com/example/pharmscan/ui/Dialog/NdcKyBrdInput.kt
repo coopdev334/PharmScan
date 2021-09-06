@@ -1,13 +1,10 @@
 package com.example.pharmscan.ui.Dialog
 
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -23,9 +20,7 @@ fun NdcKyBrdInput(
     onCancel: () -> Unit
 ) {
     var text by remember { mutableStateOf(ConvertNumNativeKeyCodeToString(tagKyBrdInput)) }
-    //text = ConvertNumNativeKeyCodeToString(tagKyBrdInput)
     val requester = FocusRequester()
-    //val scroll = rememberScrollState(0)
 
     if (showDialog) {
         AlertDialog(
@@ -57,7 +52,6 @@ fun NdcKyBrdInput(
                         singleLine = true,
                         textStyle = MaterialTheme.typography.h5,
                         modifier = Modifier
-                            //.horizontalScroll(scroll)
                             .focusRequester(requester)
                             .focusable()
 

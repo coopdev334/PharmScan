@@ -25,7 +25,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.navArgument
 import com.example.pharmscan.Data.Tables.SystemInfo
 import com.example.pharmscan.ViewModel.PharmScanViewModel
-import com.example.pharmscan.ui.Dialog.GetOpId
 import com.example.pharmscan.ui.Dialog.NdcKyBrdInput
 import com.example.pharmscan.ui.Dialog.TagKyBrdInput
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
