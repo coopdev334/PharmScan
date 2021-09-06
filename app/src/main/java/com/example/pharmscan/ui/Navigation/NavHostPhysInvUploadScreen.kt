@@ -2,7 +2,6 @@ package com.example.pharmscan.ui.Navigation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -12,8 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-//import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -21,11 +18,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
+import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.GetOpId
 import com.example.pharmscan.ui.Screen.Screen
+import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import kotlinx.coroutines.launch
 
-fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController) {
+fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     composable(
         route = Screen.PhysInvUploadScreen.route + "/{hostCompName}",
         // Define argument list to pass to this composable in composable constructor
@@ -49,13 +48,18 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController) {
                 showDialog = showEnterOpIdDialog.value,
                 onDismiss = {
                     showEnterOpIdDialog.value = false
+                },
+                onToScanScreen = {opid ->
+                    showEnterOpIdDialog.value = false
+                    val columnValue = mapOf("opid" to opid)
+                    UpdateSystemInfo(pharmScanViewModel, columnValue)
                     navController.navigate(Screen.ScanScreen.withArgs("*** Scan Tag ***", "yellow"))
-                })
+                }
+            )
         }
 
         Scaffold(
             scaffoldState = scaffoldState,
-            //drawerShape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp, bottomEnd = 15.dp, bottomStart = 15.dp),
             drawerShape = MaterialTheme.shapes.large,
             drawerContent = {
                 Text(
@@ -182,7 +186,7 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController) {
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Button(onClick = {
-                            // TODO: Enter op id someway
+                            // TODO: add funciton to upload data using network wifi to host
                             //navController.navigate(Screen.xxxxxxxxx.route)
                         }) {
                             Text(

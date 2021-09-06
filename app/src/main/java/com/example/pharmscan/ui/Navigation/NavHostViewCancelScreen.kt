@@ -7,11 +7,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,7 +24,6 @@ import com.example.pharmscan.ui.Utility.SearchBar
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
 import com.example.pharmscan.Data.Tables.CollectedData
-import com.example.pharmscan.Data.Tables.HostCompName
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.CancelCollDataRecord
 import kotlinx.coroutines.launch
@@ -36,19 +35,30 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
 
         composable(Screen.ViewCancel.route) {
 
-        var itemList: MutableList<CollectedDataViewCancelSearch> by remember {mutableStateOf(mutableListOf<CollectedDataViewCancelSearch>())}
+        var itemList: MutableList<CollectedData> by remember {mutableStateOf(mutableListOf<CollectedData>())}
         var startIndex: Int by remember {mutableStateOf(0)}
         var hintLabel by remember {mutableStateOf("Rec#")}
         val listState = rememberLazyListState()
         var clearTxt by remember {mutableStateOf(false)}
         val showCancelCollDataDialog = remember { mutableStateOf(false) }
         val coroutineScope = rememberCoroutineScope()
+        var selectedIndex by remember{mutableStateOf(-1)}
 
         if (showCancelCollDataDialog.value) {
             CancelCollDataRecord(
                 collDataRec = delHostCompName,
                 showDialog = showCancelCollDataDialog.value,
-                onDismiss = {showCancelCollDataDialog.value = false})
+                onDismiss = {
+                    showCancelCollDataDialog.value = false
+                    selectedIndex = -1
+                },
+                onCancelRecord = {
+                    itemList[selectedIndex].qty = "000000"
+                    pharmScanViewModel.insertCollectedData(itemList[selectedIndex])
+                    showCancelCollDataDialog.value = false
+                    selectedIndex = -1
+                }
+            )
         }
 
         Column(
@@ -74,17 +84,6 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                 style = MaterialTheme.typography.subtitle1,
                 color = MaterialTheme.colors.onBackground
             )
-//            SearchBar(
-//                clear = clearTxt,
-//                hintLabel = hintLabel,
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(all = 18.dp),
-//            ) {searchText ->
-//                // This lamda function gets called when soft keyboard popup search button is pressed
-//                itemList = pharmScanViewModel.getAllCollectedDataOrderByRecCnt()
-//                startIndex = itemList.indexOfFirst { it.recount == searchText }
-//            }
 
             clearTxt = false
             Spacer(modifier = Modifier.height(height = 5.dp))
@@ -144,7 +143,7 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                 hintLabel = hintLabel,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(all = 5.dp),
+                    .padding(start = 20.dp, top = 5.dp)
             ) {searchText ->
                 // This lamda function gets called when soft keyboard popup search button is pressed
                 if (hintLabel == "Rec#") {
@@ -167,23 +166,32 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 horizontalAlignment = Alignment.Start
             ) {
-                // If startIndex is -1 then search did find a match. Clear itemlist
+                // If startIndex is -1 then search did not find a match. Clear itemlist
                 if (startIndex == -1) {
                     itemList.clear()
-                    itemList.add(CollectedDataViewCancelSearch("","","","","","",""))
-                    startIndex = 0
                 }
 
                 items(itemList.size) { index ->
                     Box(
                         modifier = Modifier
-                            //.height(80.dp)
-                            .clickable {
-                                showCancelCollDataDialog.value = true
-                            }
-                            .background(color = Color.LightGray)
+                            .selectable(
+                                selected = index == selectedIndex,
+                                onClick = {
+                                    if (selectedIndex != index)
+                                        selectedIndex = index else selectedIndex = -1
+                                }
+                            )
+                            .background(
+                                if (itemList[index].qty == "000000")
+                                Color.Red else Color.LightGray
+                            )
 
                     ) {
+                        if (selectedIndex == index) {
+                            startIndex = selectedIndex
+                            showCancelCollDataDialog.value = true
+                        }
+
                         Column {
                             Row(
                                 modifier = Modifier
@@ -208,7 +216,6 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(start = 5.dp),
-                                //.background(Color.),
                                 horizontalArrangement = Arrangement.Start
                             ) {
                                 Text(
@@ -228,7 +235,6 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(start = 5.dp),
-                                //.background(Color.Yellow),
                                 horizontalArrangement = Arrangement.Start
                             ) {
                                 Text(
@@ -248,7 +254,6 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(start = 5.dp),
-                                //.background(Color.Yellow),
                                 horizontalArrangement = Arrangement.Start
                             ) {
                                 Text(
@@ -268,14 +273,3 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
         }
     }
 }
-
-
-data class CollectedDataViewCancelSearch(
-    val	ndc: String?,
-    val	qty: String?,
-    val	price: String?,
-    val	packsz: String?,
-    val	matchflg: String?,
-    val	loc: String?,
-    val	recount: String?
-)

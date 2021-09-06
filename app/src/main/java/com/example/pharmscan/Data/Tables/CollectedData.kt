@@ -11,7 +11,7 @@ data class CollectedData (
     val	dept: String?,
     val	prodcd: String?,
     val	ndc: String?,
-    val	qty: String?,
+    var	qty: String?,
     val	price: String?,
     val	packsz: String?,
     val	xstock: String?,

@@ -1,28 +1,32 @@
 package com.example.pharmscan.Data
 
-import android.app.Application
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.pharmscan.Data.DAO.CollectedDataDao
 import com.example.pharmscan.Data.DAO.HostCompNameDao
+import com.example.pharmscan.Data.DAO.SystemInfoDao
 import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.Data.Tables.HostCompName
+import com.example.pharmscan.Data.Tables.SystemInfo
 
 // List all tables here and update version for each database change
+// NOTE: Increament version each time any database changes are made
 @Database(
     entities = [
         HostCompName::class,
-        CollectedData::class
+        CollectedData::class,
+        SystemInfo::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class PharmScanDb: RoomDatabase() {
     // These functions will return the Dao's for each table
     abstract fun getHostCompNameDao(): HostCompNameDao
     abstract fun getCollectedDataDao(): CollectedDataDao
+    abstract fun getSystemInfoDao(): SystemInfoDao
 
     // companion object is a static object accessed in this class
 //    companion object {
@@ -70,6 +74,7 @@ abstract class PharmScanDb: RoomDatabase() {
                     "PharmScan.db"
                 )
                     //.createFromAsset("PharmScan.db")
+                    .fallbackToDestructiveMigration()
                     .allowMainThreadQueries()
                     .build()
                 INSTANCE = instance
@@ -82,3 +87,11 @@ abstract class PharmScanDb: RoomDatabase() {
 
 
 }
+
+// TODO used for testing. Remove if not needed anymore
+//insert into CollectedData values ("111", "1234567", "11111111111", "123456", "12345678", "12345678", "123", "R", "1111", "123", "1001", "09/03/21", "12345", "P", "12345678", 1)
+//insert into CollectedData values ("222", "1234567", "22222222222", "123456", "12345678", "12345678", "123", "R", "2222", "123", "1002", "09/03/21", "12345", "P", "12345678", 2)
+//insert into CollectedData values ("333", "1234567", "33333333333", "123456", "12345678", "12345678", "123", "R", "3333", "123", "1003", "09/03/21", "12345", "P", "12345678", 3)
+//insert into CollectedData values ("444", "1234567", "44444444444", "123456", "12345678", "12345678", "123", "R", "4444", "123", "1004", "09/03/21", "12345", "P", "12345678", 4)
+//insert into CollectedData values ("555", "1234567", "55555555555", "123456", "12345678", "12345678", "123", "R", "5555", "123", "1005", "09/03/21", "12345", "P", "12345678", 5)
+//insert into CollectedData values ("666", "1234567", "66666666666", "123456", "12345678", "12345678", "123", "R", "6666", "123", "1006", "09/03/21", "12345", "P", "12345678", 6)
