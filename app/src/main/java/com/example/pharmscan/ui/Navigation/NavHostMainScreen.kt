@@ -94,7 +94,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                     modifier = Modifier.clickable {
                         coroutineScope.launch {
                             scaffoldState.drawerState.close()
-                            scaffoldState.snackbarHostState.showSnackbar("Drawer Settings") }
+                            navController.navigate(Screen.Settings.route) }
                     },
                     style = MaterialTheme.typography.caption,
                     color = MaterialTheme.colors.onBackground
