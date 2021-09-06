@@ -20,8 +20,8 @@ fun TagKyBrdInput(
     onAdd: (name: String) -> Unit,
     onCancel: () -> Unit
 ) {
-    var text by rememberSaveable { mutableStateOf("") }
-    text = ConvertNumNativeKeyCodeToString(tagKyBrdInput)
+    var text by remember { mutableStateOf(ConvertNumNativeKeyCodeToString(tagKyBrdInput)) }
+    //text = ConvertNumNativeKeyCodeToString(tagKyBrdInput)
     val requester = FocusRequester()
 
     if (showDialog) {
@@ -35,7 +35,7 @@ fun TagKyBrdInput(
                 OutlinedTextField(
                     value = text,
                     onValueChange = {
-                        text = manageLength(it, 4)
+                        text = ManageLength(ReformatText(it), 4)
                     },
                     label = {
                         Column(

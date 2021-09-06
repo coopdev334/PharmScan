@@ -1,7 +1,9 @@
 package com.example.pharmscan.ui.Dialog
 
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
@@ -10,50 +12,57 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-//import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.pharmscan.ui.Utility.*
 
 @Composable
-fun GetOpId(
+fun NdcKyBrdInput(
+    tagKyBrdInput: Int,
     showDialog: Boolean,
-    onDismiss: () -> Unit,
-    onToScanScreen: (opid: String) -> Unit
+    onAdd: (name: String) -> Unit,
+    onCancel: () -> Unit
 ) {
-    var text by rememberSaveable { mutableStateOf("") }
+    var text by remember { mutableStateOf(ConvertNumNativeKeyCodeToString(tagKyBrdInput)) }
+    //text = ConvertNumNativeKeyCodeToString(tagKyBrdInput)
     val requester = FocusRequester()
+    //val scroll = rememberScrollState(0)
 
     if (showDialog) {
         AlertDialog(
             onDismissRequest = {
-                onDismiss()
+                onCancel()
             },
-            modifier = Modifier
-                .size(200.dp, 200.dp),
+
+            modifier = Modifier.size(250.dp, 200.dp),
             text = {
-                Text("")
-                OutlinedTextField(
-                    value = text,
-                    onValueChange = {
-                        text = ManageLength(it, 3)
-                    },
-                    label = {
-                        Column(
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        ) {
-                            Text(
-                                text = "Operator Id",
-                                style = MaterialTheme.typography.h5
-                            )
-                        }
-                    },
-                    singleLine = true,
-                    textStyle = MaterialTheme.typography.h4,
-                    modifier = Modifier
-                        .focusRequester(requester)
-                        .focusable()
-                    //keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                ){
+                    TextField(
+                        value = text,
+                        onValueChange = {
+
+                            text = ManageLength(ReformatText(it), 11)
+                        },
+                        label = {
+                            Column(
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            ) {
+                                Text(
+                                    text = "Ndc",
+                                    style = MaterialTheme.typography.h5
+                                )
+                            }
+                        },
+                        singleLine = true,
+                        textStyle = MaterialTheme.typography.h5,
+                        modifier = Modifier
+                            //.horizontalScroll(scroll)
+                            .focusRequester(requester)
+                            .focusable()
+
+                    )
+                }
             },
             buttons = {
                 Column(
@@ -67,7 +76,7 @@ fun GetOpId(
                         verticalAlignment = Alignment.Bottom
                     ) {
                         TextButton(
-                            onClick = { onDismiss() }
+                            onClick = { onCancel() }
                         ) {
                             Text(
                                 text = "Cancel",
@@ -75,13 +84,7 @@ fun GetOpId(
                             )
                         }
                         Button(
-                            onClick = {
-                                if (text.isNotEmpty()) {
-                                    onToScanScreen(text)
-                                }else {
-                                    onDismiss()
-                                }
-                            }
+                            onClick = { onAdd(text) }
                         ) {
                             Text(
                                 text = " OK ",

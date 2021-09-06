@@ -1,6 +1,5 @@
 package com.example.pharmscan.ui.Navigation
 
-import android.view.KeyCharacterMap
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -24,14 +23,14 @@ import androidx.compose.ui.input.key.*
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.navigation.NavType
 import androidx.navigation.compose.navArgument
-import com.example.pharmscan.Data.Tables.HostCompName
 import com.example.pharmscan.Data.Tables.SystemInfo
 import com.example.pharmscan.ViewModel.PharmScanViewModel
+import com.example.pharmscan.ui.Dialog.GetOpId
+import com.example.pharmscan.ui.Dialog.NdcKyBrdInput
 import com.example.pharmscan.ui.Dialog.TagKyBrdInput
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
 @ExperimentalComposeUiApi
@@ -55,52 +54,67 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
     ) {
         // Get the arguments passed to this composable by key name
         // args must be present
-        var argTextstatusBar by remember { mutableStateOf(it.arguments!!.getString("statusBar")) }
-        val argStatusBarBkGrColor = it.arguments!!.getString("bkgrColor")
+        var statusBarText by remember { mutableStateOf(it.arguments!!.getString("statusBar")) }
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
-        var statusBarBkgrColor by remember { mutableStateOf(Color.White) }
+        var statusBarBkGrColor by remember { mutableStateOf(Color.Yellow) }
         val systemInfo: List<SystemInfo> by pharmScanViewModel.systemInfo.observeAsState(listOf<SystemInfo>())
-        var currentStatusBar: String? by remember { mutableStateOf("")}
-        var currentBarBkgrColor by remember {mutableStateOf(Color.White)}
-        var tagKyBrdInput by remember {mutableStateOf(0)}
-        val showTagKyBrdInputDialog = remember { mutableStateOf(false) }
+        var previousStatusBarText: String? by remember { mutableStateOf("")}
+        var previousBarBkgrColor by remember {mutableStateOf(Color.White)}
+        var keyBrdInput by remember {mutableStateOf(0)}
+        val showKyBrdInputDialog = remember { mutableStateOf(false) }
         val focusManager = LocalFocusManager.current
 
         // Get record from SystemInfo table which will update livedata which will update
         // systemInfo which will cause a recompose of screen
         pharmScanViewModel.updateSystemInfoLiveData()
 
-        // Convert status bar string arg to Color object
-        when (argStatusBarBkGrColor) {
-            "yellow" -> statusBarBkgrColor = Color.Yellow
-        }
         val requester = FocusRequester()
+        previousStatusBarText = statusBarText
+        previousBarBkgrColor = statusBarBkGrColor
 
-        if (showTagKyBrdInputDialog.value) {
-            focusManager.clearFocus()
-            TagKyBrdInput(
-                tagKyBrdInput,
-                showDialog = showTagKyBrdInputDialog.value,
-                onAdd = {tag ->
-                    showTagKyBrdInputDialog.value = false
-                    val columnValue = mapOf("Tag" to tag)
-                    UpdateSystemInfo(pharmScanViewModel, columnValue)
-                },
-                onCancel = {
-                    showTagKyBrdInputDialog.value = false
-                }
-            )
+        if (showKyBrdInputDialog.value) {
+            if (statusBarText == "*** Scan Tag ***") {
+                TagKyBrdInput(
+                    keyBrdInput,
+                    showDialog = showKyBrdInputDialog.value,
+                    onAdd = {tag ->
+                        showKyBrdInputDialog.value = false
+                        val columnValue = mapOf("Tag" to tag)
+                        UpdateSystemInfo(pharmScanViewModel, columnValue)
+                        statusBarBkGrColor = Color.Green
+                        statusBarText = "*** Scan BarCode ***"
+                    },
+                    onCancel = {
+                        showKyBrdInputDialog.value = false
+                    }
+                )
+            }else{
+                NdcKyBrdInput(
+                    keyBrdInput,
+                    showDialog = showKyBrdInputDialog.value,
+                    onAdd = {ndc ->
+                        showKyBrdInputDialog.value = false
+                        //val columnValue = mapOf("Tag" to ndc)
+                        //UpdateSystemInfo(pharmScanViewModel, columnValue)
+                        statusBarBkGrColor = Color.Green
+                        statusBarText = "*** Scan BarCode ***"
+                    },
+                    onCancel = {
+                        showKyBrdInputDialog.value = false
+                    }
+                )
+            }
         }
-        
+
+
         Scaffold(
             scaffoldState = scaffoldState,
             modifier = Modifier
                 .onPreviewKeyEvent { KeyEvent ->
-                    println("coop ${KeyEvent.key.nativeKeyCode}")
                     if (KeyEvent.key.nativeKeyCode in 7..16) {
-                        tagKyBrdInput = KeyEvent.key.nativeKeyCode
-                        showTagKyBrdInputDialog.value = true
+                        keyBrdInput = KeyEvent.key.nativeKeyCode
+                        showKyBrdInputDialog.value = true
                     }
                     true
                 }
@@ -183,11 +197,11 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(statusBarBkgrColor),
+                            .background(statusBarBkGrColor),
                         horizontalArrangement = Arrangement.Center
                     ){
                         Text(
-                            text = argTextstatusBar!!,
+                            text = statusBarText!!,
                             style = MaterialTheme.typography.h5,
                             color = MaterialTheme.colors.onBackground
                         )
@@ -313,13 +327,15 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                     .clip(RoundedCornerShape(50.dp))
                                     .size(width = 110.dp, height = 50.dp),
                                 onClick = {
-                                statusBarBkgrColor = Color.Yellow
-                                argTextstatusBar = "*** Scan Tag ***"
-                                coroutineScope.launch(Dispatchers.Default) {
-                                    // TODO: Implement Changetagscan function
-                                    // supend fun ChangeTagScan()
+ //                                   previousStatusBarText = statusBarText
+ //                                   previousBarBkgrColor = statusBarBkGrColor
+                                    statusBarBkGrColor = Color.Yellow
+                                    statusBarText = "*** Scan Tag ***"
+                                    coroutineScope.launch(Dispatchers.Default) {
+                                        // TODO: Implement Changetagscan function
+                                        // supend fun ChangeTagScan()
+                                    }
                                 }
-                            }
                             ) {
                                 Text(text = "Change Tag")
 
@@ -330,20 +346,19 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                     .size(width = 110.dp, height = 50.dp),
                                 onClick = {
 
-                                    if (argTextstatusBar == "*** Hold ***") {
-                                        argTextstatusBar = currentStatusBar
-                                        statusBarBkgrColor = currentBarBkgrColor
+                                    if (statusBarText == "*** Hold ***") {
+                                        statusBarText = previousStatusBarText
+                                        statusBarBkGrColor = previousBarBkgrColor
                                     }else {
-                                        currentStatusBar = argTextstatusBar
-                                        currentBarBkgrColor = statusBarBkgrColor
-                                        statusBarBkgrColor = Color.Cyan
-                                        argTextstatusBar = "*** Hold ***"
+                                        previousStatusBarText = statusBarText
+                                        previousBarBkgrColor = statusBarBkGrColor
+                                        statusBarBkGrColor = Color.Cyan
+                                        statusBarText = "*** Hold ***"
                                         focusManager.clearFocus()
                                     }
                                 }
                             ) {
                                 Text(text = "Hold")
-
                             }
                         }
                         Spacer(modifier = Modifier.height(height = 8.dp))
@@ -376,10 +391,9 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
             }
         )
 
-        if (argTextstatusBar == "*** Scan Tag ***") {
-            LaunchedEffect(Unit) {
-                requester.requestFocus()
-            }
-        }
+        //if (statusBarText == "*** Scan Tag ***") {
+            LaunchedEffect(Unit) {requester.requestFocus()}
+        //}
     }
 }
+
