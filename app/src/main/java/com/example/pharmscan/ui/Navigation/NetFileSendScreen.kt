@@ -181,7 +181,7 @@ fun TagCheckBox(){
         modifier = Modifier.padding(8.dp)
     )
 }
-@Composable
+/*@Composable
 fun TagChangesTextField() {
     Column(Modifier.padding(16.dp)) {
         val textState = remember {  mutableStateOf(TextFieldValue())   }
@@ -194,7 +194,7 @@ fun TagChangesTextField() {
         )
 
     }
-}
+}*/ // Moved to the main Settings screen
 @Composable
 fun IntervalTextField() {
     Column(Modifier.padding(16.dp)) {

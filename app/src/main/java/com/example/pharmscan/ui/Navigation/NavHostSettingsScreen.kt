@@ -43,7 +43,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
 
-        Column (
+        Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -80,6 +80,30 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
                 style = MaterialTheme.typography.h2,
                 color = MaterialTheme.colors.onBackground
             )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Text(
+                    text = "Number of Tags On Hold",
+                    modifier = Modifier
+                        .padding(start = 20.dp),
+                    //.clickable {
+                    //navController.navigate(Screen.NetFileSend.route)
+                    //}, Disabled
+                    style = MaterialTheme.typography.h2,
+                    color = MaterialTheme.colors.onBackground
+                )
+                TagChangesTextField()
+            }
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(MaterialTheme.colors.secondary)
+            )
+            /*
             Text(
                 text = "Network File Send",
                 modifier = Modifier
@@ -117,12 +141,15 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
                     .height(1.dp)
                     .background(MaterialTheme.colors.secondary)
             )
+
+             */
             Spacer(modifier = Modifier.height(height = 30.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Start
-            ) {
+            )
+            {
                 Text(
                     text = "Cost Limit",
                     modifier = Modifier
@@ -177,6 +204,20 @@ fun CostLimitTextField() {
         )
     }
 }
+@Composable
+fun TagChangesTextField() {
+    Column(Modifier.padding(16.dp)) {
+        val textState = remember { mutableStateOf(TextFieldValue()) }
+        TextField(
+            value = textState.value,
+            onValueChange = { textState.value = it },
+            modifier = Modifier
+                .height(30.dp)
+        )
+    }
+}
+
+
 
 
 
