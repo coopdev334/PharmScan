@@ -6,11 +6,14 @@ import com.example.pharmscan.Data.DAO.SystemInfoDao
 import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.Data.Tables.HostCompName
 import com.example.pharmscan.Data.Tables.SystemInfo
+import com.example.pharmscan.Data.DAO.SettingsDao
+import com.example.pharmscan.Data.Tables.Settings
 
 class PharmScanRepo(
     private val daoHostCompName: HostCompNameDao,
     private val daoCollectedData: CollectedDataDao,
-    private val daoSystemInfo: SystemInfoDao
+    private val daoSystemInfo: SystemInfoDao,
+    private val daoSettings: SettingsDao
 ) {
     // HostCompName db SQL
     suspend fun insertHostCompName(hostCompName: HostCompName) = daoHostCompName.insert(hostCompName)
@@ -29,4 +32,9 @@ class PharmScanRepo(
     suspend fun insertSystemInfo(systemInfo: SystemInfo) = daoSystemInfo.insert(systemInfo)
     suspend fun deleteSystemInfo(systemInfo: SystemInfo) = daoSystemInfo.delete(systemInfo)
     fun getAllSystemInfo() = daoSystemInfo.getAll()
+
+    //Settings accessable SQL
+    suspend fun insertSettings(settings: Settings) = daoSettings.insert(settings)
+    suspend fun deleteSettings(settings: Settings) = daoSettings.delete(settings)
+    fun getCurrentSettings() = daoSettings.getCurrent()
 }
