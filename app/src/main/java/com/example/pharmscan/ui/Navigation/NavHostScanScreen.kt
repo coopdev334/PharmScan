@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import com.example.pharmscan.ui.Screen.Screen
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.ButtonDefaults.buttonColors
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -63,6 +64,28 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         var previousBarBkgrColor by remember {mutableStateOf(Color.White)}
         var keyBrdInput by remember {mutableStateOf(0)}
         val showKyBrdInputDialog = remember { mutableStateOf(false) }
+        val chgTagEnabled = remember { mutableStateOf(false) }
+        val holdEnabled = remember { mutableStateOf(false) }
+        val defaultButtonColors: ButtonColors = buttonColors(
+            backgroundColor = Color.Blue,
+            contentColor = Color.White,
+            disabledBackgroundColor = Color.LightGray,
+            disabledContentColor = Color.Black
+        )
+        val chgTagOnButtonColors: ButtonColors = buttonColors(
+            backgroundColor = Color.Yellow,
+            contentColor = Color.Black,
+            disabledBackgroundColor = Color.LightGray,
+            disabledContentColor = Color.Black
+        )
+        val holdOnButtonColors: ButtonColors = buttonColors(
+            backgroundColor = Color.Cyan,
+            contentColor = Color.Black,
+            disabledBackgroundColor = Color.LightGray,
+            disabledContentColor = Color.Black
+        )
+        var chgTagButtonColor by remember {mutableStateOf(defaultButtonColors)}
+        var holdButtonColor by remember {mutableStateOf(defaultButtonColors)}
 
         // Get record from SystemInfo table which will update livedata which will update
         // systemInfo which will cause a recompose of screen showing latest values
@@ -83,10 +106,13 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                         showDialog = showKyBrdInputDialog.value,
                         onAdd = { tag ->
                             showKyBrdInputDialog.value = false
+                            chgTagEnabled.value = true
+                            holdEnabled.value = true
                             val columnValue = mapOf("Tag" to tag)
                             UpdateSystemInfo(pharmScanViewModel, columnValue)
                             statusBarBkGrColor = Color.Green
                             statusBarText = "*** Scan BarCode ***"
+                            chgTagButtonColor = defaultButtonColors
                         },
                         onCancel = {
                             showKyBrdInputDialog.value = false
@@ -317,7 +343,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 horizontalArrangement = Arrangement.Center
                             ) {
                                 Text(
-                                    text = "??????",
+                                    text = "Last Scan",
                                     style = MaterialTheme.typography.h5,
                                     color = MaterialTheme.colors.onBackground
                                 )
@@ -328,8 +354,19 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
                                 Text(
-                                    text = "Something: xxxxxxxxxxx",
-                                    style = MaterialTheme.typography.h5,
+                                    text = "Ndc:12345678901  Qty: 1233",
+                                    style = MaterialTheme.typography.body1,
+                                    color = MaterialTheme.colors.onBackground
+                                )
+                            }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                Text(
+                                    text = "Price: 1255   PkSz: 2  Cost: 1244",
+                                    style = MaterialTheme.typography.body1,
                                     color = MaterialTheme.colors.onBackground
                                 )
                             }
@@ -346,6 +383,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ){
                             Button(
+                                enabled = chgTagEnabled.value,
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(50.dp))
                                     .size(width = 110.dp, height = 50.dp),
@@ -353,21 +391,25 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                     if (statusBarText == "*** Scan Tag ***") {
                                         statusBarText = previousStatusBarText
                                         statusBarBkGrColor = previousBarBkgrColor
+                                        chgTagButtonColor = defaultButtonColors
                                     }else {
                                         previousStatusBarText = statusBarText
                                         previousBarBkgrColor = statusBarBkGrColor
                                         statusBarBkGrColor = Color.Yellow
                                         statusBarText = "*** Scan Tag ***"
+                                        chgTagButtonColor = chgTagOnButtonColors
                                     }
                                     coroutineScope.launch(Dispatchers.Default) {
                                         // TODO: Implement Changetagscan function
                                         // supend fun ChangeTagScan()
                                     }
-                                }
+                                },
+                                colors = chgTagButtonColor
                             ) {
                                 Text(text = "Change Tag")
                             }
                             Button(
+                                enabled = holdEnabled.value,
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(50.dp))
                                     .size(width = 110.dp, height = 50.dp),
@@ -376,13 +418,16 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                     if (statusBarText == "*** Hold ***") {
                                         statusBarBkGrColor = Color.Green
                                         statusBarText = "*** Scan BarCode ***"
+                                        holdButtonColor = defaultButtonColors
                                     }else {
                                         previousStatusBarText = statusBarText
                                         previousBarBkgrColor = statusBarBkGrColor
                                         statusBarBkGrColor = Color.Cyan
                                         statusBarText = "*** Hold ***"
+                                        holdButtonColor = holdOnButtonColors
                                     }
-                                }
+                                },
+                                colors = holdButtonColor
                             ) {
                                 Text(text = "Hold")
                             }

@@ -46,7 +46,7 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
         if (showEnterOpIdDialog.value) {
             GetOpId(
                 showDialog = showEnterOpIdDialog.value,
-                onDismiss = {
+                onCancel = {
                     showEnterOpIdDialog.value = false
                 },
                 onToScanScreen = {opid ->
