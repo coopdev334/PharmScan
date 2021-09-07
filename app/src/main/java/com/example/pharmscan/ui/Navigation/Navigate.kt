@@ -21,15 +21,15 @@ fun Navigate(pharmScanViewModel: PharmScanViewModel) {
 
         addMainScreen(navController = navController, pharmScanViewModel)
         addAboutScreen(navController = navController)
-        addViewColDataFNameScreen(navController = navController)
+        addViewColDataFNameScreen(navController = navController, pharmScanViewModel)
         addViewCancelScreen(navController = navController, pharmScanViewModel)
-        addPhysInvUploadScreen(navController = navController)
+        addPhysInvUploadScreen(navController = navController, pharmScanViewModel)
         addSettingsScreen(navController = navController)
         addNetFileSendScreen(navController = navController)
         addNetID(navController = navController)
         addCostLimit(navController = navController)
         addNavMatchScreen(navController = navController)
         addNavNoMatchScreen(navController = navController)
-        addScanScreen(navController = navController)
+        addScanScreen(navController = navController,pharmScanViewModel)
     }
 }
