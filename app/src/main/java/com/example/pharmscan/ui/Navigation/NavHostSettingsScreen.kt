@@ -80,6 +80,25 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
                 style = MaterialTheme.typography.h2,
                 color = MaterialTheme.colors.onBackground
             )
+            Text(
+                text = "Network ID",
+                modifier = Modifier
+                    .align(alignment = Alignment.Start)
+                    .padding(start = 20.dp)
+                    .clickable {
+                        navController.navigate(Screen.NetID.route)
+                    }
+                    .background(color = Color.Cyan, shape = MaterialTheme.shapes.large), //CHANGE THIS !!
+                style = MaterialTheme.typography.h2,
+                color = MaterialTheme.colors.onBackground,
+            )
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(MaterialTheme.colors.secondary)
+            )
+            Spacer(modifier = Modifier.height(height = 30.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -115,7 +134,6 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
                 style = MaterialTheme.typography.h2,
                 color = MaterialTheme.colors.onBackground
             )
-            // Before spacer
             Box(
                 Modifier
                     .fillMaxWidth()
@@ -123,27 +141,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
                     .background(MaterialTheme.colors.secondary)
             )
             Spacer(modifier = Modifier.height(height = 30.dp))
-
-            Text(
-                text = "Network ID",
-                modifier = Modifier
-                    .align(alignment = Alignment.Start)
-                    .padding(start = 20.dp)
-                    .clickable {
-                        navController.navigate(Screen.NetID.route)
-                    },
-                style = MaterialTheme.typography.h2,
-                color = MaterialTheme.colors.onBackground
-            )
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(MaterialTheme.colors.secondary)
-            )
-
-             */
-            Spacer(modifier = Modifier.height(height = 30.dp))
+            */
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
