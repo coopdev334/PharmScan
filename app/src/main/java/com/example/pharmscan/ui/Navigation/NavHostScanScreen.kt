@@ -387,7 +387,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
                                 Text(
-                                    text = "Price:${collectedData[0].price}   PkSz:${collectedData[0].packsz}  Cost:${collectedData[0].itemcst}",
+                                    text = "Price:${collectedData[0].price}   PkSz:${collectedData[0].packsz}",
                                     style = MaterialTheme.typography.body1,
                                     color = MaterialTheme.colors.onBackground
                                 )
