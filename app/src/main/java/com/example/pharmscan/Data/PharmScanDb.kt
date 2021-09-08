@@ -22,7 +22,7 @@ import com.example.pharmscan.Data.Tables.SystemInfo
         SystemInfo::class,
         PSNdc::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class PharmScanDb: RoomDatabase() {
@@ -99,3 +99,8 @@ abstract class PharmScanDb: RoomDatabase() {
 //insert into CollectedData values ("444", "1234567", "44444444444", "123456", "12345678", "12345678", "123", "R", "4444", "123", "1004", "09/03/21", "12345", "P", "12345678", 4)
 //insert into CollectedData values ("555", "1234567", "55555555555", "123456", "12345678", "12345678", "123", "R", "5555", "123", "1005", "09/03/21", "12345", "P", "12345678", 5)
 //insert into CollectedData values ("666", "1234567", "66666666666", "123456", "12345678", "12345678", "123", "R", "6666", "123", "1006", "09/03/21", "12345", "P", "12345678", 6)
+
+//insert into PSNdc values ("11111111111", "12345678", "12345678", 1)
+//insert into PSNdc values ("22222222222", "12345678", "12345678", 2)
+//insert into PSNdc values ("33333333333", "12345678", "12345678", 3)
+//insert into PSNdc values ("44444444444", "12345678", "12345678", 4)

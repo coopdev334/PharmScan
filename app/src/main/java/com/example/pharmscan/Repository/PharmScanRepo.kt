@@ -27,6 +27,7 @@ class PharmScanRepo(
     fun getAllCollectedDataOrderByRecCnt() = daoCollectedData.getAllOrderByRecCnt()
     fun getAllCollectedDataOrderByTag() = daoCollectedData.getAllOrderByTag()
     fun getAllCollectedDataOrderByNdc() = daoCollectedData.getAllOrderByNdc()
+    fun getColDataLastInsertedRow() = daoCollectedData.getLastInsertedRow()
 
     // SystemInfo db SQL
     suspend fun insertSystemInfo(systemInfo: SystemInfo) = daoSystemInfo.insert(systemInfo)

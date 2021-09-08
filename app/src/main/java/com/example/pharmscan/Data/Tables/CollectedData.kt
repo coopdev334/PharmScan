@@ -10,10 +10,10 @@ import androidx.room.PrimaryKey
 data class CollectedData (
     val	dept: String?,
     val	prodcd: String?,
-    val	ndc: String?,
+    var	ndc: String?,
     var	qty: String?,
-    val	price: String?,
-    val	packsz: String?,
+    var	price: String?,
+    var	packsz: String?,
     val	xstock: String?,
     val	matchflg: String?,
     val	loc: String?,
@@ -22,7 +22,7 @@ data class CollectedData (
     val	date: String?,
     val	seconds: String?,
     val	itemtyp: String?,
-    val	itemcst: String?
+    var	itemcst: String?
 ) {
     @PrimaryKey(autoGenerate = true)
     var iD: Int? = null

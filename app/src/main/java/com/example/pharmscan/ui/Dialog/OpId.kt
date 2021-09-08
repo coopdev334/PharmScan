@@ -187,7 +187,7 @@ fun GetOpId(
                         Button(
                             modifier = Modifier.size(width = 90.dp, height = 45.dp),
                             onClick = {
-                                if (!isNumber(text)){
+                                if (!isWholeNumber(text)){
                                     invalidInput = true
                                     text = ""
                                 }else {

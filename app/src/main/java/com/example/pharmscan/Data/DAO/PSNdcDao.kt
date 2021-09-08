@@ -14,4 +14,5 @@ interface PSNdcDao {
 
     @Query("SELECT * FROM PSNdc")
     fun getAll(): List<PSNdc>
+
 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.Data.Tables.HostCompName
+import com.example.pharmscan.Data.Tables.PSNdc
 import com.example.pharmscan.Data.Tables.SystemInfo
 import com.example.pharmscan.Repository.PharmScanRepo
 import kotlinx.coroutines.CoroutineScope
@@ -67,6 +68,7 @@ class PharmScanViewModel(
     fun getAllCollectedDataOrderByRecCnt() = repo.getAllCollectedDataOrderByRecCnt()
     fun getAllCollectedDataOrderByTag() = repo.getAllCollectedDataOrderByTag()
     fun getAllCollectedDataOrderByNdc() = repo.getAllCollectedDataOrderByNdc()
+    fun getColDataLastInsertedRow() = repo.getColDataLastInsertedRow()
 
 
     // SystemInfo
@@ -94,5 +96,32 @@ class PharmScanViewModel(
     }
 
     fun getAllSystemInfo() = repo.getAllSystemInfo()
+
+
+    // PSNdc
+    // LiveData holds state which is observed by the UI
+    // (state flows down from ViewModel)
+    private var _psNdc = MutableLiveData(listOf<PSNdc>())
+    val psNdc: LiveData<List<PSNdc>> = _psNdc
+
+
+    // This gets all rows from database and updates live data
+    // which is observed by systemInfoList
+    // to recompose LazyColumn list
+    fun updatePSNdcLiveData() {
+        _psNdc.value = getAllPSNdc()
+    }
+
+    // PSNdc viewModel db interface
+    // These functions will be called by the composable views to get and set database information
+    // Suspend function modifier is not used here but in repo and dao
+    fun insertPSNdc(psNdc: PSNdc) = CoroutineScope(Dispatchers.IO).launch {
+        repo.insertPSNdc(psNdc)
+    }
+    fun deletePSNdc(psNdc: PSNdc) = CoroutineScope(Dispatchers.IO).launch {
+        repo.deletePSNdc(psNdc)
+    }
+
+    fun getAllPSNdc() = repo.getAllPSNdc()
 
  }

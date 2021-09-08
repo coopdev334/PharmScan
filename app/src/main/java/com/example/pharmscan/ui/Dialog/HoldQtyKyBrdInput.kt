@@ -75,12 +75,11 @@ fun HoldQtyKyBrdInput(
                                             MaterialTheme.colors.onBackground
                                         }
                        Text(
-                           text = if (invalidInput) "Requires decimal point ." else "",
+                           text = if (invalidInput) "Requires number with 1 decimal" else "",
                            style = MaterialTheme.typography.h6,
                            color = textColor
                         )
                     }
-                    Spacer(modifier = Modifier.height(40.dp))
                     Row(
                         modifier = Modifier.fillMaxSize(),
                         horizontalArrangement = Arrangement.End,
@@ -98,7 +97,7 @@ fun HoldQtyKyBrdInput(
                         Button(
                             modifier = Modifier.size(width = 90.dp, height = 45.dp),
                             onClick = {
-                                if ('.' !in text){
+                                if (!isDecNumber(text)){
                                     invalidInput = true
                                     text = ""
                                 }else {

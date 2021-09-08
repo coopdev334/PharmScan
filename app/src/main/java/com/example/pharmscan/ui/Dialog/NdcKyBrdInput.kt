@@ -210,7 +210,7 @@ fun NdcKyBrdInput(
                                     invalidLength = true
                                     text = ""
                                 }else {
-                                    if (isNumber(text)){
+                                    if (isWholeNumber(text)){
                                         onAdd(text)
                                     }else {
                                         invalidLength = false

@@ -24,6 +24,7 @@ import androidx.compose.ui.input.key.*
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.navigation.NavType
 import androidx.navigation.compose.navArgument
+import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.Data.Tables.SystemInfo
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.HoldQtyKyBrdInput
@@ -124,7 +125,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                     HoldQtyKyBrdInput(
                         keyBrdInput,
                         showDialog = showKyBrdInputDialog.value,
-                        onAdd = { ndc ->
+                        onAdd = {
                             showKyBrdInputDialog.value = false
                             //val columnValue = mapOf("Tag" to ndc)
                             //UpdateSystemInfo(pharmScanViewModel, columnValue)
@@ -337,6 +338,27 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                             .background(Color.LightGray)
                     ){
                         Column() {
+                            // Get last scanned row for display. If no rows default list
+                            var collectedData = pharmScanViewModel.getColDataLastInsertedRow()
+                            if (collectedData.isEmpty()){
+                                collectedData = listOf(CollectedData(
+                                    dept = "",
+                                    prodcd = "",
+                                	ndc = "",
+                                	qty = "",
+                                	price = "",
+                                	packsz = "",
+                                	xstock = "",
+                                	matchflg = "",
+                                	loc = "",
+                                	operid = "",
+                                	recount = "",
+                                	date = "",
+                                	seconds = "",
+                                	itemtyp = "",
+                                	itemcst = ""
+                                ))
+                            }
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth(),
@@ -354,7 +376,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
                                 Text(
-                                    text = "Ndc:12345678901  Qty: 1233",
+                                    text = "Ndc:${collectedData[0].ndc}  Qty:${collectedData[0].qty}",
                                     style = MaterialTheme.typography.body1,
                                     color = MaterialTheme.colors.onBackground
                                 )
@@ -365,7 +387,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
                                 Text(
-                                    text = "Price: 1255   PkSz: 2  Cost: 1244",
+                                    text = "Price:${collectedData[0].price}   PkSz:${collectedData[0].packsz}  Cost:${collectedData[0].itemcst}",
                                     style = MaterialTheme.typography.body1,
                                     color = MaterialTheme.colors.onBackground
                                 )
@@ -444,7 +466,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(50.dp))
                                     .size(width = 250.dp, height = 50.dp),
-                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
+                                colors = buttonColors(backgroundColor = Color.Red),
                                 onClick = {
                                   navController.popBackStack()
                             }
