@@ -22,7 +22,7 @@ class MainActivity() : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val database = PharmScanDb.getDatabase(this)
-        val repo = PharmScanRepo(database.getHostCompNameDao(), database.getCollectedDataDao(), database.getSystemInfoDao())
+        val repo = PharmScanRepo(database.getHostCompNameDao(), database.getCollectedDataDao(), database.getSystemInfoDao(), database.getPSNdcDao())
         val factory = PharmScanViewModelFactory(repo)
         val pharmScanViewModel = ViewModelProvider(this, factory).get(PharmScanViewModel::class.java)
 

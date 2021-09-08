@@ -6,9 +6,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.pharmscan.Data.DAO.CollectedDataDao
 import com.example.pharmscan.Data.DAO.HostCompNameDao
+import com.example.pharmscan.Data.DAO.PSNdcDao
 import com.example.pharmscan.Data.DAO.SystemInfoDao
 import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.Data.Tables.HostCompName
+import com.example.pharmscan.Data.Tables.PSNdc
 import com.example.pharmscan.Data.Tables.SystemInfo
 
 // List all tables here and update version for each database change
@@ -17,9 +19,10 @@ import com.example.pharmscan.Data.Tables.SystemInfo
     entities = [
         HostCompName::class,
         CollectedData::class,
-        SystemInfo::class
+        SystemInfo::class,
+        PSNdc::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class PharmScanDb: RoomDatabase() {
@@ -27,6 +30,7 @@ abstract class PharmScanDb: RoomDatabase() {
     abstract fun getHostCompNameDao(): HostCompNameDao
     abstract fun getCollectedDataDao(): CollectedDataDao
     abstract fun getSystemInfoDao(): SystemInfoDao
+    abstract fun getPSNdcDao(): PSNdcDao
 
     // companion object is a static object accessed in this class
 //    companion object {
