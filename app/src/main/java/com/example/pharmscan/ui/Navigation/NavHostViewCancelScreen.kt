@@ -23,9 +23,11 @@ import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ui.Utility.SearchBar
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.CancelCollDataRecord
+import com.example.pharmscan.ui.Utility.ClearText
 import kotlinx.coroutines.launch
 
 @ExperimentalFoundationApi
@@ -39,10 +41,15 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
         var startIndex: Int by remember {mutableStateOf(0)}
         var hintLabel by remember {mutableStateOf("Rec#")}
         val listState = rememberLazyListState()
-        var clearTxt by remember {mutableStateOf(false)}
+        var clearTxt by remember {mutableStateOf(ClearText(false))}
         val showCancelCollDataDialog = remember { mutableStateOf(false) }
         val coroutineScope = rememberCoroutineScope()
         var selectedIndex by remember{mutableStateOf(-1)}
+        var btnSelectedRec by remember {mutableStateOf(true)}
+        var btnSelectedTag by remember {mutableStateOf(false)}
+        var btnSelectedNdc by remember {mutableStateOf(false)}
+        var textStyle = MaterialTheme.typography.subtitle1
+        var ontextStyle = MaterialTheme.typography.subtitle2
 
         if (showCancelCollDataDialog.value) {
             CancelCollDataRecord(
@@ -84,15 +91,15 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                 style = MaterialTheme.typography.subtitle1,
                 color = MaterialTheme.colors.onBackground
             )
-
-            clearTxt = false
             Spacer(modifier = Modifier.height(height = 5.dp))
-
             Row(horizontalArrangement = Arrangement.SpaceEvenly) {
                 OutlinedButton(
                     onClick = {
                         hintLabel = "Rec#"
-                        clearTxt = true
+                        clearTxt.clear = true
+                        btnSelectedRec = true
+                        btnSelectedTag = false
+                        btnSelectedNdc = false
                     },
                     shape = RoundedCornerShape(50),
                     border = BorderStroke(1.dp, MaterialTheme.colors.onBackground),
@@ -101,14 +108,18 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                 ) {
                     Text(
                         text = "Rec#",
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
+                        style = if(btnSelectedRec) ontextStyle else textStyle
                     )
                 }
                 Spacer(modifier = Modifier.width(width = 10.dp))
                 OutlinedButton(
                     onClick = {
                         hintLabel = "Tag"
-                        clearTxt = true
+                        clearTxt.clear = true
+                        btnSelectedRec = false
+                        btnSelectedTag = true
+                        btnSelectedNdc = false
                     },
                     shape = RoundedCornerShape(50),
                     border = BorderStroke(1.dp, MaterialTheme.colors.onBackground),
@@ -117,14 +128,18 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                 ) {
                     Text(
                         text = "Tag",
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
+                        style = if(btnSelectedTag) ontextStyle else textStyle
                     )
                 }
                 Spacer(modifier = Modifier.width(width = 10.dp))
                 OutlinedButton(
                     onClick = {
                         hintLabel = "Ndc"
-                        clearTxt = true
+                        clearTxt.clear = true
+                        btnSelectedRec = false
+                        btnSelectedTag = false
+                        btnSelectedNdc = true
                     },
                     shape = RoundedCornerShape(50),
                     border = BorderStroke(1.dp, MaterialTheme.colors.onBackground),
@@ -133,7 +148,8 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                 ) {
                     Text(
                         text = "Ndc",
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
+                        style = if(btnSelectedNdc) ontextStyle else textStyle
                     )
                 }
             }
@@ -143,130 +159,142 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                 hintLabel = hintLabel,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 20.dp, top = 5.dp)
-            ) {searchText ->
+                    .padding(start = 5.dp, top = 5.dp, end = 5.dp)
+            ) { searchText ->
                 // This lamda function gets called when soft keyboard popup search button is pressed
-                if (hintLabel == "Rec#") {
-                    itemList = pharmScanViewModel.getAllCollectedDataOrderByRecCnt()
-                    startIndex = itemList.indexOfFirst { it.recount == searchText }
-                }
-                if (hintLabel == "Tag") {
-                    itemList = pharmScanViewModel.getAllCollectedDataOrderByTag()
-                    startIndex = itemList.indexOfFirst { it.loc == searchText }
-                }
-                if (hintLabel == "Ndc") {
-                    itemList = pharmScanViewModel.getAllCollectedDataOrderByNdc()
-                    startIndex = itemList.indexOfFirst { it.ndc == searchText }
+                when (hintLabel) {
+                    "Rec#" -> {
+                        itemList = pharmScanViewModel.getAllCollectedDataOrderByRecCnt()
+                        startIndex = itemList.indexOfFirst { it.recount == searchText }
+                    }
+                    "Tag" -> {
+                        itemList = pharmScanViewModel.getAllCollectedDataOrderByTag()
+                        startIndex = itemList.indexOfFirst { it.loc == searchText }
+                    }
+                    "Ndc" -> {
+                        itemList = pharmScanViewModel.getAllCollectedDataOrderByNdc()
+                        startIndex = itemList.indexOfFirst { it.ndc == searchText }
+                    }
                 }
             }
 
-            LazyColumn(
-                modifier = Modifier.padding(top = 5.dp, bottom = 5.dp, start = 5.dp),
-                state = listState,
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                horizontalAlignment = Alignment.Start
-            ) {
-                // If startIndex is -1 then search did not find a match. Clear itemlist
-                if (startIndex == -1) {
-                    itemList.clear()
-                }
+            if (startIndex == -1) {
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "*** No Match ***",
+                    style = MaterialTheme.typography.h4,
+                    color = MaterialTheme.colors.error
+                )
+            }
+            else {
+                LazyColumn(
+                    modifier = Modifier.padding(top = 5.dp, bottom = 5.dp, start = 5.dp),
+                    state = listState,
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    // If startIndex is -1 then search did not find a match. Clear itemlist
+//                    if (startIndex == -1) {
+//                        itemList.clear()
+//                    }
 
-                items(itemList.size) { index ->
-                    Box(
-                        modifier = Modifier
-                            .selectable(
-                                selected = index == selectedIndex,
-                                onClick = {
-                                    if (selectedIndex != index)
-                                        selectedIndex = index else selectedIndex = -1
+                    items(itemList.size) { index ->
+                        Box(
+                            modifier = Modifier
+                                .selectable(
+                                    selected = index == selectedIndex,
+                                    onClick = {
+                                        if (selectedIndex != index)
+                                            selectedIndex = index else selectedIndex = -1
+                                    }
+                                )
+                                .background(
+                                    if (itemList[index].qty == "000000")
+                                        Color.Red else Color.LightGray
+                                )
+
+                        ) {
+                            if (selectedIndex == index) {
+                                startIndex = selectedIndex
+                                showCancelCollDataDialog.value = true
+                            }
+
+                            Column {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 5.dp),
+                                    horizontalArrangement = Arrangement.Start
+                                ) {
+                                    Text(
+                                        text = "Tag: " + itemList[index].loc,
+                                        style = MaterialTheme.typography.h6,
+                                        color = MaterialTheme.colors.onBackground,
+                                        modifier = Modifier.width(156.dp)
+                                    )
+                                    Text(
+                                        text = "Qty: " + itemList[index].qty,
+                                        style = MaterialTheme.typography.h6,
+                                        color = MaterialTheme.colors.onBackground
+                                    )
                                 }
-                            )
-                            .background(
-                                if (itemList[index].qty == "000000")
-                                Color.Red else Color.LightGray
-                            )
-
-                    ) {
-                        if (selectedIndex == index) {
-                            startIndex = selectedIndex
-                            showCancelCollDataDialog.value = true
-                        }
-
-                        Column {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 5.dp),
-                                horizontalArrangement = Arrangement.Start
-                            ) {
-                                Text(
-                                    text = "Tag: " + itemList[index].loc,
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onBackground,
-                                    modifier = Modifier.width(156.dp)
-                                )
-                                Text(
-                                    text = "Qty: " + itemList[index].qty,
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onBackground
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 5.dp),
-                                horizontalArrangement = Arrangement.Start
-                            ) {
-                                Text(
-                                    text = "Rec#: " + itemList[index].recount,
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onBackground,
-                                    modifier = Modifier.width(156.dp)
-                                )
-                                Text(
-                                    text = "Match: " + itemList[index].matchflg,
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onBackground
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 5.dp),
-                                horizontalArrangement = Arrangement.Start
-                            ) {
-                                Text(
-                                    text = "Price: " + itemList[index].price,
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onBackground,
-                                    modifier = Modifier.width(156.dp)
-                                )
-                                Text(
-                                    text = "PkSz: " + itemList[index].packsz,
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onBackground
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 5.dp),
-                                horizontalArrangement = Arrangement.Start
-                            ) {
-                                Text(
-                                    text = "Ndc: " + itemList[index].ndc,
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onBackground
-                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 5.dp),
+                                    horizontalArrangement = Arrangement.Start
+                                ) {
+                                    Text(
+                                        text = "Rec#: " + itemList[index].recount,
+                                        style = MaterialTheme.typography.h6,
+                                        color = MaterialTheme.colors.onBackground,
+                                        modifier = Modifier.width(156.dp)
+                                    )
+                                    Text(
+                                        text = "Match: " + itemList[index].matchflg,
+                                        style = MaterialTheme.typography.h6,
+                                        color = MaterialTheme.colors.onBackground
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 5.dp),
+                                    horizontalArrangement = Arrangement.Start
+                                ) {
+                                    Text(
+                                        text = "Price: " + itemList[index].price,
+                                        style = MaterialTheme.typography.h6,
+                                        color = MaterialTheme.colors.onBackground,
+                                        modifier = Modifier.width(156.dp)
+                                    )
+                                    Text(
+                                        text = "PkSz: " + itemList[index].packsz,
+                                        style = MaterialTheme.typography.h6,
+                                        color = MaterialTheme.colors.onBackground
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 5.dp),
+                                    horizontalArrangement = Arrangement.Start
+                                ) {
+                                    Text(
+                                        text = "Ndc: " + itemList[index].ndc,
+                                        style = MaterialTheme.typography.h6,
+                                        color = MaterialTheme.colors.onBackground
+                                    )
+                                }
                             }
                         }
-                    }
 
-                    coroutineScope.launch {
-                        listState.scrollToItem(index = startIndex)
+                        coroutineScope.launch {
+                            listState.scrollToItem(index = startIndex)
+                        }
                     }
                 }
             }
