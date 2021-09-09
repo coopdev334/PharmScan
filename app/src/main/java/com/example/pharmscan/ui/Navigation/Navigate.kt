@@ -26,6 +26,7 @@ fun Navigate(pharmScanViewModel: PharmScanViewModel) {
         addPhysInvUploadScreen(navController = navController, pharmScanViewModel)
         addScanScreen(navController = navController, pharmScanViewModel)
         addSettingsScreen(navController = navController, pharmScanViewModel)
+        addNetIdScreen(navController = navController, pharmScanViewModel)
 
     }
 }

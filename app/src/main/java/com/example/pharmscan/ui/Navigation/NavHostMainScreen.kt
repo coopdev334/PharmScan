@@ -86,59 +86,65 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
             //drawerShape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp, bottomEnd = 15.dp, bottomStart = 15.dp),
             drawerShape = MaterialTheme.shapes.large,
             drawerContent = {
-                Text(
-                    text = "Settings",
-                    modifier = Modifier.clickable {
-                        coroutineScope.launch {
-                            scaffoldState.drawerState.close()
-                            //scaffoldState.snackbarHostState.showSnackbar("Drawer Settings")
-                            navController.navigate(Screen.SettingsScreen.route)
-                        }
-                    },
-                    style = MaterialTheme.typography.caption,
-                    color = MaterialTheme.colors.onBackground
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(start = 20.dp)
+                ) {
+                    Text(
+                        text = "Settings",
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                scaffoldState.drawerState.close()
+                                //scaffoldState.snackbarHostState.showSnackbar("Drawer Settings")
+                                navController.navigate(Screen.SettingsScreen.route)
+                            }
+                        },
+                        style = MaterialTheme.typography.caption,
+                        color = MaterialTheme.colors.onBackground
+                    )
 
-                Spacer(modifier = Modifier.height(height = 10.dp))
+                    Spacer(modifier = Modifier.height(height = 10.dp))
 
-                Text(
-                    text = "View Cancel",
-                    modifier = Modifier.clickable {
-                        coroutineScope.launch {
-                            scaffoldState.drawerState.close()
-                            navController.navigate(Screen.ViewCancel.route) }
-                    },
-                    style = MaterialTheme.typography.caption,
-                    color = MaterialTheme.colors.onBackground
-                )
+                    Text(
+                        text = "View Cancel",
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                scaffoldState.drawerState.close()
+                                navController.navigate(Screen.ViewCancel.route) }
+                        },
+                        style = MaterialTheme.typography.caption,
+                        color = MaterialTheme.colors.onBackground
+                    )
 
-                Spacer(modifier = Modifier.height(height = 10.dp))
+                    Spacer(modifier = Modifier.height(height = 10.dp))
 
-                Text(
-                    text = "View File Name",
-                    modifier = Modifier.clickable {
-                        coroutineScope.launch {
-                            scaffoldState.drawerState.close()
-                            navController.navigate(Screen.ViewColDataFNameScreen.route)
-                        }
-                    },
-                    style = MaterialTheme.typography.caption,
-                    color = MaterialTheme.colors.onBackground
-                )
+                    Text(
+                        text = "View File Name",
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                scaffoldState.drawerState.close()
+                                navController.navigate(Screen.ViewColDataFNameScreen.route)
+                            }
+                        },
+                        style = MaterialTheme.typography.caption,
+                        color = MaterialTheme.colors.onBackground
+                    )
 
-                Spacer(modifier = Modifier.height(height = 10.dp))
+                    Spacer(modifier = Modifier.height(height = 10.dp))
 
-                Text(
-                    text = "About",
-                    modifier = Modifier.clickable {
-                        coroutineScope.launch {
-                            scaffoldState.drawerState.close()
-                            navController.navigate(Screen.AboutScreen.route)
-                        }
-                    },
-                    style = MaterialTheme.typography.caption,
-                    color = MaterialTheme.colors.onBackground
-                )
+                    Text(
+                        text = "About",
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                scaffoldState.drawerState.close()
+                                navController.navigate(Screen.AboutScreen.route)
+                            }
+                        },
+                        style = MaterialTheme.typography.caption,
+                        color = MaterialTheme.colors.onBackground
+                    )
+                }
             },
             topBar = {
                 TopAppBar(

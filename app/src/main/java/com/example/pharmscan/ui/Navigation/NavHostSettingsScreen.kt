@@ -1,13 +1,11 @@
 package com.example.pharmscan.ui.Navigation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Snackbar
-import androidx.compose.material.Text
-import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -20,133 +18,197 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.pharmscan.ui.Screen.Screen
-import com.example.pharmscan.BuildConfig
 import com.example.pharmscan.ViewModel.PharmScanViewModel
-import kotlinx.coroutines.launch
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.TextFieldValue
+
 
 fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     composable(Screen.SettingsScreen.route) {
-        val coroutineScope = rememberCoroutineScope()
+        var text by remember {mutableStateOf("")}
+
         Column(
-                modifier = Modifier.padding(start = 10.dp),
+                modifier = Modifier.padding(start = 10.dp, end = 8.dp),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Center
         ) {
             Row(
-                    modifier = Modifier
-                            .fillMaxWidth(),
-                    //.background(Color.Yellow),
-                    horizontalArrangement = Arrangement.Center
+                modifier = Modifier
+                    .fillMaxWidth(),
+                //.background(Color.Yellow),
+                horizontalArrangement = Arrangement.Center
             ) {
+
             }
             Text(
-                    text = "<-",
-                    fontSize = 40.sp,
-                    modifier = Modifier
-                            .align(alignment = Alignment.Start)
-                            .padding(start = 20.dp)
-                            .clickable {
-                                navController.popBackStack()
-                            },
-                    style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.onBackground
+                text = "<-",
+                fontSize = 40.sp,
+                modifier = Modifier
+                    .align(alignment = Alignment.Start)
+                    .padding(start = 20.dp)
+                    .clickable {
+                        navController.popBackStack()
+                    },
+                style = MaterialTheme.typography.h5,
+                color = MaterialTheme.colors.onBackground
             )
             Text(
-                    text = "Settings",
-                    style = MaterialTheme.typography.h3,
-                    color = MaterialTheme.colors.onBackground
+                text = "Settings",
+                style = MaterialTheme.typography.h3,
+                color = MaterialTheme.colors.onBackground
             )
             Spacer(modifier = Modifier.height(height = 30.dp))
             Box(
-                    Modifier
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .background(MaterialTheme.colors.secondary)
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(MaterialTheme.colors.secondary)
             )
             Spacer(modifier = Modifier.height(height = 10.dp))
             Row(
-                    modifier = Modifier.fillMaxWidth()
-                            .clickable {
-                            },
-                    verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        navController.navigate(Screen.NetIdScreen.route)
+                    },
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                        text = "Network Id",
-                        style = MaterialTheme.typography.h5,
-                        color = MaterialTheme.colors.onBackground
+                    text = "Network Id",
+                    style = MaterialTheme.typography.h5,
+                    color = MaterialTheme.colors.onBackground
                 )
             }
             Spacer(modifier = Modifier.height(height = 10.dp))
             Box(
-                    Modifier
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .background(MaterialTheme.colors.secondary)
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(MaterialTheme.colors.secondary)
             )
             Spacer(modifier = Modifier.height(height = 10.dp))
             Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                        text = "Manual Price",
-                        style = MaterialTheme.typography.h5,
-                        color = MaterialTheme.colors.onBackground
+                    text = "Manual Price",
+                    style = MaterialTheme.typography.h5,
+                    color = MaterialTheme.colors.onBackground
                 )
+                PriceEntryCheckbox()
             }
             Spacer(modifier = Modifier.height(height = 10.dp))
             Box(
-                    Modifier
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .background(MaterialTheme.colors.secondary)
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(MaterialTheme.colors.secondary)
             )
             Spacer(modifier = Modifier.height(height = 10.dp))
             Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                        text = "Cost Limit",
-                        style = MaterialTheme.typography.h5,
-                        color = MaterialTheme.colors.onBackground
+                    text = "Cost Limit",
+                    style = MaterialTheme.typography.h5,
+                    color = MaterialTheme.colors.onBackground
                 )
+                CostLimit()
             }
             Spacer(modifier = Modifier.height(height = 10.dp))
             Box(
-                    Modifier
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .background(MaterialTheme.colors.secondary)
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(MaterialTheme.colors.secondary)
             )
             Spacer(modifier = Modifier.height(height = 10.dp))
             Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                        text = "Tag Changes",
-                        style = MaterialTheme.typography.h5,
-                        color = MaterialTheme.colors.onBackground
+                    text = "Tag Changes",
+                    style = MaterialTheme.typography.h5,
+                    color = MaterialTheme.colors.onBackground
                 )
                 Text(
-                        text = "(FileSend)",
-                        style = TextStyle(
-                                    fontFamily = FontFamily.Default,
-                                    fontWeight = FontWeight.Light,
-                                    fontStyle = FontStyle.Italic,
-                                    fontSize = 15.sp
-                                ),
-                        color = MaterialTheme.colors.onBackground
+                    text = "(FileSend)",
+                    style = TextStyle(
+                        fontFamily = FontFamily.Default,
+                        fontWeight = FontWeight.Light,
+                        fontStyle = FontStyle.Italic,
+                        fontSize = 15.sp
+                    ),
+                    color = MaterialTheme.colors.onBackground
                 )
+                //Spacer(modifier = Modifier.width(width = 30.dp))
+                TagChanges()
             }
             Spacer(modifier = Modifier.height(height = 10.dp))
             Box(
-                    Modifier
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .background(MaterialTheme.colors.secondary)
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(MaterialTheme.colors.secondary)
             )
         }
     }
+}
+
+@Composable
+fun PriceEntryCheckbox(){
+    val checkedState = remember {  mutableStateOf(true)  }
+    Checkbox(
+            modifier = Modifier.size(width = 40.dp, height = 20.dp),
+            checked = checkedState.value,
+            onCheckedChange = { checkedState.value = it }
+    )
+}
+
+@Composable
+fun CostLimit() {
+    var value by remember { mutableStateOf(TextFieldValue("")) }
+    BasicTextField(
+        value = value,
+        onValueChange = { value = it },
+        decorationBox = { innerTextField ->
+            Box(
+                Modifier
+                    .border(border = BorderStroke(1.dp, Color.Black))
+                    .padding(2.dp)
+                    .size(width = 60.dp, height = 30.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                innerTextField()
+            }
+        },
+        textStyle = TextStyle(fontSize = 25.sp)
+    )
+}
+
+@Composable
+fun TagChanges() {
+    var value by remember { mutableStateOf(TextFieldValue("")) }
+    BasicTextField(
+        value = value,
+        onValueChange = { value = it },
+        decorationBox = { innerTextField ->
+            Box(
+                Modifier
+                    .border(border = BorderStroke(1.dp, Color.Black))
+                    .padding(2.dp)
+                    .size(width = 60.dp, height = 30.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                innerTextField()
+            }
+        },
+        textStyle = TextStyle(fontSize = 25.sp)
+    )
 }
