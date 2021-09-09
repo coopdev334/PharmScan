@@ -4,10 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pharmscan.Data.Tables.CollectedData
-import com.example.pharmscan.Data.Tables.HostCompName
-import com.example.pharmscan.Data.Tables.PSNdc
-import com.example.pharmscan.Data.Tables.SystemInfo
+import com.example.pharmscan.Data.Tables.*
 import com.example.pharmscan.Repository.PharmScanRepo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +14,7 @@ class PharmScanViewModel(
     private val repo: PharmScanRepo
 ): ViewModel() {
 
+    // **********************************************************************
     // HostCompName
     // LiveData holds state which is observed by the UI
     // (state flows down from ViewModel)
@@ -44,6 +42,7 @@ class PharmScanViewModel(
     private fun getAllHostCompName() = repo.getAllHostCompName()
 
 
+    // **********************************************************************
     // CollectedData
     // LiveData holds state which is observed by the UI
     // (state flows down from ViewModel)
@@ -71,6 +70,7 @@ class PharmScanViewModel(
     fun getColDataLastInsertedRow() = repo.getColDataLastInsertedRow()
 
 
+    // **********************************************************************
     // SystemInfo
     // LiveData holds state which is observed by the UI
     // (state flows down from ViewModel)
@@ -98,6 +98,7 @@ class PharmScanViewModel(
     fun getAllSystemInfo() = repo.getAllSystemInfo()
 
 
+    // **********************************************************************
     // PSNdc
     // LiveData holds state which is observed by the UI
     // (state flows down from ViewModel)
@@ -123,5 +124,33 @@ class PharmScanViewModel(
     }
 
     fun getAllPSNdc() = repo.getAllPSNdc()
+
+
+    // **********************************************************************
+    // Settings
+    // LiveData holds state which is observed by the UI
+    // (state flows down from ViewModel)
+    private var _settings = MutableLiveData(listOf<Settings>())
+    val settings: LiveData<List<Settings>> = _settings
+
+
+    // This gets all rows from database and updates live data
+    // which is observed by hostCompNameList in NavHostMainScreen
+    // to recompose LazyColumn list
+    fun updateSettingsLiveData() {
+        _settings.value = getAllSettings()
+    }
+
+    // HostCompName viewModel db interface
+    // These functions will be called by the composable views to get and set database information
+    // Suspend function modifier is not used here but in repo and dao
+    fun insertSettings(hostCompName: Settings) = CoroutineScope(Dispatchers.IO).launch {
+        repo.insertSettings(hostCompName)
+    }
+    fun deleteSettings(hostCompName: Settings) = CoroutineScope(Dispatchers.IO).launch {
+        repo.deleteSettings(hostCompName)
+    }
+
+    private fun getAllSettings() = repo.getAllSettings()
 
  }
