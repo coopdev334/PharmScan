@@ -47,7 +47,7 @@ fun SearchBar(
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier) {
-        TextField(modifier = modifier
+        TextField(modifier = Modifier
             .onPreviewKeyEvent { KeyEvent ->
             if (KeyEvent.key.nativeKeyCode == 66) {
                 keyboardController?.hide()

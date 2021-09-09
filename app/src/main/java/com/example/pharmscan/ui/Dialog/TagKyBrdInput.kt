@@ -103,12 +103,18 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.nativeKeyCode
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import com.example.pharmscan.ui.Utility.*
 
+@ExperimentalComposeUiApi
 @Composable
 fun TagKyBrdInput(
     kyBrdInput: Int,
@@ -117,16 +123,34 @@ fun TagKyBrdInput(
     onCancel: () -> Unit
 ) {
     var text by remember { mutableStateOf(ConvertNumNativeKeyCodeToString(kyBrdInput)) }
+    val keyboardController = LocalSoftwareKeyboardController.current
     val requester = FocusRequester()
     var invalidInput = false
     var reformat = true
 
     if (showDialog) {
         AlertDialog(
+            modifier = Modifier
+                .size(240.dp, 230.dp)
+                .onPreviewKeyEvent { KeyEvent ->
+                    if (KeyEvent.key.nativeKeyCode == 66) {
+                        if (!isWholeNumber(text)){
+                            invalidInput = true
+                            text = ""
+                        }else {
+                            if (text.isNotEmpty()) {
+                                keyboardController?.hide()
+                                onAdd(text)
+                            }
+                        }
+                        true
+                    } else {
+                        false
+                    }
+                },
             onDismissRequest = {
                 onCancel()
             },
-            modifier = Modifier.size(240.dp, 230.dp),
             buttons = {
                 Column(
                     modifier = Modifier
@@ -140,7 +164,7 @@ fun TagKyBrdInput(
                             if (invalidInput || !reformat) {
                                 text = ManageLength(it, 4)
                             }else{
-                                if (it.length > 4) {
+                                if (it.length > 4 || it.isEmpty()) {
                                     reformat = false
                                 }
                                 text = ManageLength(ReformatText(it, 4), 4)
@@ -212,9 +236,7 @@ fun TagKyBrdInput(
                 }
             }
         )
-        LaunchedEffect(Unit) {
-            requester.requestFocus()
-        }
+        LaunchedEffect(Unit) {requester.requestFocus()}
     }
 }
 

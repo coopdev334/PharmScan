@@ -6,12 +6,18 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.nativeKeyCode
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import com.example.pharmscan.ui.Utility.*
 
+@ExperimentalComposeUiApi
 @Composable
 fun HoldQtyKyBrdInput(
     kyBrdInput: Int,
@@ -20,16 +26,35 @@ fun HoldQtyKyBrdInput(
     onCancel: () -> Unit
 ) {
     var text by remember { mutableStateOf(ConvertNumNativeKeyCodeToString(kyBrdInput)) }
+    val keyboardController = LocalSoftwareKeyboardController.current
     val requester = FocusRequester()
     var invalidInput = false
     var reformat = true
 
     if (showDialog) {
         AlertDialog(
+            modifier = Modifier
+                .size(240.dp, 230.dp)
+                .onPreviewKeyEvent { KeyEvent ->
+                    if (KeyEvent.key.nativeKeyCode == 66) {
+                        if (text.isNotEmpty()) {
+                            if (isDecNumber(text)) {
+                                keyboardController?.hide()
+                                onAdd(text)
+                            } else {
+                                invalidInput = true
+                                text = ""
+                            }
+                        }
+                        reformat = false
+                        true
+                    } else {
+                        false
+                    }
+                },
             onDismissRequest = {
                 onCancel()
             },
-            modifier = Modifier.size(240.dp, 230.dp),
             buttons = {
                 Column(
                     modifier = Modifier
@@ -43,7 +68,7 @@ fun HoldQtyKyBrdInput(
                             if (invalidInput || !reformat) {
                                 text = ManageLength(it, 8)
                             }else{
-                                if (it.length > 8) {
+                                if (it.length > 8 || it.isEmpty()) {
                                     reformat = false
                                 }
                                 text = ManageLength(ReformatText(it, 8), 8)
@@ -114,8 +139,6 @@ fun HoldQtyKyBrdInput(
                 }
             }
         )
-        LaunchedEffect(Unit) {
-            requester.requestFocus()
-        }
+        LaunchedEffect(Unit) {requester.requestFocus()}
     }
 }
