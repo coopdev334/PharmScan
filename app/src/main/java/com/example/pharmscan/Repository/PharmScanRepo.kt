@@ -37,5 +37,5 @@ class PharmScanRepo(
     // Settings db SQL
     suspend fun insertSettings(settings: Settings) = daoSettings.insert(settings)
     suspend fun deleteSettings(settings: Settings) = daoSettings.delete(settings)
-    fun getAllSettings() = daoSettings.getAll()
+    fun getSettingsRow() = daoSettings.getRow()
 }

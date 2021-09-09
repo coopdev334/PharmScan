@@ -14,6 +14,6 @@ interface SettingsDao {
     suspend fun delete(settings: Settings)
 
     @Query("SELECT * FROM Settings LIMIT 1")
-    fun getAll(): List<Settings>
+    fun getRow(): List<Settings>
 
 }

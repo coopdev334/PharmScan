@@ -21,11 +21,25 @@ import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
+import com.example.pharmscan.Data.Tables.Settings
+import com.example.pharmscan.ui.Utility.UpdateSettings
+import com.example.pharmscan.ui.Utility.UpdateSystemInfo
+import kotlinx.coroutines.runBlocking
 
 
 fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     composable(Screen.SettingsScreen.route) {
         var text by remember {mutableStateOf("")}
+        var settings by remember {mutableStateOf(pharmScanViewModel.getSettingsRow())}
+
+        if (settings.isEmpty()){
+            runBlocking {
+                val job = pharmScanViewModel.insertSettings(Settings("","","","",""))
+                job.join()
+                settings = pharmScanViewModel.getSettingsRow()
+            }
+
+        }
 
         Column(
                 modifier = Modifier.padding(start = 10.dp, end = 8.dp),
@@ -47,6 +61,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                     .align(alignment = Alignment.Start)
                     .padding(start = 20.dp)
                     .clickable {
+                        UpdateSettings(pharmScanViewModel, settings[0])
                         navController.popBackStack()
                     },
                 style = MaterialTheme.typography.h5,
@@ -97,7 +112,13 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                     style = MaterialTheme.typography.h5,
                     color = MaterialTheme.colors.onBackground
                 )
-                PriceEntryCheckbox()
+                if (settings[0].ManualPrice == "checked") {
+                    settings[0].ManualPrice = PriceEntryCheckbox(true)
+                }else {
+                    settings[0].ManualPrice = PriceEntryCheckbox(false)
+                }
+
+
             }
             Spacer(modifier = Modifier.height(height = 10.dp))
             Box(
@@ -117,7 +138,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                     style = MaterialTheme.typography.h5,
                     color = MaterialTheme.colors.onBackground
                 )
-                CostLimit()
+                settings[0].CostLimit = CostLimit(settings)
             }
             Spacer(modifier = Modifier.height(height = 10.dp))
             Box(
@@ -147,8 +168,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                     ),
                     color = MaterialTheme.colors.onBackground
                 )
-                //Spacer(modifier = Modifier.width(width = 30.dp))
-                TagChanges()
+                settings[0].FileSendTagChgs = TagChanges(settings)
             }
             Spacer(modifier = Modifier.height(height = 10.dp))
             Box(
@@ -162,18 +182,26 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
 }
 
 @Composable
-fun PriceEntryCheckbox(){
-    val checkedState = remember {  mutableStateOf(true)  }
+fun PriceEntryCheckbox(checked: Boolean): String {
+    var checkedState by remember { mutableStateOf(checked) }
+
     Checkbox(
-            modifier = Modifier.size(width = 40.dp, height = 20.dp),
-            checked = checkedState.value,
-            onCheckedChange = { checkedState.value = it }
+        modifier = Modifier.size(width = 40.dp, height = 20.dp),
+        checked = checkedState,
+        onCheckedChange = { checkedState = it }
     )
+
+
+    if (checkedState) {
+        return "checked"
+    }
+    return "unchecked"
 }
 
 @Composable
-fun CostLimit() {
-    var value by remember { mutableStateOf(TextFieldValue("")) }
+fun CostLimit(settings: List<Settings>): String {
+    var value by remember { mutableStateOf(TextFieldValue(settings[0].CostLimit!!)) }
+
     BasicTextField(
         value = value,
         onValueChange = { value = it },
@@ -190,11 +218,14 @@ fun CostLimit() {
         },
         textStyle = TextStyle(fontSize = 25.sp)
     )
+
+    return value.text
 }
 
 @Composable
-fun TagChanges() {
-    var value by remember { mutableStateOf(TextFieldValue("")) }
+fun TagChanges(settings: List<Settings>): String{
+    var value by remember { mutableStateOf(TextFieldValue(settings[0].FileSendTagChgs!!)) }
+
     BasicTextField(
         value = value,
         onValueChange = { value = it },
@@ -211,4 +242,6 @@ fun TagChanges() {
         },
         textStyle = TextStyle(fontSize = 25.sp)
     )
+
+    return value.text
 }

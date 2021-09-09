@@ -3,7 +3,6 @@ package com.example.pharmscan.ViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.pharmscan.Data.Tables.*
 import com.example.pharmscan.Repository.PharmScanRepo
 import kotlinx.coroutines.CoroutineScope
@@ -138,7 +137,7 @@ class PharmScanViewModel(
     // which is observed by hostCompNameList in NavHostMainScreen
     // to recompose LazyColumn list
     fun updateSettingsLiveData() {
-        _settings.value = getAllSettings()
+        _settings.value = getSettingsRow()
     }
 
     // HostCompName viewModel db interface
@@ -151,6 +150,6 @@ class PharmScanViewModel(
         repo.deleteSettings(hostCompName)
     }
 
-    private fun getAllSettings() = repo.getAllSettings()
+    fun getSettingsRow() = repo.getSettingsRow()
 
  }
