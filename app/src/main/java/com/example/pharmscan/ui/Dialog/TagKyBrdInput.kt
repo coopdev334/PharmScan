@@ -145,6 +145,9 @@ fun TagKyBrdInput(
                         }
                         true
                     } else {
+                        if (KeyEvent.key.nativeKeyCode == 67) {
+                            reformat = false
+                        }
                         false
                     }
                 },
