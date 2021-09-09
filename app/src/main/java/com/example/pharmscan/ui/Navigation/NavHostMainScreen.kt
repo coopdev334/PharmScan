@@ -18,6 +18,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.ExperimentalComposeUiApi
 import com.example.pharmscan.Data.Tables.HostCompName
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.AddHostComputer
@@ -26,9 +27,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
+@ExperimentalComposeUiApi
 @ExperimentalFoundationApi
 fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
-    var delHostCompName: HostCompName = HostCompName("")
+    var delHostCompName = HostCompName("")
 
     composable(Screen.MainScreen.route) {
         val scaffoldState = rememberScaffoldState()

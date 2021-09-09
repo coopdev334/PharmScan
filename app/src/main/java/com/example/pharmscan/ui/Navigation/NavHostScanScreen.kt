@@ -142,9 +142,9 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                     NdcKyBrdInput(
                         keyBrdInput,
                         showDialog = showKyBrdInputDialog.value,
-                        onAdd = { ndc ->
+                        onAdd = {
                             showKyBrdInputDialog.value = false
-                            //val columnValue = mapOf("Tag" to ndc)
+                            //val columnValue = mapOf("Ndc" to ndc)
                             //UpdateSystemInfo(pharmScanViewModel, columnValue)
                             //statusBarBkGrColor = Color.Green
                             //statusBarText = "*** Scan BarCode ***"

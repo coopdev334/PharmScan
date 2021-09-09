@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,6 +25,7 @@ import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import kotlinx.coroutines.launch
 
+@ExperimentalComposeUiApi
 fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     composable(
         route = Screen.PhysInvUploadScreen.route + "/{hostCompName}",
