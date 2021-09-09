@@ -32,7 +32,6 @@ import kotlinx.coroutines.launch
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
-    val delHostCompName = ""
 
         composable(Screen.ViewCancel.route) {
 
@@ -52,7 +51,6 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
 
         if (showCancelCollDataDialog.value) {
             CancelCollDataRecord(
-                collDataRec = delHostCompName,
                 showDialog = showCancelCollDataDialog.value,
                 onDismiss = {
                     showCancelCollDataDialog.value = false
