@@ -98,7 +98,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
                     .height(1.dp)
                     .background(MaterialTheme.colors.secondary)
             )
-            Spacer(modifier = Modifier.height(height = 30.dp))
+            Spacer(modifier = Modifier.height(height = 10.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -163,7 +163,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
                     .height(1.dp)
                     .background(MaterialTheme.colors.secondary)
             )
-            Spacer(modifier = Modifier.height(height = 30.dp))
+            Spacer(modifier = Modifier.height(height = 10.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -178,6 +178,24 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController) {
                 )
                 Spacer(modifier = Modifier.width(width = 60.dp))
                 PriceEntryCheckbox()
+            }
+            Spacer(modifier = Modifier.height(height = 10.dp))
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(MaterialTheme.colors.secondary)
+            )
+            Button(onClick = {
+                // UPDATE DATABASE HERE
+
+                navController.popBackStack(Screen.MainScreen.route, inclusive = false)
+            }) {
+                Text(
+                    text = "OK",
+                    modifier = Modifier.padding(8.dp),
+                    style = MaterialTheme.typography.h2
+                )
             }
         }
     }
@@ -198,7 +216,7 @@ fun CostLimitTextField() {
             value = textState.value,
             onValueChange = { textState.value = it },
             modifier = Modifier
-                .height(30.dp)
+                .height(50.dp)
         )
     }
 }
@@ -210,7 +228,7 @@ fun TagChangesTextField() {
             value = textState.value,
             onValueChange = { textState.value = it },
             modifier = Modifier
-                .height(30.dp)
+                .height(50.dp)
         )
     }
 }
