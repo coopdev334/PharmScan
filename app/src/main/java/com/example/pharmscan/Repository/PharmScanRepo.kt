@@ -1,19 +1,14 @@
 package com.example.pharmscan.Repository
 
-import com.example.pharmscan.Data.DAO.CollectedDataDao
-import com.example.pharmscan.Data.DAO.HostCompNameDao
-import com.example.pharmscan.Data.DAO.PSNdcDao
-import com.example.pharmscan.Data.DAO.SystemInfoDao
-import com.example.pharmscan.Data.Tables.CollectedData
-import com.example.pharmscan.Data.Tables.HostCompName
-import com.example.pharmscan.Data.Tables.PSNdc
-import com.example.pharmscan.Data.Tables.SystemInfo
+import com.example.pharmscan.Data.DAO.*
+import com.example.pharmscan.Data.Tables.*
 
 class PharmScanRepo(
     private val daoHostCompName: HostCompNameDao,
     private val daoCollectedData: CollectedDataDao,
     private val daoSystemInfo: SystemInfoDao,
-    private val daoPSNdc: PSNdcDao
+    private val daoPSNdc: PSNdcDao,
+    private val daoSettings: SettingsDao
 ) {
     // HostCompName db SQL
     suspend fun insertHostCompName(hostCompName: HostCompName) = daoHostCompName.insert(hostCompName)
@@ -38,4 +33,9 @@ class PharmScanRepo(
     suspend fun insertPSNdc(psNdc: PSNdc) = daoPSNdc.insert(psNdc)
     suspend fun deletePSNdc(psNdc: PSNdc) = daoPSNdc.delete(psNdc)
     fun getAllPSNdc() = daoPSNdc.getAll()
+
+    // Settings db SQL
+    suspend fun insertSettings(settings: Settings) = daoSettings.insert(settings)
+    suspend fun deleteSettings(settings: Settings) = daoSettings.delete(settings)
+    fun getAllSettings() = daoSettings.getAll()
 }
