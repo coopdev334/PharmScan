@@ -23,7 +23,6 @@ import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ui.Utility.SearchBar
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.CancelCollDataRecord
@@ -161,7 +160,7 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                     .fillMaxWidth()
                     .padding(start = 5.dp, top = 5.dp, end = 5.dp)
             ) { searchText ->
-                // This lamda function gets called when soft keyboard popup search button is pressed
+                // This lamda function gets called when searching
                 when (hintLabel) {
                     "Rec#" -> {
                         itemList = pharmScanViewModel.getAllCollectedDataOrderByRecCnt()
@@ -193,10 +192,6 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                     horizontalAlignment = Alignment.Start
                 ) {
-                    // If startIndex is -1 then search did not find a match. Clear itemlist
-//                    if (startIndex == -1) {
-//                        itemList.clear()
-//                    }
 
                     items(itemList.size) { index ->
                         Box(
