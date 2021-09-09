@@ -5,6 +5,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 
 // Set of Material typography styles to start with
@@ -26,6 +27,12 @@ val Typography = Typography(
         fontWeight = FontWeight.W300,
         fontStyle = FontStyle.Italic,
         fontSize = 30.sp
-    )
+    ),
 
+    subtitle2 = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.W500,
+        fontSize = 30.sp,
+        textDecoration = TextDecoration.Underline
+    )
 )

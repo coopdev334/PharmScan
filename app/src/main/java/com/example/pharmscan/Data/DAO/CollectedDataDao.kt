@@ -2,8 +2,7 @@ package com.example.pharmscan.Data.DAO
 
 import androidx.room.*
 import com.example.pharmscan.Data.Tables.CollectedData
-import com.example.pharmscan.Data.Tables.HostCompName
-import com.example.pharmscan.ui.Navigation.CollectedDataViewCancelSearch
+import com.example.pharmscan.Data.Tables.PSNdc
 
 // This object contains all the SQL needed to access the
 // database tables.
@@ -18,14 +17,17 @@ interface CollectedDataDao {
     @Query("SELECT * FROM CollectedData")
     fun getAll(): List<CollectedData>
 
-    @Query("SELECT ndc, qty, price, packsz, matchflg, loc, recount FROM CollectedData ORDER BY recount")
-    fun getAllOrderByRecCnt(): MutableList<CollectedDataViewCancelSearch>
+    @Query("SELECT * FROM CollectedData ORDER BY recount")
+    fun getAllOrderByRecCnt(): MutableList<CollectedData>
 
-    @Query("SELECT ndc, qty, price, packsz, matchflg, loc, recount FROM CollectedData ORDER BY loc")
-    fun getAllOrderByTag(): MutableList<CollectedDataViewCancelSearch>
+    @Query("SELECT * FROM CollectedData ORDER BY loc")
+    fun getAllOrderByTag(): MutableList<CollectedData>
 
-    @Query("SELECT ndc, qty, price, packsz, matchflg, loc, recount FROM CollectedData ORDER BY ndc")
-    fun getAllOrderByNdc(): MutableList<CollectedDataViewCancelSearch>
+    @Query("SELECT * FROM CollectedData ORDER BY ndc")
+    fun getAllOrderByNdc(): MutableList<CollectedData>
+
+    @Query("SELECT * FROM CollectedData WHERE iD = (SELECT MAX(iD) FROM CollectedData) LIMIT 1")
+    fun getLastInsertedRow(): List<CollectedData>
 
 
 }

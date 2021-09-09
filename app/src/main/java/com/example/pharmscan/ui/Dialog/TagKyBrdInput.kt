@@ -5,44 +5,50 @@ package com.example.pharmscan.ui.Dialog
 //import androidx.compose.material.*
 //import androidx.compose.runtime.Composable
 //import androidx.compose.runtime.*
-//import androidx.compose.runtime.saveable.rememberSaveable
 //import androidx.compose.ui.Alignment
 //import androidx.compose.ui.Modifier
 //import androidx.compose.ui.focus.FocusRequester
 //import androidx.compose.ui.focus.focusRequester
-////import androidx.compose.ui.text.input.KeyboardType
 //import androidx.compose.ui.unit.dp
 //import com.example.pharmscan.ui.Utility.*
 //
 //@Composable
-//fun GetOpId(
+//fun TagKyBrdInput(
+//    tagKyBrdInput: Int,
 //    showDialog: Boolean,
-//    onDismiss: () -> Unit,
-//    onToScanScreen: (opid: String) -> Unit
+//    onAdd: (name: String) -> Unit,
+//    onCancel: () -> Unit
 //) {
-//    var text by rememberSaveable { mutableStateOf("") }
+//    var text by remember { mutableStateOf(ConvertNumNativeKeyCodeToString(tagKyBrdInput)) }
 //    val requester = FocusRequester()
+//    var reformat by remember { mutableStateOf(true) }
 //
 //    if (showDialog) {
 //        AlertDialog(
 //            onDismissRequest = {
-//                onDismiss()
+//                onCancel()
 //            },
-//            modifier = Modifier
-//                .size(200.dp, 200.dp),
+//
+//            modifier = Modifier.size(200.dp, 200.dp),
 //            text = {
-//                Text("")
 //                OutlinedTextField(
 //                    value = text,
 //                    onValueChange = {
-//                        text = ManageLength(it, 3)
+//                        if (!reformat) {
+//                            text = ManageLength(it, 4)
+//                        }else{
+//                            if (it.length > 4) {
+//                                reformat = false
+//                            }
+//                            text = ManageLength(ReformatText(it, 4), 4)
+//                        }
 //                    },
 //                    label = {
 //                        Column(
 //                            modifier = Modifier.padding(bottom = 8.dp)
 //                        ) {
 //                            Text(
-//                                text = "Operator Id",
+//                                text = "Tag",
 //                                style = MaterialTheme.typography.h5
 //                            )
 //                        }
@@ -52,7 +58,6 @@ package com.example.pharmscan.ui.Dialog
 //                    modifier = Modifier
 //                        .focusRequester(requester)
 //                        .focusable()
-//                    //keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
 //                )
 //            },
 //            buttons = {
@@ -67,7 +72,7 @@ package com.example.pharmscan.ui.Dialog
 //                        verticalAlignment = Alignment.Bottom
 //                    ) {
 //                        TextButton(
-//                            onClick = { onDismiss() }
+//                            onClick = { onCancel() }
 //                        ) {
 //                            Text(
 //                                text = "Cancel",
@@ -75,13 +80,7 @@ package com.example.pharmscan.ui.Dialog
 //                            )
 //                        }
 //                        Button(
-//                            onClick = {
-//                                if (text.isNotEmpty()) {
-//                                    onToScanScreen(text)
-//                                }else {
-//                                    onDismiss()
-//                                }
-//                            }
+//                            onClick = { onAdd(text) }
 //                        ) {
 //                            Text(
 //                                text = " OK ",
@@ -117,15 +116,17 @@ import com.example.pharmscan.ui.Utility.*
 
 @ExperimentalComposeUiApi
 @Composable
-fun GetOpId(
+fun TagKyBrdInput(
+    kyBrdInput: Int,
     showDialog: Boolean,
-    onCancel: () -> Unit,
-    onToScanScreen: (opid: String) -> Unit
+    onAdd: (name: String) -> Unit,
+    onCancel: () -> Unit
 ) {
-    var text by remember { mutableStateOf("") }
+    var text by remember { mutableStateOf(ConvertNumNativeKeyCodeToString(kyBrdInput)) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val requester = FocusRequester()
     var invalidInput = false
+    var reformat = true
 
     if (showDialog) {
         AlertDialog(
@@ -139,11 +140,14 @@ fun GetOpId(
                         }else {
                             if (text.isNotEmpty()) {
                                 keyboardController?.hide()
-                                onToScanScreen(text)
+                                onAdd(text)
                             }
                         }
                         true
                     } else {
+                        if (KeyEvent.key.nativeKeyCode == 67) {
+                            reformat = false
+                        }
                         false
                     }
                 },
@@ -160,14 +164,21 @@ fun GetOpId(
                     OutlinedTextField(
                         value = text,
                         onValueChange = {
-                                text = ManageLength(it, 3)
+                            if (invalidInput || !reformat) {
+                                text = ManageLength(it, 4)
+                            }else{
+                                if (it.length > 4 || it.isEmpty()) {
+                                    reformat = false
+                                }
+                                text = ManageLength(ReformatText(it, 4), 4)
+                            }
                         },
                         label = {
                             Column(
                                 modifier = Modifier.padding(bottom = 8.dp)
                             ) {
                                 Text(
-                                    text = "Operator Id",
+                                    text = "Tag",
                                     style = MaterialTheme.typography.h5
                                 )
                             }
@@ -215,11 +226,7 @@ fun GetOpId(
                                     invalidInput = true
                                     text = ""
                                 }else {
-                                    if (text.isNotEmpty()) {
-                                        onToScanScreen(text)
-                                    }else {
-                                        onCancel()
-                                    }
+                                    onAdd(text)
                                 }
                             }
                         ) {
@@ -232,9 +239,9 @@ fun GetOpId(
                 }
             }
         )
-        LaunchedEffect(Unit) {
-            requester.requestFocus()
-        }
+        LaunchedEffect(Unit) {requester.requestFocus()}
     }
 }
+
+
 

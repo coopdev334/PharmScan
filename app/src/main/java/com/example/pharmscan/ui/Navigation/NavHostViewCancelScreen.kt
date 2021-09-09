@@ -7,11 +7,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,31 +24,45 @@ import com.example.pharmscan.ui.Utility.SearchBar
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
 import com.example.pharmscan.Data.Tables.CollectedData
-import com.example.pharmscan.Data.Tables.HostCompName
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.CancelCollDataRecord
+import com.example.pharmscan.ui.Utility.ClearText
 import kotlinx.coroutines.launch
 
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
-    val delHostCompName = ""
 
         composable(Screen.ViewCancel.route) {
 
-        var itemList: MutableList<CollectedDataViewCancelSearch> by remember {mutableStateOf(mutableListOf<CollectedDataViewCancelSearch>())}
+        var itemList: MutableList<CollectedData> by remember {mutableStateOf(mutableListOf<CollectedData>())}
         var startIndex: Int by remember {mutableStateOf(0)}
         var hintLabel by remember {mutableStateOf("Rec#")}
         val listState = rememberLazyListState()
-        var clearTxt by remember {mutableStateOf(false)}
+        var clearTxt by remember {mutableStateOf(ClearText(false))}
         val showCancelCollDataDialog = remember { mutableStateOf(false) }
         val coroutineScope = rememberCoroutineScope()
+        var selectedIndex by remember{mutableStateOf(-1)}
+        var btnSelectedRec by remember {mutableStateOf(true)}
+        var btnSelectedTag by remember {mutableStateOf(false)}
+        var btnSelectedNdc by remember {mutableStateOf(false)}
+        var textStyle = MaterialTheme.typography.subtitle1
+        var ontextStyle = MaterialTheme.typography.subtitle2
 
         if (showCancelCollDataDialog.value) {
             CancelCollDataRecord(
-                collDataRec = delHostCompName,
                 showDialog = showCancelCollDataDialog.value,
-                onDismiss = {showCancelCollDataDialog.value = false})
+                onDismiss = {
+                    showCancelCollDataDialog.value = false
+                    selectedIndex = -1
+                },
+                onCancelRecord = {
+                    itemList[selectedIndex].qty = "000000"
+                    pharmScanViewModel.insertCollectedData(itemList[selectedIndex])
+                    showCancelCollDataDialog.value = false
+                    selectedIndex = -1
+                }
+            )
         }
 
         Column(
@@ -74,26 +88,15 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                 style = MaterialTheme.typography.subtitle1,
                 color = MaterialTheme.colors.onBackground
             )
-//            SearchBar(
-//                clear = clearTxt,
-//                hintLabel = hintLabel,
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(all = 18.dp),
-//            ) {searchText ->
-//                // This lamda function gets called when soft keyboard popup search button is pressed
-//                itemList = pharmScanViewModel.getAllCollectedDataOrderByRecCnt()
-//                startIndex = itemList.indexOfFirst { it.recount == searchText }
-//            }
-
-            clearTxt = false
             Spacer(modifier = Modifier.height(height = 5.dp))
-
             Row(horizontalArrangement = Arrangement.SpaceEvenly) {
                 OutlinedButton(
                     onClick = {
                         hintLabel = "Rec#"
-                        clearTxt = true
+                        clearTxt.clear = true
+                        btnSelectedRec = true
+                        btnSelectedTag = false
+                        btnSelectedNdc = false
                     },
                     shape = RoundedCornerShape(50),
                     border = BorderStroke(1.dp, MaterialTheme.colors.onBackground),
@@ -102,14 +105,18 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                 ) {
                     Text(
                         text = "Rec#",
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
+                        style = if(btnSelectedRec) ontextStyle else textStyle
                     )
                 }
                 Spacer(modifier = Modifier.width(width = 10.dp))
                 OutlinedButton(
                     onClick = {
                         hintLabel = "Tag"
-                        clearTxt = true
+                        clearTxt.clear = true
+                        btnSelectedRec = false
+                        btnSelectedTag = true
+                        btnSelectedNdc = false
                     },
                     shape = RoundedCornerShape(50),
                     border = BorderStroke(1.dp, MaterialTheme.colors.onBackground),
@@ -118,14 +125,18 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                 ) {
                     Text(
                         text = "Tag",
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
+                        style = if(btnSelectedTag) ontextStyle else textStyle
                     )
                 }
                 Spacer(modifier = Modifier.width(width = 10.dp))
                 OutlinedButton(
                     onClick = {
                         hintLabel = "Ndc"
-                        clearTxt = true
+                        clearTxt.clear = true
+                        btnSelectedRec = false
+                        btnSelectedTag = false
+                        btnSelectedNdc = true
                     },
                     shape = RoundedCornerShape(50),
                     border = BorderStroke(1.dp, MaterialTheme.colors.onBackground),
@@ -134,7 +145,8 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                 ) {
                     Text(
                         text = "Ndc",
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
+                        style = if(btnSelectedNdc) ontextStyle else textStyle
                     )
                 }
             }
@@ -144,138 +156,141 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                 hintLabel = hintLabel,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(all = 5.dp),
-            ) {searchText ->
-                // This lamda function gets called when soft keyboard popup search button is pressed
-                if (hintLabel == "Rec#") {
-                    itemList = pharmScanViewModel.getAllCollectedDataOrderByRecCnt()
-                    startIndex = itemList.indexOfFirst { it.recount == searchText }
-                }
-                if (hintLabel == "Tag") {
-                    itemList = pharmScanViewModel.getAllCollectedDataOrderByTag()
-                    startIndex = itemList.indexOfFirst { it.loc == searchText }
-                }
-                if (hintLabel == "Ndc") {
-                    itemList = pharmScanViewModel.getAllCollectedDataOrderByNdc()
-                    startIndex = itemList.indexOfFirst { it.ndc == searchText }
+                    .padding(start = 5.dp, top = 5.dp, end = 5.dp)
+            ) { searchText ->
+                // This lamda function gets called when searching
+                when (hintLabel) {
+                    "Rec#" -> {
+                        itemList = pharmScanViewModel.getAllCollectedDataOrderByRecCnt()
+                        startIndex = itemList.indexOfFirst { it.recount == searchText }
+                    }
+                    "Tag" -> {
+                        itemList = pharmScanViewModel.getAllCollectedDataOrderByTag()
+                        startIndex = itemList.indexOfFirst { it.loc == searchText }
+                    }
+                    "Ndc" -> {
+                        itemList = pharmScanViewModel.getAllCollectedDataOrderByNdc()
+                        startIndex = itemList.indexOfFirst { it.ndc == searchText }
+                    }
                 }
             }
 
-            LazyColumn(
-                modifier = Modifier.padding(top = 5.dp, bottom = 5.dp, start = 5.dp),
-                state = listState,
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                horizontalAlignment = Alignment.Start
-            ) {
-                // If startIndex is -1 then search did find a match. Clear itemlist
-                if (startIndex == -1) {
-                    itemList.clear()
-                    itemList.add(CollectedDataViewCancelSearch("","","","","","",""))
-                    startIndex = 0
-                }
+            if (startIndex == -1) {
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "*** No Match ***",
+                    style = MaterialTheme.typography.h4,
+                    color = MaterialTheme.colors.error
+                )
+            }
+            else {
+                LazyColumn(
+                    modifier = Modifier.padding(top = 5.dp, bottom = 5.dp, start = 5.dp),
+                    state = listState,
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalAlignment = Alignment.Start
+                ) {
 
-                items(itemList.size) { index ->
-                    Box(
-                        modifier = Modifier
-                            //.height(80.dp)
-                            .clickable {
+                    items(itemList.size) { index ->
+                        Box(
+                            modifier = Modifier
+                                .selectable(
+                                    selected = index == selectedIndex,
+                                    onClick = {
+                                        if (selectedIndex != index)
+                                            selectedIndex = index else selectedIndex = -1
+                                    }
+                                )
+                                .background(
+                                    if (itemList[index].qty == "000000")
+                                        Color.Red else Color.LightGray
+                                )
+
+                        ) {
+                            if (selectedIndex == index) {
+                                startIndex = selectedIndex
                                 showCancelCollDataDialog.value = true
                             }
-                            .background(color = Color.LightGray)
 
-                    ) {
-                        Column {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 5.dp),
-                                horizontalArrangement = Arrangement.Start
-                            ) {
-                                Text(
-                                    text = "Tag: " + itemList[index].loc,
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onBackground,
-                                    modifier = Modifier.width(156.dp)
-                                )
-                                Text(
-                                    text = "Qty: " + itemList[index].qty,
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onBackground
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 5.dp),
-                                //.background(Color.),
-                                horizontalArrangement = Arrangement.Start
-                            ) {
-                                Text(
-                                    text = "Rec#: " + itemList[index].recount,
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onBackground,
-                                    modifier = Modifier.width(156.dp)
-                                )
-                                Text(
-                                    text = "Match: " + itemList[index].matchflg,
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onBackground
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 5.dp),
-                                //.background(Color.Yellow),
-                                horizontalArrangement = Arrangement.Start
-                            ) {
-                                Text(
-                                    text = "Price: " + itemList[index].price,
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onBackground,
-                                    modifier = Modifier.width(156.dp)
-                                )
-                                Text(
-                                    text = "PkSz: " + itemList[index].packsz,
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onBackground
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 5.dp),
-                                //.background(Color.Yellow),
-                                horizontalArrangement = Arrangement.Start
-                            ) {
-                                Text(
-                                    text = "Ndc: " + itemList[index].ndc,
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onBackground
-                                )
+                            Column {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 5.dp),
+                                    horizontalArrangement = Arrangement.Start
+                                ) {
+                                    Text(
+                                        text = "Tag: " + itemList[index].loc,
+                                        style = MaterialTheme.typography.h6,
+                                        color = MaterialTheme.colors.onBackground,
+                                        modifier = Modifier.width(156.dp)
+                                    )
+                                    Text(
+                                        text = "Qty: " + itemList[index].qty,
+                                        style = MaterialTheme.typography.h6,
+                                        color = MaterialTheme.colors.onBackground
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 5.dp),
+                                    horizontalArrangement = Arrangement.Start
+                                ) {
+                                    Text(
+                                        text = "Rec#: " + itemList[index].recount,
+                                        style = MaterialTheme.typography.h6,
+                                        color = MaterialTheme.colors.onBackground,
+                                        modifier = Modifier.width(156.dp)
+                                    )
+                                    Text(
+                                        text = "Match: " + itemList[index].matchflg,
+                                        style = MaterialTheme.typography.h6,
+                                        color = MaterialTheme.colors.onBackground
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 5.dp),
+                                    horizontalArrangement = Arrangement.Start
+                                ) {
+                                    Text(
+                                        text = "Price: " + itemList[index].price,
+                                        style = MaterialTheme.typography.h6,
+                                        color = MaterialTheme.colors.onBackground,
+                                        modifier = Modifier.width(156.dp)
+                                    )
+                                    Text(
+                                        text = "PkSz: " + itemList[index].packsz,
+                                        style = MaterialTheme.typography.h6,
+                                        color = MaterialTheme.colors.onBackground
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 5.dp),
+                                    horizontalArrangement = Arrangement.Start
+                                ) {
+                                    Text(
+                                        text = "Ndc: " + itemList[index].ndc,
+                                        style = MaterialTheme.typography.h6,
+                                        color = MaterialTheme.colors.onBackground
+                                    )
+                                }
                             }
                         }
-                    }
 
-                    coroutineScope.launch {
-                        listState.scrollToItem(index = startIndex)
+                        coroutineScope.launch {
+                            listState.scrollToItem(index = startIndex)
+                        }
                     }
                 }
             }
         }
     }
 }
-
-
-data class CollectedDataViewCancelSearch(
-    val	ndc: String?,
-    val	qty: String?,
-    val	price: String?,
-    val	packsz: String?,
-    val	matchflg: String?,
-    val	loc: String?,
-    val	recount: String?
-)

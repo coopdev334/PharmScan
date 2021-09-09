@@ -15,17 +15,21 @@ import androidx.compose.ui.input.key.nativeKeyCode
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
+import com.example.pharmscan.ui.Utility.*
 
 @ExperimentalComposeUiApi
 @Composable
-fun AddHostComputer(
+fun HoldQtyKyBrdInput(
+    kyBrdInput: Int,
     showDialog: Boolean,
     onAdd: (name: String) -> Unit,
     onCancel: () -> Unit
 ) {
-    var text by remember { mutableStateOf("") }
+    var text by remember { mutableStateOf(ConvertNumNativeKeyCodeToString(kyBrdInput)) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val requester = FocusRequester()
+    var invalidInput = false
+    var reformat = true
 
     if (showDialog) {
         AlertDialog(
@@ -33,10 +37,21 @@ fun AddHostComputer(
                 .size(240.dp, 230.dp)
                 .onPreviewKeyEvent { KeyEvent ->
                     if (KeyEvent.key.nativeKeyCode == 66) {
-                        keyboardController?.hide()
-                        onAdd(text)
+                        if (text.isNotEmpty()) {
+                            if (isDecNumber(text)) {
+                                keyboardController?.hide()
+                                onAdd(text)
+                            } else {
+                                invalidInput = true
+                                text = ""
+                            }
+                        }
+                        reformat = false
                         true
                     } else {
+                        if (KeyEvent.key.nativeKeyCode == 67) {
+                            reformat = false
+                        }
                         false
                     }
                 },
@@ -53,14 +68,21 @@ fun AddHostComputer(
                     OutlinedTextField(
                         value = text,
                         onValueChange = {
-                            text = it
+                            if (invalidInput || !reformat) {
+                                text = ManageLength(it, 8)
+                            }else{
+                                if (it.length > 8 || it.isEmpty()) {
+                                    reformat = false
+                                }
+                                text = ManageLength(ReformatText(it, 8), 8)
+                            }
                         },
                         label = {
                             Column(
                                 modifier = Modifier.padding(bottom = 8.dp)
                             ) {
                                 Text(
-                                    text = "Host Computer",
+                                    text = "Qty",
                                     style = MaterialTheme.typography.h5
                                 )
                             }
@@ -71,7 +93,21 @@ fun AddHostComputer(
                             .focusRequester(requester)
                             .focusable()
                     )
-                    Spacer(modifier = Modifier.height(40.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        val textColor = if (invalidInput) {
+                                            MaterialTheme.colors.error
+                                        } else {
+                                            MaterialTheme.colors.onBackground
+                                        }
+                       Text(
+                           text = if (invalidInput) "Requires number with 1 decimal" else "",
+                           style = MaterialTheme.typography.h6,
+                           color = textColor
+                        )
+                    }
                     Row(
                         modifier = Modifier.fillMaxSize(),
                         horizontalArrangement = Arrangement.End,
@@ -89,13 +125,16 @@ fun AddHostComputer(
                         Button(
                             modifier = Modifier.size(width = 90.dp, height = 45.dp),
                             onClick = {
-                                if (text.isNotEmpty()) {
+                                if (!isDecNumber(text)){
+                                    invalidInput = true
+                                    text = ""
+                                }else {
                                     onAdd(text)
                                 }
                             }
                         ) {
                             Text(
-                                text = " Add ",
+                                text = " OK ",
                                 style = MaterialTheme.typography.h6
                             )
                         }
@@ -103,8 +142,6 @@ fun AddHostComputer(
                 }
             }
         )
-        LaunchedEffect(Unit) {
-            requester.requestFocus()
-        }
+        LaunchedEffect(Unit) {requester.requestFocus()}
     }
 }
