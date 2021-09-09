@@ -45,11 +45,13 @@ fun NavGraphBuilder.addNetIdScreen(navController: NavController, pharmScanViewMo
                 text = "<-",
                 fontSize = 40.sp,
                 modifier = Modifier
-                    .align(alignment = Alignment.Start)
-                    .padding(start = 20.dp)
-                    .clickable {
-                        navController.popBackStack()
-                    },
+                        .align(alignment = Alignment.Start)
+                        .padding(start = 20.dp)
+                        .clickable {
+                            // INPUT THE INFO INTO DATABASE HERE
+
+                            navController.popBackStack()
+                        },
                 style = MaterialTheme.typography.h5,
                 color = MaterialTheme.colors.onBackground
             )
@@ -60,31 +62,32 @@ fun NavGraphBuilder.addNetIdScreen(navController: NavController, pharmScanViewMo
             )
             Spacer(modifier = Modifier.height(height = 30.dp))
             Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(MaterialTheme.colors.secondary)
+                    Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(MaterialTheme.colors.secondary)
             )
             Spacer(modifier = Modifier.height(height = 10.dp))
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                    },
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
                     text = "Host Account",
                     style = MaterialTheme.typography.h5,
                     color = MaterialTheme.colors.onBackground
                 )
+                Spacer(modifier = Modifier.width(width = 10.dp))
+                HostNameTextField()
             }
             Spacer(modifier = Modifier.height(height = 10.dp))
             Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(MaterialTheme.colors.secondary)
+                    Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(MaterialTheme.colors.secondary)
             )
             Spacer(modifier = Modifier.height(height = 10.dp))
             Row(
@@ -97,67 +100,59 @@ fun NavGraphBuilder.addNetIdScreen(navController: NavController, pharmScanViewMo
                     style = MaterialTheme.typography.h5,
                     color = MaterialTheme.colors.onBackground
                 )
-                //PriceEntryCheckbox()
+                Spacer(modifier = Modifier.width(width = 10.dp))
+                HostPasswordTextField()
             }
             Spacer(modifier = Modifier.height(height = 10.dp))
             Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(MaterialTheme.colors.secondary)
+                    Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(MaterialTheme.colors.secondary)
             )
         }
     }
 }
 
-//@Composable
-//fun PriceEntryCheckbox(){
-//    val checkedState = remember {  mutableStateOf(true)  }
-//    Checkbox(
-//        modifier = Modifier.size(width = 40.dp, height = 20.dp),
-//        checked = checkedState.value,
-//        onCheckedChange = { checkedState.value = it }
-//    )
-//}
 //
-//@Composable
-//fun CostLimit() {
-//    var value by remember { mutableStateOf(TextFieldValue("")) }
-//    BasicTextField(
-//        value = value,
-//        onValueChange = { value = it },
-//        decorationBox = { innerTextField ->
-//            Box(
-//                Modifier
-//                    .border(border = BorderStroke(1.dp, Color.Black))
-//                    .padding(2.dp)
-//                    .size(width = 60.dp, height = 30.dp),
-//                contentAlignment = Alignment.CenterStart
-//            ) {
-//                innerTextField()
-//            }
-//        },
-//        textStyle = TextStyle(fontSize = 25.sp)
-//    )
-//}
-//
-//@Composable
-//fun TagChanges() {
-//    var value by remember { mutableStateOf(TextFieldValue("")) }
-//    BasicTextField(
-//        value = value,
-//        onValueChange = { value = it },
-//        decorationBox = { innerTextField ->
-//            Box(
-//                Modifier
-//                    .border(border = BorderStroke(1.dp, Color.Black))
-//                    .padding(2.dp)
-//                    .size(width = 60.dp, height = 30.dp),
-//                contentAlignment = Alignment.CenterStart
-//            ) {
-//                innerTextField()
-//            }
-//        },
-//        textStyle = TextStyle(fontSize = 25.sp)
-//    )
-//}
+@Composable
+fun HostNameTextField() {
+    var value by remember { mutableStateOf(TextFieldValue("")) }
+    BasicTextField(
+        value = value,
+        onValueChange = { value = it },
+        decorationBox = { innerTextField ->
+            Box(
+                    Modifier
+                            .border(border = BorderStroke(1.dp, Color.Black))
+                            .padding(2.dp)
+                            .size(width = 490.dp, height = 30.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                innerTextField()
+            }
+        },
+        textStyle = TextStyle(fontSize = 25.sp)
+    )
+}
+
+@Composable
+fun HostPasswordTextField() {
+    var value by remember { mutableStateOf(TextFieldValue("")) }
+    BasicTextField(
+        value = value,
+        onValueChange = { value = it },
+        decorationBox = { innerTextField ->
+            Box(
+                    Modifier
+                            .border(border = BorderStroke(1.dp, Color.Black))
+                            .padding(2.dp)
+                            .size(width = 490.dp, height = 30.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                innerTextField()
+            }
+        },
+        textStyle = TextStyle(fontSize = 25.sp)
+    )
+}
