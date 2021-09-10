@@ -34,7 +34,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
 
         if (settings.isEmpty()){
             runBlocking {
-                val job = pharmScanViewModel.insertSettings(Settings("name","password","","",""))
+                val job = pharmScanViewModel.insertSettings(Settings("","","","",""))
                 job.join()
                 settings = pharmScanViewModel.getSettingsRow()
             }
