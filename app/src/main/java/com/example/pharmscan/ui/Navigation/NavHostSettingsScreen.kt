@@ -7,6 +7,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -23,14 +24,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import com.example.pharmscan.Data.Tables.Settings
 import com.example.pharmscan.ui.Utility.UpdateSettings
-import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import kotlinx.coroutines.runBlocking
 
 
+@ExperimentalComposeUiApi
 fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     composable(Screen.SettingsScreen.route) {
-        var text by remember {mutableStateOf("")}
         var settings by remember {mutableStateOf(pharmScanViewModel.getSettingsRow())}
+
+        // update settings when built-in back button is used
+        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+            UpdateSettings(pharmScanViewModel, settings[0])
+        }
 
         if (settings.isEmpty()){
             runBlocking {
@@ -49,7 +54,6 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
-                //.background(Color.Yellow),
                 horizontalArrangement = Arrangement.Center
             ) {
 
@@ -210,7 +214,7 @@ fun CostLimit(settings: List<Settings>): String {
                 Modifier
                     .border(border = BorderStroke(1.dp, Color.Black))
                     .padding(2.dp)
-                    .size(width = 60.dp, height = 30.dp),
+                    .size(width = 90.dp, height = 30.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
                 innerTextField()
@@ -222,13 +226,15 @@ fun CostLimit(settings: List<Settings>): String {
     return value.text
 }
 
+@ExperimentalComposeUiApi
 @Composable
 fun TagChanges(settings: List<Settings>): String{
     var value by remember { mutableStateOf(TextFieldValue(settings[0].FileSendTagChgs!!)) }
 
     BasicTextField(
         value = value,
-        onValueChange = { value = it },
+        onValueChange = {
+            value = it },
         decorationBox = { innerTextField ->
             Box(
                 Modifier

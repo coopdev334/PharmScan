@@ -1,7 +1,6 @@
 package com.example.pharmscan.ui.Utility
 
 import com.example.pharmscan.Data.Tables.Settings
-import com.example.pharmscan.Data.Tables.SystemInfo
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import kotlinx.coroutines.runBlocking
 
