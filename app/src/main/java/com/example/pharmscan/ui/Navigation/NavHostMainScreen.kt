@@ -81,6 +81,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
             )
         }
 
+        // NOTE: Changes need to be made also in all screens with the scafford settings
         Scaffold(
             scaffoldState = scaffoldState,
             //drawerShape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp, bottomEnd = 15.dp, bottomStart = 15.dp),
@@ -178,12 +179,6 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                 ){
                     Text(
                         text = "Select Host Computer",
-                        modifier = Modifier.clickable {
-                            coroutineScope.launch {
-                                scaffoldState.drawerState.close()
-                                scaffoldState.snackbarHostState.showSnackbar("Drawer Settings")
-                            }
-                        },
                         style = MaterialTheme.typography.h5,
                         color = MaterialTheme.colors.onBackground
                     )

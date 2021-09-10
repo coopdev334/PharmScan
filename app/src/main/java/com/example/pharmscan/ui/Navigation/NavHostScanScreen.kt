@@ -158,6 +158,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         }
 
 
+        // NOTE: Changes need to be made also in all screens with the scafford settings
         Scaffold(
             scaffoldState = scaffoldState,
             modifier = Modifier
@@ -176,9 +177,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                 Text(
                     text = "Settings",
                     modifier = Modifier.clickable {
-                        coroutineScope.launch {
-                            scaffoldState.drawerState.close()
-                            scaffoldState.snackbarHostState.showSnackbar("Drawer Settings") }
+                        navController.navigate(Screen.SettingsScreen.route)
                     },
                     style = MaterialTheme.typography.caption,
                     color = MaterialTheme.colors.onBackground
