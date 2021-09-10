@@ -67,6 +67,9 @@ class PharmScanViewModel(
     fun getAllCollectedDataOrderByTag() = repo.getAllCollectedDataOrderByTag()
     fun getAllCollectedDataOrderByNdc() = repo.getAllCollectedDataOrderByNdc()
     fun getColDataLastInsertedRow() = repo.getColDataLastInsertedRow()
+    fun uploadCollectedData() = CoroutineScope(Dispatchers.Main).launch {
+        repo.uploadCollectedData()
+    }
 
 
     // **********************************************************************

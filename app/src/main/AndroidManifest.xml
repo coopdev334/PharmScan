@@ -3,6 +3,7 @@
     package="com.example.pharmscan">
 
     <application
+        android:name=".PharmScanApplication"
         android:allowBackup="true"
         android:windowSoftInputMode="adjustResize"
         android:icon="@mipmap/ic_pharm"

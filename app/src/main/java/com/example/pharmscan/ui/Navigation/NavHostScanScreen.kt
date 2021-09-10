@@ -175,55 +175,65 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
 
             drawerShape = MaterialTheme.shapes.large,
             drawerContent = {
-                Text(
-                    text = "Settings",
-                    modifier = Modifier.clickable {
-                        navController.navigate(Screen.SettingsScreen.route)
-                    },
-                    style = MaterialTheme.typography.caption,
-                    color = MaterialTheme.colors.onBackground
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(start = 20.dp)
+                ) {
+                    Text(
+                        text = "Settings",
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                scaffoldState.drawerState.close()
+                                //scaffoldState.snackbarHostState.showSnackbar("Drawer Settings")
+                                navController.navigate(Screen.SettingsScreen.route)
+                            }
+                        },
+                        style = MaterialTheme.typography.caption,
+                        color = MaterialTheme.colors.onBackground
+                    )
 
-                Spacer(modifier = Modifier.height(height = 10.dp))
+                    Spacer(modifier = Modifier.height(height = 10.dp))
 
-                Text(
-                    text = "View Cancel",
-                    modifier = Modifier.clickable {
-                        coroutineScope.launch {
-                            scaffoldState.drawerState.close()
-                            navController.navigate(Screen.ViewCancel.route) }
-                    },
-                    style = MaterialTheme.typography.caption,
-                    color = MaterialTheme.colors.onBackground
-                )
+                    Text(
+                        text = "View Cancel",
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                scaffoldState.drawerState.close()
+                                navController.navigate(Screen.ViewCancel.route) }
+                        },
+                        style = MaterialTheme.typography.caption,
+                        color = MaterialTheme.colors.onBackground
+                    )
 
-                Spacer(modifier = Modifier.height(height = 10.dp))
+                    Spacer(modifier = Modifier.height(height = 10.dp))
 
-                Text(
-                    text = "View File Name",
-                    modifier = Modifier.clickable {
-                        coroutineScope.launch {
-                            scaffoldState.drawerState.close()
-                            navController.navigate(Screen.ViewColDataFNameScreen.route)
-                        }
-                    },
-                    style = MaterialTheme.typography.caption,
-                    color = MaterialTheme.colors.onBackground
-                )
+                    Text(
+                        text = "View File Name",
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                scaffoldState.drawerState.close()
+                                navController.navigate(Screen.ViewColDataFNameScreen.route)
+                            }
+                        },
+                        style = MaterialTheme.typography.caption,
+                        color = MaterialTheme.colors.onBackground
+                    )
 
-                Spacer(modifier = Modifier.height(height = 10.dp))
+                    Spacer(modifier = Modifier.height(height = 10.dp))
 
-                Text(
-                    text = "About",
-                    modifier = Modifier.clickable {
-                        coroutineScope.launch {
-                            scaffoldState.drawerState.close()
-                            navController.navigate(Screen.AboutScreen.route)
-                        }
-                    },
-                    style = MaterialTheme.typography.caption,
-                    color = MaterialTheme.colors.onBackground
-                )
+                    Text(
+                        text = "About",
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                scaffoldState.drawerState.close()
+                                navController.navigate(Screen.AboutScreen.route)
+                            }
+                        },
+                        style = MaterialTheme.typography.caption,
+                        color = MaterialTheme.colors.onBackground
+                    )
+                }
             },
             topBar = {
                 TopAppBar(
@@ -261,7 +271,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                     Spacer(modifier = Modifier.height(height = 8.dp))
                     Box(
                         modifier = Modifier
-                            .size(width = 308.dp, height = 240.dp)
+                            .size(width = 308.dp, height = 242.dp)
                             .clip(RoundedCornerShape(30.dp))
                             .background(Color.LightGray)
                     ) {
@@ -356,9 +366,6 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(height = 80.dp)
-                                    .clip(RoundedCornerShape(50.dp))
-                                    .background(Color.LightGray)
                             ) {
                                 Column() {
                                     // Get last scanned row for display. If no rows default list
@@ -402,7 +409,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                     ) {
                                         Text(
                                             text = "Ndc:${collectedData[0].ndc}  Qty:${collectedData[0].qty}",
-                                            style = MaterialTheme.typography.body1,
+                                            style = MaterialTheme.typography.h6,
                                             color = MaterialTheme.colors.onBackground
                                         )
                                     }
@@ -413,7 +420,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                     ) {
                                         Text(
                                             text = "Price:${collectedData[0].price}   PkSz:${collectedData[0].packsz}",
-                                            style = MaterialTheme.typography.body1,
+                                            style = MaterialTheme.typography.h6,
                                             color = MaterialTheme.colors.onBackground
                                         )
                                     }

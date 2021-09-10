@@ -1,6 +1,7 @@
 package com.example.pharmscan.ui.Utility
 
-import androidx.core.text.isDigitsOnly
+import android.widget.Toast
+import com.example.pharmscan.PharmScanApplication
 
 // Determine is string value is valid decimal numeric with 1 decimal place
 fun isDecNumber(s: String?): Boolean {
@@ -17,5 +18,15 @@ fun isWholeNumber(s: String?): Boolean {
         return false
     } else {
         return s.matches("""^(0|[1-9]\d*)$""".toRegex())
+    }
+}
+
+// Warning: If calling Toast from a coroutine, ONLY Main dispatcher can be used.
+// Cannot be called from IO or Default
+fun ToastDisplay(message: String, length: Int) {
+    val con = PharmScanApplication()
+
+    if (con.getAppContext() != null) {
+        Toast.makeText(con.getAppContext(), message, length).show()
     }
 }
