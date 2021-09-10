@@ -15,6 +15,7 @@ import androidx.compose.material.ButtonDefaults.buttonColors
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
@@ -242,10 +243,12 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
+                        .padding(8.dp)
                 ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .clip(RoundedCornerShape(50.dp))
                             .background(statusBarBkGrColor),
                         horizontalArrangement = Arrangement.Center
                     ){
@@ -256,140 +259,165 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                         )
                     }
                     Spacer(modifier = Modifier.height(height = 8.dp))
-                    Row(
+                    Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(height = 80.dp)
-                            .clip(RoundedCornerShape(50.dp))
+                            .size(width = 308.dp, height = 240.dp)
+                            .clip(RoundedCornerShape(30.dp))
                             .background(Color.LightGray)
-                    ){
+                    ) {
                         Column() {
                             Row(
                                 modifier = Modifier
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center
+                                    .fillMaxWidth()
                             ) {
-                                Text(
-                                    text = "Tag: " + systemInfo[0].Tag,
-                                    style = MaterialTheme.typography.h5,
-                                    color = MaterialTheme.colors.onBackground
-                                )
+                                Column() {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Text(
+                                            text = "Tag: " + systemInfo[0].Tag,
+                                            style = MaterialTheme.typography.h5,
+                                            color = MaterialTheme.colors.onBackground
+                                        )
+                                    }
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceEvenly
+                                    ) {
+                                        Text(
+                                            text = "Qty: " + systemInfo[0].TotQty,
+                                            style = MaterialTheme.typography.h6,
+                                            color = MaterialTheme.colors.onBackground
+                                        )
+                                        Text(
+                                            text = "Amount: " + systemInfo[0].TotAmt,
+                                            style = MaterialTheme.typography.h6,
+                                            color = MaterialTheme.colors.onBackground
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(height = 8.dp))
+                                    Row(
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(start = 20.dp, end = 20.dp)
+                                    ) {
+                                        Box(
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .height(1.dp)
+                                                .background(MaterialTheme.colors.onBackground)
+                                        )
+                                    }
+                                }
                             }
                             Row(
                                 modifier = Modifier
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceEvenly
+                                    .fillMaxWidth()
                             ) {
-                                Text(
-                                    text = "Qty: " + systemInfo[0].TotQty,
-                                    style = MaterialTheme.typography.h5,
-                                    color = MaterialTheme.colors.onBackground
-                                )
-                                Text(
-                                    text = "Amount: " + systemInfo[0].TotAmt,
-                                    style = MaterialTheme.typography.h5,
-                                    color = MaterialTheme.colors.onBackground
-                                )
-                            }
-
-                        }
-
-                    }
-                    Spacer(modifier = Modifier.height(height = 8.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(height = 80.dp)
-                            .clip(RoundedCornerShape(50.dp))
-                            .background(Color.LightGray)
-                    ){
-                        Column() {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = "File",
-                                    style = MaterialTheme.typography.h5,
-                                    color = MaterialTheme.colors.onBackground
-                                )
-                            }
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceEvenly
-                            ) {
-                                Text(
-                                    text = "Rec Count: " + systemInfo[0].TotRecCount,
-                                    style = MaterialTheme.typography.h5,
-                                    color = MaterialTheme.colors.onBackground
-                                )
-                            }
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(height = 8.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(height = 80.dp)
-                            .clip(RoundedCornerShape(50.dp))
-                            .background(Color.LightGray)
-                    ){
-                        Column() {
-                            // Get last scanned row for display. If no rows default list
-                            var collectedData = pharmScanViewModel.getColDataLastInsertedRow()
-                            if (collectedData.isEmpty()){
-                                collectedData = listOf(CollectedData(
-                                    dept = "",
-                                    prodcd = "",
-                                	ndc = "",
-                                	qty = "",
-                                	price = "",
-                                	packsz = "",
-                                	xstock = "",
-                                	matchflg = "",
-                                	loc = "",
-                                	operid = "",
-                                	recount = "",
-                                	date = "",
-                                	seconds = "",
-                                	itemtyp = "",
-                                	itemcst = ""
-                                ))
+                                Column() {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Text(
+                                            text = "File",
+                                            style = MaterialTheme.typography.h5,
+                                            color = MaterialTheme.colors.onBackground
+                                        )
+                                    }
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceEvenly
+                                    ) {
+                                        Text(
+                                            text = "Rec Count: " + systemInfo[0].TotRecCount,
+                                            style = MaterialTheme.typography.h5,
+                                            color = MaterialTheme.colors.onBackground
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(height = 8.dp))
+                                    Row(
+                                        Modifier.padding(start = 20.dp, end = 20.dp)
+                                    ) {
+                                        Box(
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .height(1.dp)
+                                                .background(MaterialTheme.colors.onBackground)
+                                        )
+                                    }
+                                }
                             }
                             Row(
                                 modifier = Modifier
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center
+                                    .fillMaxWidth()
+                                    .height(height = 80.dp)
+                                    .clip(RoundedCornerShape(50.dp))
+                                    .background(Color.LightGray)
                             ) {
-                                Text(
-                                    text = "Last Scan",
-                                    style = MaterialTheme.typography.h5,
-                                    color = MaterialTheme.colors.onBackground
-                                )
-                            }
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceEvenly
-                            ) {
-                                Text(
-                                    text = "Ndc:${collectedData[0].ndc}  Qty:${collectedData[0].qty}",
-                                    style = MaterialTheme.typography.body1,
-                                    color = MaterialTheme.colors.onBackground
-                                )
-                            }
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceEvenly
-                            ) {
-                                Text(
-                                    text = "Price:${collectedData[0].price}   PkSz:${collectedData[0].packsz}",
-                                    style = MaterialTheme.typography.body1,
-                                    color = MaterialTheme.colors.onBackground
-                                )
+                                Column() {
+                                    // Get last scanned row for display. If no rows default list
+                                    var collectedData = pharmScanViewModel.getColDataLastInsertedRow()
+                                    if (collectedData.isEmpty()) {
+                                        collectedData = listOf(
+                                            CollectedData(
+                                                dept = "",
+                                                prodcd = "",
+                                                ndc = "",
+                                                qty = "",
+                                                price = "",
+                                                packsz = "",
+                                                xstock = "",
+                                                matchflg = "",
+                                                loc = "",
+                                                operid = "",
+                                                recount = "",
+                                                date = "",
+                                                seconds = "",
+                                                itemtyp = "",
+                                                itemcst = ""
+                                            )
+                                        )
+                                    }
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Text(
+                                            text = "Last Scan",
+                                            style = MaterialTheme.typography.h5,
+                                            color = MaterialTheme.colors.onBackground
+                                        )
+                                    }
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceEvenly
+                                    ) {
+                                        Text(
+                                            text = "Ndc:${collectedData[0].ndc}  Qty:${collectedData[0].qty}",
+                                            style = MaterialTheme.typography.body1,
+                                            color = MaterialTheme.colors.onBackground
+                                        )
+                                    }
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceEvenly
+                                    ) {
+                                        Text(
+                                            text = "Price:${collectedData[0].price}   PkSz:${collectedData[0].packsz}",
+                                            style = MaterialTheme.typography.body1,
+                                            color = MaterialTheme.colors.onBackground
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -407,7 +435,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 enabled = chgTagEnabled.value,
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(50.dp))
-                                    .size(width = 110.dp, height = 50.dp),
+                                    .size(width = 130.dp, height = 50.dp),
                                 onClick = {
                                     if (statusBarText == "*** Scan Tag ***") {
                                         statusBarText = previousStatusBarText
@@ -433,7 +461,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 enabled = holdEnabled.value,
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(50.dp))
-                                    .size(width = 110.dp, height = 50.dp),
+                                    .size(width = 130.dp, height = 50.dp),
                                 onClick = {
 
                                     if (statusBarText == "*** Hold ***") {
@@ -458,13 +486,11 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ){
-                            // TODO: Button just for testing status bar color and text change
-                            // use this to change info on this screen as user selects options
-                            // and status or other displays.
+
                             Button(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(50.dp))
-                                    .size(width = 250.dp, height = 50.dp),
+                                    .size(width = 270.dp, height = 35.dp),
                                 colors = buttonColors(backgroundColor = Color.Red),
                                 onClick = {
                                   navController.popBackStack()
@@ -482,7 +508,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                 }
             }
         )
-            LaunchedEffect(Unit) {requester.requestFocus()}
+        LaunchedEffect(Unit) {requester.requestFocus()}
     }
 }
 
