@@ -10,13 +10,14 @@ import kotlinx.coroutines.runBlocking
 // Save current SystemInfo data, then delete the 1 row and then insert new row with
 // update column values
 fun UpdateSystemInfo(pharmScanViewModel: PharmScanViewModel, columnValue: Map<String, String>) {
+    // Get the current SystemInfo values
     var systemInfo = pharmScanViewModel.getAllSystemInfo()
 
     runBlocking {
 
         if (systemInfo.isEmpty()) {
             // set to defaults then update columns
-            systemInfo = listOf(SystemInfo("0", "0", "0", "0", "0", "0"))
+            systemInfo = listOf(SystemInfo("0", "0", "0", "0", "0", "0", "0"))
         } else {
             val job = pharmScanViewModel.deleteSystemInfo(systemInfo[0])
             job.join() // wait for delete to complete
@@ -30,7 +31,15 @@ fun UpdateSystemInfo(pharmScanViewModel: PharmScanViewModel, columnValue: Map<St
             "TotQty" -> systemInfo[0].TotQty = item.value
             "TotAmt" -> systemInfo[0].TotAmt = item.value
             "TotRecCount" -> systemInfo[0].TotRecCount = item.value
-            "Tag" -> systemInfo[0].Tag = item.value
+            "Tag" -> {
+                if (systemInfo[0].Tag != "0" && item.value != systemInfo[0].Tag){
+                    val tagCnt = systemInfo[0].TagChangeCount?.toInt()
+                    val cnt = tagCnt?.plus(1)
+                    systemInfo[0].TagChangeCount = cnt.toString()
+                }
+                systemInfo[0].Tag = item.value
+
+            }
         }
     }
 

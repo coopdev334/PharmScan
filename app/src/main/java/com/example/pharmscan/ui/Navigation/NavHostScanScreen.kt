@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.navigation.NavType
 import androidx.navigation.compose.navArgument
 import com.example.pharmscan.Data.Tables.CollectedData
+import com.example.pharmscan.Data.Tables.Settings
 import com.example.pharmscan.Data.Tables.SystemInfo
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.HoldQtyKyBrdInput
@@ -62,6 +63,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         val coroutineScope = rememberCoroutineScope()
         var statusBarBkGrColor by remember { mutableStateOf(Color.Yellow) }
         val systemInfo: List<SystemInfo> by pharmScanViewModel.systemInfo.observeAsState(listOf<SystemInfo>())
+        val settings: List<Settings> by pharmScanViewModel.settings.observeAsState(listOf<Settings>())
         var previousStatusBarText: String? by remember { mutableStateOf("")}
         var previousBarBkgrColor by remember {mutableStateOf(Color.White)}
         var keyBrdInput by remember {mutableStateOf(0)}
@@ -92,6 +94,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         // Get record from SystemInfo table which will update livedata which will update
         // systemInfo which will cause a recompose of screen showing latest values
         pharmScanViewModel.updateSystemInfoLiveData()
+        pharmScanViewModel.updateSettingsLiveData()
 
         val requester = FocusRequester()
         //previousStatusBarText = statusBarText
@@ -287,7 +290,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                         horizontalArrangement = Arrangement.Center
                                     ) {
                                         Text(
-                                            text = "Tag: " + systemInfo[0].Tag,
+                                            text = "Tag: ${systemInfo[0].Tag}           ${systemInfo[0].TagChangeCount}/${settings[0].FileSendTagChgs}",
                                             style = MaterialTheme.typography.h5,
                                             color = MaterialTheme.colors.onBackground
                                         )

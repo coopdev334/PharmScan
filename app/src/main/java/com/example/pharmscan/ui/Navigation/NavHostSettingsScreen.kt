@@ -32,11 +32,6 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
     composable(Screen.SettingsScreen.route) {
         var settings by remember {mutableStateOf(pharmScanViewModel.getSettingsRow())}
 
-        // update settings when built-in back button is used
-        navController.addOnDestinationChangedListener { controller, destination, arguments ->
-            UpdateSettings(pharmScanViewModel, settings[0])
-        }
-
         if (settings.isEmpty()){
             runBlocking {
                 val job = pharmScanViewModel.insertSettings(Settings("","","","",""))
@@ -44,6 +39,11 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                 settings = pharmScanViewModel.getSettingsRow()
             }
 
+        }else{
+            // update settings when built-in back button is used
+            navController.addOnDestinationChangedListener { controller, destination, arguments ->
+                UpdateSettings(pharmScanViewModel, settings[0])
+            }
         }
 
         Column(
