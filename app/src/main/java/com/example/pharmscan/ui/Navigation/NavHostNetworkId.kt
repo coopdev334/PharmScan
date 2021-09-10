@@ -1,5 +1,6 @@
 package com.example.pharmscan.ui.Navigation
 
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,11 +23,23 @@ import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
+import com.example.pharmscan.Data.Tables.Settings
+import com.example.pharmscan.ui.Utility.UpdateSettings
+import kotlinx.coroutines.runBlocking
 
 
 fun NavGraphBuilder.addNetIdScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     composable(Screen.NetIdScreen.route) {
-        var text by remember {mutableStateOf("")}
+        var settings by remember {mutableStateOf(pharmScanViewModel.getSettingsRow())}
+
+        if (settings.isEmpty()){
+            runBlocking {
+                var job = pharmScanViewModel.insertSettings(Settings("","","","",""))
+                job.join()
+                settings = pharmScanViewModel.getSettingsRow()
+            }
+
+        }
 
         Column(
             modifier = Modifier.padding(start = 10.dp, end = 8.dp),
@@ -48,8 +61,7 @@ fun NavGraphBuilder.addNetIdScreen(navController: NavController, pharmScanViewMo
                         .align(alignment = Alignment.Start)
                         .padding(start = 20.dp)
                         .clickable {
-                            // INPUT THE INFO INTO DATABASE HERE
-
+                            UpdateSettings(pharmScanViewModel, settings[0])
                             navController.popBackStack()
                         },
                 style = MaterialTheme.typography.h5,
@@ -80,7 +92,9 @@ fun NavGraphBuilder.addNetIdScreen(navController: NavController, pharmScanViewMo
                     color = MaterialTheme.colors.onBackground
                 )
                 Spacer(modifier = Modifier.width(width = 10.dp))
-                HostNameTextField()
+                val stringLocalType = HostNameTextField(settings)
+                settings[0].hostAcct = stringLocalType
+                Log.println(Log.DEBUG, "TESTING", stringLocalType)
             }
             Spacer(modifier = Modifier.height(height = 10.dp))
             Box(
@@ -101,7 +115,7 @@ fun NavGraphBuilder.addNetIdScreen(navController: NavController, pharmScanViewMo
                     color = MaterialTheme.colors.onBackground
                 )
                 Spacer(modifier = Modifier.width(width = 10.dp))
-                HostPasswordTextField()
+                settings[0].hostPassword = HostPasswordTextField(settings)
             }
             Spacer(modifier = Modifier.height(height = 10.dp))
             Box(
@@ -116,8 +130,8 @@ fun NavGraphBuilder.addNetIdScreen(navController: NavController, pharmScanViewMo
 
 //
 @Composable
-fun HostNameTextField() {
-    var value by remember { mutableStateOf(TextFieldValue("")) }
+fun HostNameTextField(settings: List<Settings>): String {
+    var value by remember { mutableStateOf(TextFieldValue(settings[0].hostAcct!!)) }
     BasicTextField(
         value = value,
         onValueChange = { value = it },
@@ -134,11 +148,12 @@ fun HostNameTextField() {
         },
         textStyle = TextStyle(fontSize = 25.sp)
     )
+    return value.text
 }
 
 @Composable
-fun HostPasswordTextField() {
-    var value by remember { mutableStateOf(TextFieldValue("")) }
+fun HostPasswordTextField(settings: List<Settings>): String {
+    var value by remember { mutableStateOf(TextFieldValue(settings[0].hostPassword!!)) }
     BasicTextField(
         value = value,
         onValueChange = { value = it },
@@ -155,4 +170,5 @@ fun HostPasswordTextField() {
         },
         textStyle = TextStyle(fontSize = 25.sp)
     )
+    return value.text
 }
