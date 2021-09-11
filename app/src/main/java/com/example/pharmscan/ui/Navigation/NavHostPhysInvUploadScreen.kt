@@ -79,8 +79,8 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                         modifier = Modifier.clickable {
                             coroutineScope.launch {
                                 scaffoldState.drawerState.close()
-                                navController.navigate(Screen.SettingsScreen.route)
                             }
+                            navController.navigate(Screen.SettingsScreen.route)
                         },
                         style = MaterialTheme.typography.caption,
                         color = MaterialTheme.colors.onBackground

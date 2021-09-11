@@ -20,6 +20,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import com.example.pharmscan.Data.Tables.HostCompName
+import com.example.pharmscan.Data.Tables.Settings
+import com.example.pharmscan.Data.Tables.SystemInfo
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.AddHostComputer
 import com.example.pharmscan.ui.Dialog.DeleteHostComputerAlert
@@ -38,11 +40,12 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
         val listState = rememberLazyListState()
         val showDelHostCompDialog = remember { mutableStateOf(false) }
         val showAddHostCompDialog = remember { mutableStateOf(false) }
-        val hostCompNameList: List<HostCompName> by pharmScanViewModel.hostCompName.observeAsState(listOf<HostCompName>())
+        val hostCompNameList: List<HostCompName> by pharmScanViewModel.hostCompName.observeAsState(pharmScanViewModel.getHostCompNameRow())
 
-        // Get all records from HostCompName table which will update livedata which will update
-        // hostCompNameList which will cause a recompose of LazyColumn list screen
-        pharmScanViewModel.updateHostCompNameLiveData()
+        if (hostCompNameList.isNullOrEmpty()) {
+            // set to defaults
+            pharmScanViewModel.insertHostCompName(HostCompName("0"))
+        }
 
         if (showDelHostCompDialog.value) {
             DeleteHostComputerAlert(
@@ -50,12 +53,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                 showDialog = showDelHostCompDialog.value,
                 onDel = {
                     showDelHostCompDialog.value = false
-                    runBlocking {
-                        val job = pharmScanViewModel.deleteHostCompName(delHostCompName)
-                        // Wait for the insert coroutine to finish then update the livedata
-                        job.join()
-                        pharmScanViewModel.updateHostCompNameLiveData()
-                    }
+                        pharmScanViewModel.deleteRowHostCompName(delHostCompName)
                 },
                 onCancel = {
                     showDelHostCompDialog.value = false
@@ -68,12 +66,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                 showDialog = showAddHostCompDialog.value,
                 onAdd = {
                     showAddHostCompDialog.value = false
-                    runBlocking {
-                        val job = pharmScanViewModel.insertHostCompName(HostCompName(it))
-                        // Wait for the insert coroutine to finish then update the livedata
-                        job.join()
-                        pharmScanViewModel.updateHostCompNameLiveData()
-                    }
+                        pharmScanViewModel.insertHostCompName(HostCompName(it))
                 },
                 onCancel = {
                     showAddHostCompDialog.value = false
@@ -97,8 +90,8 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                         modifier = Modifier.clickable {
                             coroutineScope.launch {
                                 scaffoldState.drawerState.close()
-                                navController.navigate(Screen.SettingsScreen.route)
                             }
+                            navController.navigate(Screen.SettingsScreen.route)
                         },
                         style = MaterialTheme.typography.caption,
                         color = MaterialTheme.colors.onBackground

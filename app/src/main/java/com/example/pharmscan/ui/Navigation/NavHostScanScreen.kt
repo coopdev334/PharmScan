@@ -1,5 +1,7 @@
 package com.example.pharmscan.ui.Navigation
 
+import android.widget.Toast
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -12,17 +14,15 @@ import com.example.pharmscan.ui.Screen.Screen
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.ButtonDefaults.buttonColors
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.*
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.navigation.NavType
 import androidx.navigation.compose.navArgument
 import com.example.pharmscan.Data.Tables.CollectedData
@@ -32,6 +32,8 @@ import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.HoldQtyKyBrdInput
 import com.example.pharmscan.ui.Dialog.NdcKyBrdInput
 import com.example.pharmscan.ui.Dialog.TagKyBrdInput
+import com.example.pharmscan.ui.Utility.ToastDisplay
+import com.example.pharmscan.ui.Utility.UpdateSettings
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -62,14 +64,17 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
         var statusBarBkGrColor by remember { mutableStateOf(Color.Yellow) }
-        val systemInfo: List<SystemInfo> by pharmScanViewModel.systemInfo.observeAsState(listOf<SystemInfo>())
-        val settings: List<Settings> by pharmScanViewModel.settings.observeAsState(listOf<Settings>())
+        val systemInfo: List<SystemInfo> by pharmScanViewModel.systemInfo.observeAsState(pharmScanViewModel.getSystemInfoRow())
+        val settings: List<Settings> by pharmScanViewModel.settings.observeAsState(pharmScanViewModel.getSettingsRow())
+
+        //val settings: State<List<Settings>?> = pharmScanViewModel.settings.observeAsState()
         var previousStatusBarText: String? by remember { mutableStateOf("")}
         var previousBarBkgrColor by remember {mutableStateOf(Color.White)}
         var keyBrdInput by remember {mutableStateOf(0)}
         val showKyBrdInputDialog = remember { mutableStateOf(false) }
         val chgTagEnabled = remember { mutableStateOf(false) }
         val holdEnabled = remember { mutableStateOf(false) }
+        val manPrcOn = remember { mutableStateOf(false) }
         val defaultButtonColors: ButtonColors = buttonColors(
             backgroundColor = Color.Blue,
             contentColor = Color.White,
@@ -91,14 +96,19 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         var chgTagButtonColor by remember {mutableStateOf(defaultButtonColors)}
         var holdButtonColor by remember {mutableStateOf(defaultButtonColors)}
 
-        // Get record from SystemInfo table which will update livedata which will update
-        // systemInfo which will cause a recompose of screen showing latest values
-        pharmScanViewModel.updateSystemInfoLiveData()
-        pharmScanViewModel.updateSettingsLiveData()
+        if (systemInfo.isNullOrEmpty()) {
+            // set to defaults
+            pharmScanViewModel.insertSystemInfo(SystemInfo("0", "0", "0", "0", "0", "0", "0"))
+        }
+
+        if (settings.isNullOrEmpty()) {
+            // set to defaults
+            pharmScanViewModel.insertSettings(Settings("0", "0", "0", "0", "0"))
+        }else{
+            manPrcOn.value = settings[0].ManualPrice == "on"
+        }
 
         val requester = FocusRequester()
-        //previousStatusBarText = statusBarText
-        //previousBarBkgrColor = statusBarBkGrColor
 
         // Key pressed, determine what context the key applies to. Capture first key
         // and open appropriate input dialog to get remaining input from user
@@ -188,9 +198,8 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                         modifier = Modifier.clickable {
                             coroutineScope.launch {
                                 scaffoldState.drawerState.close()
-                                //scaffoldState.snackbarHostState.showSnackbar("Drawer Settings")
-                                navController.navigate(Screen.SettingsScreen.route)
                             }
+                            navController.navigate(Screen.SettingsScreen.route)
                         },
                         style = MaterialTheme.typography.caption,
                         color = MaterialTheme.colors.onBackground
@@ -248,6 +257,41 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                             }
                         ) {
                             Icon(Icons.Filled.Menu, contentDescription = "Localized description")
+                        }
+                    },
+                    actions = {
+                        IconButton(
+                            onClick = {
+                                ToastDisplay("clicked", Toast.LENGTH_SHORT)
+                            }
+                        ) {
+                            Icon(Icons.Filled.Create, contentDescription = "")
+                        }
+                        IconToggleButton(
+                            checked = manPrcOn.value,
+                            onCheckedChange = {
+
+                                if (manPrcOn.value){
+                                    val colVal = mapOf("ManualPrice" to "off")
+                                    ToastDisplay("Man Price Off", Toast.LENGTH_SHORT)
+                                    UpdateSettings(pharmScanViewModel, colVal)
+                                }else{
+                                    val colVal = mapOf("ManualPrice" to "on")
+                                    ToastDisplay("Man Price On", Toast.LENGTH_SHORT)
+                                    UpdateSettings(pharmScanViewModel, colVal)
+                                }
+                                manPrcOn.value = it
+                            }
+                        ) {
+                            val tint by animateColorAsState(
+                                if (manPrcOn.value) Color.Red
+                                else Color.White
+                            )
+                            Icon(
+                                imageVector = Icons.Filled.AddCircle,
+                                contentDescription = "Localized description",
+                                tint = tint
+                            )
                         }
                     }
                 )

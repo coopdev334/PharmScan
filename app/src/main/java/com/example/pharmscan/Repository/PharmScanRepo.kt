@@ -12,8 +12,10 @@ class PharmScanRepo(
 ) {
     // HostCompName db SQL
     suspend fun insertHostCompName(hostCompName: HostCompName) = daoHostCompName.insert(hostCompName)
-    suspend fun deleteHostCompName(hostCompName: HostCompName) = daoHostCompName.delete(hostCompName)
-    fun getAllHostCompName() = daoHostCompName.getAll()
+    suspend fun deleteRowHostCompName(hostCompName: HostCompName) = daoHostCompName.deleteRow(hostCompName)
+    suspend fun deleteAllHostCompName() = daoHostCompName.deleteAll()
+    fun getLiveDataHostCompNameRow() = daoHostCompName.getLiveDataRow()
+    fun getHostCompNameRow() = daoHostCompName.getRow()
 
     // CollectedData db SQL
     suspend fun insertCollectedData(collectedData: CollectedData) = daoCollectedData.insert(collectedData)
@@ -27,16 +29,22 @@ class PharmScanRepo(
 
     // SystemInfo db SQL
     suspend fun insertSystemInfo(systemInfo: SystemInfo) = daoSystemInfo.insert(systemInfo)
-    suspend fun deleteSystemInfo(systemInfo: SystemInfo) = daoSystemInfo.delete(systemInfo)
-    fun getAllSystemInfo() = daoSystemInfo.getAll()
+    suspend fun deleteRowSystemInfo(systemInfo: SystemInfo) = daoSystemInfo.deleteRow(systemInfo)
+    suspend fun deleteAllSystemInfo() = daoSystemInfo.deleteAll()
+    fun getLiveDataSystemInfoRow() = daoSystemInfo.getLiveDataRow()
+    fun getSystemInfoRow() = daoSystemInfo.getRow()
 
     // PSNdc db SQL
     suspend fun insertPSNdc(psNdc: PSNdc) = daoPSNdc.insert(psNdc)
-    suspend fun deletePSNdc(psNdc: PSNdc) = daoPSNdc.delete(psNdc)
-    fun getAllPSNdc() = daoPSNdc.getAll()
+    suspend fun deleteRowPSNdc(psNdc: PSNdc) = daoPSNdc.deleteRow(psNdc)
+    suspend fun deleteAllPSNdc() = daoPSNdc.deleteAll()
+    fun getLiveDataPSNdcRow() = daoPSNdc.getLiveDataRow()
+    fun getPSNdcRow() = daoPSNdc.getRow()
 
     // Settings db SQL
     suspend fun insertSettings(settings: Settings) = daoSettings.insert(settings)
-    suspend fun deleteSettings(settings: Settings) = daoSettings.delete(settings)
+    suspend fun deleteRowSettings(settings: Settings) = daoSettings.deleteRow(settings)
+    suspend fun deleteAllSettings() = daoSettings.deleteAll()
+    fun getLiveDataSettingsRow() = daoSettings.getLiveDataRow()
     fun getSettingsRow() = daoSettings.getRow()
 }

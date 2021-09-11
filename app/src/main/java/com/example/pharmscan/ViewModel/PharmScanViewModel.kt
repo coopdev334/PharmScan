@@ -17,28 +17,24 @@ class PharmScanViewModel(
     // HostCompName
     // LiveData holds state which is observed by the UI
     // (state flows down from ViewModel)
-    private var _hostCompName = MutableLiveData(listOf<HostCompName>())
-    val hostCompName: LiveData<List<HostCompName>> = _hostCompName
+    var hostCompName: LiveData<List<HostCompName>> = getLiveDataHostCompNameRow()
 
-
-    // This gets all rows from database and updates live data
-    // which is observed by hostCompNameList in NavHostMainScreen
-    // to recompose LazyColumn list
-    fun updateHostCompNameLiveData() {
-        _hostCompName.value = getAllHostCompName()
-    }
-
-    // HostCompName viewModel db interface
+    // Settings viewModel db interface
     // These functions will be called by the composable views to get and set database information
     // Suspend function modifier is not used here but in repo and dao
     fun insertHostCompName(hostCompName: HostCompName) = CoroutineScope(Dispatchers.IO).launch {
         repo.insertHostCompName(hostCompName)
     }
-    fun deleteHostCompName(hostCompName: HostCompName) = CoroutineScope(Dispatchers.IO).launch {
-        repo.deleteHostCompName(hostCompName)
+    fun deleteRowHostCompName(hostCompName: HostCompName) = CoroutineScope(Dispatchers.IO).launch {
+        repo.deleteRowHostCompName(hostCompName)
     }
 
-    private fun getAllHostCompName() = repo.getAllHostCompName()
+    fun deleteAllHostCompName() = CoroutineScope(Dispatchers.IO).launch {
+        repo.deleteAllHostCompName()
+    }
+
+    fun getLiveDataHostCompNameRow() = repo.getLiveDataHostCompNameRow()
+    fun getHostCompNameRow() = repo.getHostCompNameRow()
 
 
     // **********************************************************************
@@ -77,44 +73,31 @@ class PharmScanViewModel(
     // SystemInfo
     // LiveData holds state which is observed by the UI
     // (state flows down from ViewModel)
-    private var _systemInfo = MutableLiveData(listOf<SystemInfo>())
-    val systemInfo: LiveData<List<SystemInfo>> = _systemInfo
+    var systemInfo: LiveData<List<SystemInfo>> = getLiveDataSystemInfoRow()
 
-
-    // This gets all rows from database and updates live data
-    // which is observed by systemInfoList
-    // to recompose LazyColumn list
-    fun updateSystemInfoLiveData() {
-        _systemInfo.value = getAllSystemInfo()
-    }
-
-    // SystemInfo viewModel db interface
+    // Settings viewModel db interface
     // These functions will be called by the composable views to get and set database information
     // Suspend function modifier is not used here but in repo and dao
     fun insertSystemInfo(systemInfo: SystemInfo) = CoroutineScope(Dispatchers.IO).launch {
         repo.insertSystemInfo(systemInfo)
     }
-    fun deleteSystemInfo(systemInfo: SystemInfo) = CoroutineScope(Dispatchers.IO).launch {
-        repo.deleteSystemInfo(systemInfo)
+    fun deleteRowSystemInfo(systemInfo: SystemInfo) = CoroutineScope(Dispatchers.IO).launch {
+        repo.deleteRowSystemInfo(systemInfo)
     }
 
-    fun getAllSystemInfo() = repo.getAllSystemInfo()
+    fun deleteAllSystemInfo() = CoroutineScope(Dispatchers.IO).launch {
+        repo.deleteAllSystemInfo()
+    }
+
+    fun getLiveDataSystemInfoRow() = repo.getLiveDataSystemInfoRow()
+    fun getSystemInfoRow() = repo.getSystemInfoRow()
 
 
     // **********************************************************************
     // PSNdc
     // LiveData holds state which is observed by the UI
     // (state flows down from ViewModel)
-    private var _psNdc = MutableLiveData(listOf<PSNdc>())
-    val psNdc: LiveData<List<PSNdc>> = _psNdc
-
-
-    // This gets all rows from database and updates live data
-    // which is observed by systemInfoList
-    // to recompose LazyColumn list
-    fun updatePSNdcLiveData() {
-        _psNdc.value = getAllPSNdc()
-    }
+    var psNdc: LiveData<List<PSNdc>> = getLiveDataPSNdcRow()
 
     // PSNdc viewModel db interface
     // These functions will be called by the composable views to get and set database information
@@ -122,38 +105,40 @@ class PharmScanViewModel(
     fun insertPSNdc(psNdc: PSNdc) = CoroutineScope(Dispatchers.IO).launch {
         repo.insertPSNdc(psNdc)
     }
-    fun deletePSNdc(psNdc: PSNdc) = CoroutineScope(Dispatchers.IO).launch {
-        repo.deletePSNdc(psNdc)
+    fun deleteRowPSNdc(psNdc: PSNdc) = CoroutineScope(Dispatchers.IO).launch {
+        repo.deleteRowPSNdc(psNdc)
     }
 
-    fun getAllPSNdc() = repo.getAllPSNdc()
+    fun deleteAllPSNdc() = CoroutineScope(Dispatchers.IO).launch {
+        repo.deleteAllPSNdc()
+    }
+
+    fun getLiveDataPSNdcRow() = repo.getLiveDataPSNdcRow()
+    fun getPSNdcRow() = repo.getPSNdcRow()
 
 
     // **********************************************************************
     // Settings
-    // LiveData holds state which is observed by the UI
-    // (state flows down from ViewModel)
-    private var _settings = MutableLiveData(listOf<Settings>())
-    val settings: LiveData<List<Settings>> = _settings
+    // LiveData object that can be observed in UI When inserts or deletes run
+    // on Room database tables, LiveData calls the onChange callback on this
+    // object
+    var settings: LiveData<List<Settings>> = getLiveDataSettingsRow()
 
-
-    // This gets all rows from database and updates live data
-    // which is observed by hostCompNameList in NavHostMainScreen
-    // to recompose LazyColumn list
-    fun updateSettingsLiveData() {
-        _settings.value = getSettingsRow()
-    }
-
-    // HostCompName viewModel db interface
+    // Settings viewModel db interface
     // These functions will be called by the composable views to get and set database information
     // Suspend function modifier is not used here but in repo and dao
-    fun insertSettings(hostCompName: Settings) = CoroutineScope(Dispatchers.IO).launch {
-        repo.insertSettings(hostCompName)
+    fun insertSettings(settings: Settings) = CoroutineScope(Dispatchers.IO).launch {
+        repo.insertSettings(settings)
     }
-    fun deleteSettings(hostCompName: Settings) = CoroutineScope(Dispatchers.IO).launch {
-        repo.deleteSettings(hostCompName)
+    fun deleteRowSettings(settings: Settings) = CoroutineScope(Dispatchers.IO).launch {
+        repo.deleteRowSettings(settings)
     }
 
+    fun deleteAllSettings() = CoroutineScope(Dispatchers.IO).launch {
+        repo.deleteAllSettings()
+    }
+
+    fun getLiveDataSettingsRow() = repo.getLiveDataSettingsRow()
     fun getSettingsRow() = repo.getSettingsRow()
 
  }

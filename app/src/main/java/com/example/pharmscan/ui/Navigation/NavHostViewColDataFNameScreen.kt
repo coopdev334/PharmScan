@@ -81,7 +81,7 @@ fun GetCollectedDataFileName(
 ) : String {
     // TODO: tempory file name display since file creation is not completed yet.
     val secs = (LocalDateTime.now().second + (LocalDateTime.now().minute*60) + (LocalDateTime.now().hour*3600))
-    val systemInfo = pharmScanViewModel.getAllSystemInfo()
+    val systemInfo = pharmScanViewModel.getSystemInfoRow()
 
     if (systemInfo.isNotEmpty()) {
         return "pharmscan_" + systemInfo[0].opid + "_" + LocalDateTime.now().monthValue + "-" + LocalDateTime.now().dayOfMonth + "-" + LocalDateTime.now().year + "_" + secs + "_" + systemInfo[0].HHDeviceId + ".new"

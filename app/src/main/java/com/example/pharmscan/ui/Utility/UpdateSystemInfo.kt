@@ -1,17 +1,15 @@
 package com.example.pharmscan.ui.Utility
 
-import com.example.pharmscan.Data.Tables.HostCompName
 import com.example.pharmscan.Data.Tables.SystemInfo
 import com.example.pharmscan.ViewModel.PharmScanViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.runBlocking
 
 // update column values in SystemInfo table. ONLY 1 row is allowed.
-// Save current SystemInfo data, then delete the 1 row and then insert new row with
+// Save current SystemInfo data, then deleteRow the 1 row and then insert new row with
 // update column values
 fun UpdateSystemInfo(pharmScanViewModel: PharmScanViewModel, columnValue: Map<String, String>) {
     // Get the current SystemInfo values
-    var systemInfo = pharmScanViewModel.getAllSystemInfo()
+    var systemInfo = pharmScanViewModel.getSystemInfoRow()
 
     runBlocking {
 
@@ -19,8 +17,8 @@ fun UpdateSystemInfo(pharmScanViewModel: PharmScanViewModel, columnValue: Map<St
             // set to defaults then update columns
             systemInfo = listOf(SystemInfo("0", "0", "0", "0", "0", "0", "0"))
         } else {
-            val job = pharmScanViewModel.deleteSystemInfo(systemInfo[0])
-            job.join() // wait for delete to complete
+            val job = pharmScanViewModel.deleteRowSystemInfo(systemInfo[0])
+            job.join() // wait for deleteRow to complete
         }
     }
 

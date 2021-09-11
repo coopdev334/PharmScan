@@ -6,8 +6,8 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -21,29 +21,16 @@ import androidx.navigation.compose.composable
 import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.TextFieldValue
 import com.example.pharmscan.Data.Tables.Settings
 import com.example.pharmscan.ui.Utility.UpdateSettings
-import kotlinx.coroutines.runBlocking
 
-
-@ExperimentalComposeUiApi
 fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     composable(Screen.SettingsScreen.route) {
-        var settings by remember {mutableStateOf(pharmScanViewModel.getSettingsRow())}
 
-        if (settings.isEmpty()){
-            runBlocking {
-                val job = pharmScanViewModel.insertSettings(Settings("","","","",""))
-                job.join()
-                settings = pharmScanViewModel.getSettingsRow()
-            }
+        val settings: List<Settings> by pharmScanViewModel.settings.observeAsState(pharmScanViewModel.getSettingsRow())
 
-        }else{
-            // update settings when built-in back button is used
-            navController.addOnDestinationChangedListener { controller, destination, arguments ->
-                UpdateSettings(pharmScanViewModel, settings[0])
-            }
+        if (settings.isNullOrEmpty()) {
+            pharmScanViewModel.insertSettings(Settings("", "", "", "", ""))
         }
 
         Column(
@@ -65,7 +52,6 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                     .align(alignment = Alignment.Start)
                     .padding(start = 20.dp)
                     .clickable {
-                        UpdateSettings(pharmScanViewModel, settings[0])
                         navController.popBackStack()
                     },
                 style = MaterialTheme.typography.h5,
@@ -116,13 +102,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                     style = MaterialTheme.typography.h5,
                     color = MaterialTheme.colors.onBackground
                 )
-                if (settings[0].ManualPrice == "checked") {
-                    settings[0].ManualPrice = PriceEntryCheckbox(true)
-                }else {
-                    settings[0].ManualPrice = PriceEntryCheckbox(false)
-                }
-
-
+                PriceEntryCheckbox(pharmScanViewModel)
             }
             Spacer(modifier = Modifier.height(height = 10.dp))
             Box(
@@ -142,7 +122,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                     style = MaterialTheme.typography.h5,
                     color = MaterialTheme.colors.onBackground
                 )
-                settings[0].CostLimit = CostLimit(settings)
+                CostLimit(pharmScanViewModel)
             }
             Spacer(modifier = Modifier.height(height = 10.dp))
             Box(
@@ -172,7 +152,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                     ),
                     color = MaterialTheme.colors.onBackground
                 )
-                settings[0].FileSendTagChgs = TagChanges(settings)
+                TagChanges(pharmScanViewModel)
             }
             Spacer(modifier = Modifier.height(height = 10.dp))
             Box(
@@ -186,29 +166,38 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
 }
 
 @Composable
-fun PriceEntryCheckbox(checked: Boolean): String {
-    var checkedState by remember { mutableStateOf(checked) }
+fun PriceEntryCheckbox(pharmScanViewModel: PharmScanViewModel) {
+    var checkedState by remember { mutableStateOf(pharmScanViewModel.getSettingsRow()[0].ManualPrice == "on") }
+
+    checkedState = pharmScanViewModel.getSettingsRow()[0].ManualPrice == "on"
 
     Checkbox(
         modifier = Modifier.size(width = 40.dp, height = 20.dp),
         checked = checkedState,
-        onCheckedChange = { checkedState = it }
+        onCheckedChange = {
+            if (it) {
+                val columnValue = mapOf("ManualPrice" to "on")
+                UpdateSettings(pharmScanViewModel, columnValue)
+            }else{
+                val columnValue = mapOf("ManualPrice" to "off")
+                UpdateSettings(pharmScanViewModel, columnValue)
+            }
+            checkedState = it
+        }
     )
-
-
-    if (checkedState) {
-        return "checked"
-    }
-    return "unchecked"
 }
 
 @Composable
-fun CostLimit(settings: List<Settings>): String {
-    var value by remember { mutableStateOf(TextFieldValue(settings[0].CostLimit!!)) }
+fun CostLimit(pharmScanViewModel: PharmScanViewModel) {
+    var value by remember { mutableStateOf(pharmScanViewModel.getSettingsRow()[0].CostLimit) }
 
     BasicTextField(
-        value = value,
-        onValueChange = { value = it },
+        value = value!!,
+        onValueChange = {
+            val columnValue = mapOf("CostLimit" to it)
+            UpdateSettings(pharmScanViewModel, columnValue)
+            value = it
+        },
         decorationBox = { innerTextField ->
             Box(
                 Modifier
@@ -222,19 +211,20 @@ fun CostLimit(settings: List<Settings>): String {
         },
         textStyle = TextStyle(fontSize = 25.sp)
     )
-
-    return value.text
 }
 
-@ExperimentalComposeUiApi
 @Composable
-fun TagChanges(settings: List<Settings>): String{
-    var value by remember { mutableStateOf(TextFieldValue(settings[0].FileSendTagChgs!!)) }
+fun TagChanges(pharmScanViewModel: PharmScanViewModel) {
+   // var value by remember { mutableStateOf(TextFieldValue(settings[0].FileSendTagChgs!!)) }
+    var value by remember { mutableStateOf(pharmScanViewModel.getSettingsRow()[0].FileSendTagChgs) }
 
     BasicTextField(
-        value = value,
+        value = value!!,
         onValueChange = {
-            value = it },
+            val columnValue = mapOf("FileSendTagChgs" to it)
+            UpdateSettings(pharmScanViewModel, columnValue)
+            value = it
+        },
         decorationBox = { innerTextField ->
             Box(
                 Modifier
@@ -248,6 +238,4 @@ fun TagChanges(settings: List<Settings>): String{
         },
         textStyle = TextStyle(fontSize = 25.sp)
     )
-
-    return value.text
 }
