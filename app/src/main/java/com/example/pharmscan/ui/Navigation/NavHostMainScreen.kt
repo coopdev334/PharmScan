@@ -24,7 +24,6 @@ import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.AddHostComputer
 import com.example.pharmscan.ui.Dialog.DeleteHostComputerAlert
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
 @ExperimentalComposeUiApi
@@ -38,11 +37,12 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
         val listState = rememberLazyListState()
         val showDelHostCompDialog = remember { mutableStateOf(false) }
         val showAddHostCompDialog = remember { mutableStateOf(false) }
-        val hostCompNameList: List<HostCompName> by pharmScanViewModel.hostCompName.observeAsState(listOf<HostCompName>())
+        val hostCompNameList: List<HostCompName> by pharmScanViewModel.hostCompName.observeAsState(pharmScanViewModel.getAllHostCompName())
 
-        // Get all records from HostCompName table which will update livedata which will update
-        // hostCompNameList which will cause a recompose of LazyColumn list screen
-        pharmScanViewModel.updateHostCompNameLiveData()
+        if (hostCompNameList.isNullOrEmpty()) {
+            // set to defaults
+            pharmScanViewModel.insertHostCompName(HostCompName("0"))
+        }
 
         if (showDelHostCompDialog.value) {
             DeleteHostComputerAlert(
@@ -50,12 +50,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                 showDialog = showDelHostCompDialog.value,
                 onDel = {
                     showDelHostCompDialog.value = false
-                    runBlocking {
-                        val job = pharmScanViewModel.deleteHostCompName(delHostCompName)
-                        // Wait for the insert coroutine to finish then update the livedata
-                        job.join()
-                        pharmScanViewModel.updateHostCompNameLiveData()
-                    }
+                        pharmScanViewModel.deleteRowHostCompName(delHostCompName)
                 },
                 onCancel = {
                     showDelHostCompDialog.value = false
@@ -68,12 +63,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                 showDialog = showAddHostCompDialog.value,
                 onAdd = {
                     showAddHostCompDialog.value = false
-                    runBlocking {
-                        val job = pharmScanViewModel.insertHostCompName(HostCompName(it))
-                        // Wait for the insert coroutine to finish then update the livedata
-                        job.join()
-                        pharmScanViewModel.updateHostCompNameLiveData()
-                    }
+                        pharmScanViewModel.insertHostCompName(HostCompName(it))
                 },
                 onCancel = {
                     showAddHostCompDialog.value = false
@@ -81,6 +71,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
             )
         }
 
+        // NOTE: Changes need to be made also in all screens with the scafford settings
         Scaffold(
             scaffoldState = scaffoldState,
             //drawerShape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp, bottomEnd = 15.dp, bottomStart = 15.dp),
@@ -96,9 +87,8 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                         modifier = Modifier.clickable {
                             coroutineScope.launch {
                                 scaffoldState.drawerState.close()
-                                //scaffoldState.snackbarHostState.showSnackbar("Drawer Settings")
-                                navController.navigate(Screen.SettingsScreen.route)
                             }
+                            navController.navigate(Screen.SettingsScreen.route)
                         },
                         style = MaterialTheme.typography.caption,
                         color = MaterialTheme.colors.onBackground
@@ -178,12 +168,6 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                 ){
                     Text(
                         text = "Select Host Computer",
-                        modifier = Modifier.clickable {
-                            coroutineScope.launch {
-                                scaffoldState.drawerState.close()
-                                scaffoldState.snackbarHostState.showSnackbar("Drawer Settings")
-                            }
-                        },
                         style = MaterialTheme.typography.h5,
                         color = MaterialTheme.colors.onBackground
                     )

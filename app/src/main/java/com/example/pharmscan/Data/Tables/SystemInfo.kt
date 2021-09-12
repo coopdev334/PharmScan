@@ -13,7 +13,8 @@ data class SystemInfo(
     var TotQty: String? = null,
     var TotAmt: String? = null,
     var TotRecCount: String? = null,
-    var Tag: String? = null
+    var Tag: String? = null,
+    var TagChangeCount: String? = null
 ) {
     @PrimaryKey(autoGenerate = true)
     var iD: Int? = null

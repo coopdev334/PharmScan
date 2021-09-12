@@ -35,7 +35,7 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
 
         composable(Screen.ViewCancel.route) {
 
-        var itemList: MutableList<CollectedData> by remember {mutableStateOf(mutableListOf<CollectedData>())}
+        var collectedData: MutableList<CollectedData> by remember {mutableStateOf(mutableListOf<CollectedData>())}
         var startIndex: Int by remember {mutableStateOf(0)}
         var hintLabel by remember {mutableStateOf("Rec#")}
         val listState = rememberLazyListState()
@@ -57,8 +57,8 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                     selectedIndex = -1
                 },
                 onCancelRecord = {
-                    itemList[selectedIndex].qty = "000000"
-                    pharmScanViewModel.insertCollectedData(itemList[selectedIndex])
+                    collectedData[selectedIndex].qty = "000000"
+                    pharmScanViewModel.insertCollectedData(collectedData[selectedIndex])
                     showCancelCollDataDialog.value = false
                     selectedIndex = -1
                 }
@@ -161,16 +161,16 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                 // This lamda function gets called when searching
                 when (hintLabel) {
                     "Rec#" -> {
-                        itemList = pharmScanViewModel.getAllCollectedDataOrderByRecCnt()
-                        startIndex = itemList.indexOfFirst { it.recount == searchText }
+                        collectedData = pharmScanViewModel.getAllCollectedDataOrderByRecCnt()
+                        startIndex = collectedData.indexOfFirst { it.recount == searchText }
                     }
                     "Tag" -> {
-                        itemList = pharmScanViewModel.getAllCollectedDataOrderByTag()
-                        startIndex = itemList.indexOfFirst { it.loc == searchText }
+                        collectedData = pharmScanViewModel.getAllCollectedDataOrderByTag()
+                        startIndex = collectedData.indexOfFirst { it.loc == searchText }
                     }
                     "Ndc" -> {
-                        itemList = pharmScanViewModel.getAllCollectedDataOrderByNdc()
-                        startIndex = itemList.indexOfFirst { it.ndc == searchText }
+                        collectedData = pharmScanViewModel.getAllCollectedDataOrderByNdc()
+                        startIndex = collectedData.indexOfFirst { it.ndc == searchText }
                     }
                 }
             }
@@ -191,7 +191,7 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                     horizontalAlignment = Alignment.Start
                 ) {
 
-                    items(itemList.size) { index ->
+                    items(collectedData.size) { index ->
                         Box(
                             modifier = Modifier
                                 .selectable(
@@ -202,7 +202,7 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                                     }
                                 )
                                 .background(
-                                    if (itemList[index].qty == "000000")
+                                    if (collectedData[index].qty == "000000")
                                         Color.Red else Color.LightGray
                                 )
 
@@ -220,13 +220,13 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                                     horizontalArrangement = Arrangement.Start
                                 ) {
                                     Text(
-                                        text = "Tag: " + itemList[index].loc,
+                                        text = "Tag: " + collectedData[index].loc,
                                         style = MaterialTheme.typography.h6,
                                         color = MaterialTheme.colors.onBackground,
                                         modifier = Modifier.width(156.dp)
                                     )
                                     Text(
-                                        text = "Qty: " + itemList[index].qty,
+                                        text = "Qty: " + collectedData[index].qty,
                                         style = MaterialTheme.typography.h6,
                                         color = MaterialTheme.colors.onBackground
                                     )
@@ -239,13 +239,13 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                                     horizontalArrangement = Arrangement.Start
                                 ) {
                                     Text(
-                                        text = "Rec#: " + itemList[index].recount,
+                                        text = "Rec#: " + collectedData[index].recount,
                                         style = MaterialTheme.typography.h6,
                                         color = MaterialTheme.colors.onBackground,
                                         modifier = Modifier.width(156.dp)
                                     )
                                     Text(
-                                        text = "Match: " + itemList[index].matchflg,
+                                        text = "Match: " + collectedData[index].matchflg,
                                         style = MaterialTheme.typography.h6,
                                         color = MaterialTheme.colors.onBackground
                                     )
@@ -258,13 +258,13 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                                     horizontalArrangement = Arrangement.Start
                                 ) {
                                     Text(
-                                        text = "Price: " + itemList[index].price,
+                                        text = "Price: " + collectedData[index].price,
                                         style = MaterialTheme.typography.h6,
                                         color = MaterialTheme.colors.onBackground,
                                         modifier = Modifier.width(156.dp)
                                     )
                                     Text(
-                                        text = "PkSz: " + itemList[index].packsz,
+                                        text = "PkSz: " + collectedData[index].packsz,
                                         style = MaterialTheme.typography.h6,
                                         color = MaterialTheme.colors.onBackground
                                     )
@@ -277,7 +277,7 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                                     horizontalArrangement = Arrangement.Start
                                 ) {
                                     Text(
-                                        text = "Ndc: " + itemList[index].ndc,
+                                        text = "Ndc: " + collectedData[index].ndc,
                                         style = MaterialTheme.typography.h6,
                                         color = MaterialTheme.colors.onBackground
                                     )

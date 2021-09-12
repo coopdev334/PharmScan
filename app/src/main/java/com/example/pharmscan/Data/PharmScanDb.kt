@@ -17,7 +17,7 @@ import com.example.pharmscan.Data.Tables.*
         PSNdc::class,
         Settings::class
     ],
-    version = 7,
+    version = 10,
     exportSchema = false
 )
 abstract class PharmScanDb: RoomDatabase() {
@@ -100,3 +100,12 @@ abstract class PharmScanDb: RoomDatabase() {
 //insert into PSNdc values ("22222222222", "12345678", "12345678", 2)
 //insert into PSNdc values ("33333333333", "12345678", "12345678", 3)
 //insert into PSNdc values ("44444444444", "12345678", "12345678", 4)
+
+//insert into SystemInfo values ("999", "123456", "123456", "12345678", "1222", "1111", 1)
+
+//insert into Settings values ("coopacct", "123456", "checked", "12345678", "2", 1)
+
+//insert into PSNdc values ("11111111111", "12345678", "1", 1)
+//insert into PSNdc values ("22222222222", "12345678", "2", 2)
+//insert into PSNdc values ("33333333333", "12345678", "3", 3)
+//insert into PSNdc values ("44444444444", "12345678", "4", 4)
