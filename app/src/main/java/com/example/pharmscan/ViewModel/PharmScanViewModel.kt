@@ -1,7 +1,6 @@
 package com.example.pharmscan.ViewModel
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.pharmscan.Data.Tables.*
 import com.example.pharmscan.Repository.PharmScanRepo
@@ -17,7 +16,7 @@ class PharmScanViewModel(
     // HostCompName
     // LiveData holds state which is observed by the UI
     // (state flows down from ViewModel)
-    var hostCompName: LiveData<List<HostCompName>> = getLiveDataHostCompNameRow()
+    var hostCompName: LiveData<List<HostCompName>> = getAllLiveDataHostCompName()
 
     // Settings viewModel db interface
     // These functions will be called by the composable views to get and set database information
@@ -33,20 +32,15 @@ class PharmScanViewModel(
         repo.deleteAllHostCompName()
     }
 
-    fun getLiveDataHostCompNameRow() = repo.getLiveDataHostCompNameRow()
-    fun getHostCompNameRow() = repo.getHostCompNameRow()
+    fun getAllLiveDataHostCompName() = repo.getAllLiveDataHostCompName()
+    fun getAllHostCompName() = repo.getAllHostCompName()
 
 
     // **********************************************************************
     // CollectedData
     // LiveData holds state which is observed by the UI
     // (state flows down from ViewModel)
-    private var _collectedData = MutableLiveData(listOf<CollectedData>())
-    val collectedData: LiveData<List<CollectedData>> = _collectedData
-
-    fun updateCollectedDataLiveData() {
-        _collectedData.value = getAllCollectedData()
-    }
+    var collectedData: LiveData<List<CollectedData>> = getAllLiveDataCollectedData()
 
     // CollectedData viewModel db interface
     // These functions will be called by the composable views to get and set database information
@@ -54,10 +48,12 @@ class PharmScanViewModel(
     fun insertCollectedData(collectedData: CollectedData) = CoroutineScope(Dispatchers.IO).launch {
         repo.insertCollectedData(collectedData)
     }
-    fun deleteCollectedData(collectedData: CollectedData) = CoroutineScope(Dispatchers.IO).launch {
-        repo.deleteCollectedData(collectedData)
+    fun deleteCollectedDataRow(collectedData: CollectedData) = CoroutineScope(Dispatchers.IO).launch {
+        repo.deleteCollectedDataRow(collectedData)
     }
 
+    fun deleteAllCollectedData() = repo.deleteAllCollectedData()
+    fun getAllLiveDataCollectedData() = repo.getAllLiveDataCollectedData()
     fun getAllCollectedData() = repo.getAllCollectedData()
     fun getAllCollectedDataOrderByRecCnt() = repo.getAllCollectedDataOrderByRecCnt()
     fun getAllCollectedDataOrderByTag() = repo.getAllCollectedDataOrderByTag()
@@ -97,7 +93,7 @@ class PharmScanViewModel(
     // PSNdc
     // LiveData holds state which is observed by the UI
     // (state flows down from ViewModel)
-    var psNdc: LiveData<List<PSNdc>> = getLiveDataPSNdcRow()
+    var psNdc: LiveData<List<PSNdc>> = getAllLiveDataPSNdc()
 
     // PSNdc viewModel db interface
     // These functions will be called by the composable views to get and set database information
@@ -113,8 +109,9 @@ class PharmScanViewModel(
         repo.deleteAllPSNdc()
     }
 
-    fun getLiveDataPSNdcRow() = repo.getLiveDataPSNdcRow()
-    fun getPSNdcRow() = repo.getPSNdcRow()
+    fun getAllLiveDataPSNdc() = repo.getAllLiveDataPSNdc()
+    fun getAllPSNdc() = repo.getAllPSNdc()
+    fun getNdcPSNdc(ndc: String) = repo.getNdcPSNdc(ndc)
 
 
     // **********************************************************************

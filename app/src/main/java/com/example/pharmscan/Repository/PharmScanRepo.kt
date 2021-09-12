@@ -14,12 +14,14 @@ class PharmScanRepo(
     suspend fun insertHostCompName(hostCompName: HostCompName) = daoHostCompName.insert(hostCompName)
     suspend fun deleteRowHostCompName(hostCompName: HostCompName) = daoHostCompName.deleteRow(hostCompName)
     suspend fun deleteAllHostCompName() = daoHostCompName.deleteAll()
-    fun getLiveDataHostCompNameRow() = daoHostCompName.getLiveDataRow()
-    fun getHostCompNameRow() = daoHostCompName.getRow()
+    fun getAllLiveDataHostCompName() = daoHostCompName.getAllLiveData()
+    fun getAllHostCompName() = daoHostCompName.getAll()
 
     // CollectedData db SQL
     suspend fun insertCollectedData(collectedData: CollectedData) = daoCollectedData.insert(collectedData)
-    suspend fun deleteCollectedData(collectedData: CollectedData) = daoCollectedData.delete(collectedData)
+    suspend fun deleteCollectedDataRow(collectedData: CollectedData) = daoCollectedData.deleteRow(collectedData)
+    fun deleteAllCollectedData() = daoCollectedData.deleteAll()
+    fun getAllLiveDataCollectedData() = daoCollectedData.getAllLiveData()
     fun getAllCollectedData() = daoCollectedData.getAll()
     fun getAllCollectedDataOrderByRecCnt() = daoCollectedData.getAllOrderByRecCnt()
     fun getAllCollectedDataOrderByTag() = daoCollectedData.getAllOrderByTag()
@@ -38,8 +40,9 @@ class PharmScanRepo(
     suspend fun insertPSNdc(psNdc: PSNdc) = daoPSNdc.insert(psNdc)
     suspend fun deleteRowPSNdc(psNdc: PSNdc) = daoPSNdc.deleteRow(psNdc)
     suspend fun deleteAllPSNdc() = daoPSNdc.deleteAll()
-    fun getLiveDataPSNdcRow() = daoPSNdc.getLiveDataRow()
-    fun getPSNdcRow() = daoPSNdc.getRow()
+    fun getAllLiveDataPSNdc() = daoPSNdc.getAllLiveData()
+    fun getAllPSNdc() = daoPSNdc.getAll()
+    fun getNdcPSNdc(ndc: String) = daoPSNdc.getNdc(ndc)
 
     // Settings db SQL
     suspend fun insertSettings(settings: Settings) = daoSettings.insert(settings)

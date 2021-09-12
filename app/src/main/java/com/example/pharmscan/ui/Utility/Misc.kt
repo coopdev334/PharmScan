@@ -15,7 +15,7 @@ fun isDecNumber(s: String?): Boolean {
 // Determine is string value is valid whole number no decimals
 fun isWholeNumber(s: String?): Boolean {
     if (s.isNullOrEmpty()) {
-        return false
+        return true
     } else {
         return s.matches("""^(0|[1-9]\d*)$""".toRegex())
     }

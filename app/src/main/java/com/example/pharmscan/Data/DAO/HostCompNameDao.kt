@@ -19,8 +19,8 @@ interface HostCompNameDao {
     suspend fun deleteAll()
 
     @Query("SELECT * FROM HostCompName")
-    fun getLiveDataRow(): LiveData<List<HostCompName>>
+    fun getAllLiveData(): LiveData<List<HostCompName>>
 
     @Query("SELECT * FROM HostCompName")
-    fun getRow(): List<HostCompName>
+    fun getAll(): List<HostCompName>
 }

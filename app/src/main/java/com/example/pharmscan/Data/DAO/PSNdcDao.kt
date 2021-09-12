@@ -16,9 +16,12 @@ interface PSNdcDao {
     suspend fun deleteAll()
 
     @Query("SELECT * FROM PSNdc")
-    fun getLiveDataRow(): LiveData<List<PSNdc>>
+    fun getAllLiveData(): LiveData<List<PSNdc>>
 
     @Query("SELECT * FROM PSNdc")
-    fun getRow(): List<PSNdc>
+    fun getAll(): List<PSNdc>
+
+    @Query("SELECT * FROM PSNdc WHERE ndc = :ndc")
+    fun getNdc(ndc: String): List<PSNdc>
 
 }

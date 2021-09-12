@@ -156,12 +156,18 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                     NdcKyBrdInput(
                         keyBrdInput,
                         showDialog = showKyBrdInputDialog.value,
-                        onAdd = {
+                        onAdd = {ndc ->
                             showKyBrdInputDialog.value = false
                             //val columnValue = mapOf("Ndc" to ndc)
                             //UpdateSystemInfo(pharmScanViewModel, columnValue)
                             //statusBarBkGrColor = Color.Green
                             //statusBarText = "*** Scan BarCode ***"
+                            val result = pharmScanViewModel.getNdcPSNdc(ndc)
+                            if (result.isNullOrEmpty()) {
+                                ToastDisplay("No Match", Toast.LENGTH_LONG)
+                            }else{
+                                ToastDisplay("Match: ", Toast.LENGTH_LONG)
+                            }
                         },
                         onCancel = {
                             showKyBrdInputDialog.value = false

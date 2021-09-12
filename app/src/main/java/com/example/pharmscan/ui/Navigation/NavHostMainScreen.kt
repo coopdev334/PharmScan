@@ -20,13 +20,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import com.example.pharmscan.Data.Tables.HostCompName
-import com.example.pharmscan.Data.Tables.Settings
-import com.example.pharmscan.Data.Tables.SystemInfo
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.AddHostComputer
 import com.example.pharmscan.ui.Dialog.DeleteHostComputerAlert
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
 @ExperimentalComposeUiApi
@@ -40,7 +37,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
         val listState = rememberLazyListState()
         val showDelHostCompDialog = remember { mutableStateOf(false) }
         val showAddHostCompDialog = remember { mutableStateOf(false) }
-        val hostCompNameList: List<HostCompName> by pharmScanViewModel.hostCompName.observeAsState(pharmScanViewModel.getHostCompNameRow())
+        val hostCompNameList: List<HostCompName> by pharmScanViewModel.hostCompName.observeAsState(pharmScanViewModel.getAllHostCompName())
 
         if (hostCompNameList.isNullOrEmpty()) {
             // set to defaults
