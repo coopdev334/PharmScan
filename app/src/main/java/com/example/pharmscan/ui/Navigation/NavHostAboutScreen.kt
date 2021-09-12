@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -16,6 +17,7 @@ import com.example.pharmscan.BuildConfig
 
 fun NavGraphBuilder.addAboutScreen(navController: NavController) {
     composable(Screen.AboutScreen.route) {
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
@@ -30,7 +32,9 @@ fun NavGraphBuilder.addAboutScreen(navController: NavController) {
             Text(
                 text = "<-",
                 fontSize = 40.sp,
-                modifier = Modifier.align(alignment = Alignment.Start).padding(start = 20.dp)
+                modifier = Modifier
+                    .align(alignment = Alignment.Start)
+                    .padding(start = 20.dp)
                     .clickable {
                         navController.popBackStack()
                     },

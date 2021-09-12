@@ -1,6 +1,7 @@
 package com.example.pharmscan
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -22,7 +23,7 @@ class MainActivity() : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val database = PharmScanDb.getDatabase(this)
-        val repo = PharmScanRepo(database.getHostCompNameDao(), database.getCollectedDataDao(), database.getSystemInfoDao(), database.getPSNdcDao())
+        val repo = PharmScanRepo(database.getHostCompNameDao(), database.getCollectedDataDao(), database.getSystemInfoDao(), database.getPSNdcDao(), database.getSettingsDao())
         val factory = PharmScanViewModelFactory(repo)
         val pharmScanViewModel = ViewModelProvider(this, factory).get(PharmScanViewModel::class.java)
 

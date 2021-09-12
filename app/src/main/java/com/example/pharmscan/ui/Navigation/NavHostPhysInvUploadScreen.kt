@@ -1,8 +1,10 @@
 package com.example.pharmscan.ui.Navigation
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -12,6 +14,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -19,6 +22,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
+import com.example.pharmscan.PharmScanApplication
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.GetOpId
 import com.example.pharmscan.ui.Screen.Screen
@@ -60,63 +64,70 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
             )
         }
 
+        // NOTE: Changes need to be made also in all screens with the scafford settings
         Scaffold(
             scaffoldState = scaffoldState,
             drawerShape = MaterialTheme.shapes.large,
             drawerContent = {
-                Text(
-                    text = "Settings",
-                    modifier = Modifier.clickable {
-                        coroutineScope.launch {
-                            scaffoldState.drawerState.close()
-                            scaffoldState.snackbarHostState.showSnackbar("Drawer Settings") }
-                    },
-                    style = MaterialTheme.typography.caption,
-                    color = MaterialTheme.colors.onBackground
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(start = 20.dp)
+                ) {
+                    Text(
+                        text = "Settings",
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                scaffoldState.drawerState.close()
+                            }
+                            navController.navigate(Screen.SettingsScreen.route)
+                        },
+                        style = MaterialTheme.typography.caption,
+                        color = MaterialTheme.colors.onBackground
+                    )
 
-                Spacer(modifier = Modifier.height(height = 10.dp))
+                    Spacer(modifier = Modifier.height(height = 10.dp))
 
-                Text(
-                    text = "View Cancel",
-                    modifier = Modifier.clickable {
-                        coroutineScope.launch {
-                            scaffoldState.drawerState.close()
-                            navController.navigate(Screen.ViewCancel.route) }
-                    },
-                    style = MaterialTheme.typography.caption,
-                    color = MaterialTheme.colors.onBackground
-                )
+                    Text(
+                        text = "View Cancel",
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                scaffoldState.drawerState.close()
+                                navController.navigate(Screen.ViewCancel.route) }
+                        },
+                        style = MaterialTheme.typography.caption,
+                        color = MaterialTheme.colors.onBackground
+                    )
 
-                Spacer(modifier = Modifier.height(height = 10.dp))
+                    Spacer(modifier = Modifier.height(height = 10.dp))
 
-                Text(
-                    text = "View File Name",
-                    modifier = Modifier.clickable {
-                        coroutineScope.launch {
-                            scaffoldState.drawerState.close()
-                            navController.navigate(Screen.ViewColDataFNameScreen.route)
-                        }
-                    },
-                    style = MaterialTheme.typography.caption,
-                    color = MaterialTheme.colors.onBackground
-                )
+                    Text(
+                        text = "View File Name",
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                scaffoldState.drawerState.close()
+                                navController.navigate(Screen.ViewColDataFNameScreen.route)
+                            }
+                        },
+                        style = MaterialTheme.typography.caption,
+                        color = MaterialTheme.colors.onBackground
+                    )
 
-                Spacer(modifier = Modifier.height(height = 10.dp))
+                    Spacer(modifier = Modifier.height(height = 10.dp))
 
-                Text(
-                    text = "About",
-                    modifier = Modifier.clickable {
-                        coroutineScope.launch {
-                            scaffoldState.drawerState.close()
-                            navController.navigate(Screen.AboutScreen.route)
-                        }
-                    },
-                    style = MaterialTheme.typography.caption,
-                    color = MaterialTheme.colors.onBackground
-                )
-            },
-            topBar = {
+                    Text(
+                        text = "About",
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                scaffoldState.drawerState.close()
+                                navController.navigate(Screen.AboutScreen.route)
+                            }
+                        },
+                        style = MaterialTheme.typography.caption,
+                        color = MaterialTheme.colors.onBackground
+                    )
+                }
+            },            topBar = {
                 TopAppBar(
                     title = { Text("PharmScan") },
                     navigationIcon = {
@@ -171,7 +182,9 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                             .padding(top = 30.dp),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Button(onClick = {
+                        Button(
+                            modifier = Modifier.clip(RoundedCornerShape(50.dp)),
+                            onClick = {
                             showEnterOpIdDialog.value = true
                         }) {
                             Text(
@@ -187,9 +200,15 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                             .padding(top = 50.dp),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Button(onClick = {
-                            // TODO: add funciton to upload data using network wifi to host
-                            //navController.navigate(Screen.xxxxxxxxx.route)
+                        Button(
+                            modifier = Modifier.clip(RoundedCornerShape(50.dp)),
+                            onClick = {
+                            // upload data using network wifi to host
+//                                val con = PharmScanApplication()
+//                                if (con.getAppContext() != null) {
+//                                    Toast.makeText(con.getAppContext(), "kldsajflkjsdlfk", Toast.LENGTH_SHORT).show()
+//                                }
+                            pharmScanViewModel.uploadCollectedData()
                         }) {
                             Text(
                                 text = "Upload Collected Data",

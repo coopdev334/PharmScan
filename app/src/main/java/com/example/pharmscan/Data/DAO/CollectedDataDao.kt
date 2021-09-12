@@ -1,5 +1,6 @@
 package com.example.pharmscan.Data.DAO
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.Data.Tables.PSNdc
@@ -12,7 +13,13 @@ interface CollectedDataDao {
     suspend fun insert(collectedData: CollectedData)
 
     @Delete
-    suspend fun delete(collectedData: CollectedData)
+    suspend fun deleteRow(collectedData: CollectedData)
+
+    @Query("DELETE FROM CollectedData")
+    fun deleteAll()
+
+    @Query("SELECT * FROM CollectedData")
+    fun getAllLiveData(): LiveData<List<CollectedData>>
 
     @Query("SELECT * FROM CollectedData")
     fun getAll(): List<CollectedData>

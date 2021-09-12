@@ -4,14 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.pharmscan.Data.DAO.CollectedDataDao
-import com.example.pharmscan.Data.DAO.HostCompNameDao
-import com.example.pharmscan.Data.DAO.PSNdcDao
-import com.example.pharmscan.Data.DAO.SystemInfoDao
-import com.example.pharmscan.Data.Tables.CollectedData
-import com.example.pharmscan.Data.Tables.HostCompName
-import com.example.pharmscan.Data.Tables.PSNdc
-import com.example.pharmscan.Data.Tables.SystemInfo
+import com.example.pharmscan.Data.DAO.*
+import com.example.pharmscan.Data.Tables.*
 
 // List all tables here and update version for each database change
 // NOTE: Increament version each time any database changes are made
@@ -20,9 +14,10 @@ import com.example.pharmscan.Data.Tables.SystemInfo
         HostCompName::class,
         CollectedData::class,
         SystemInfo::class,
-        PSNdc::class
+        PSNdc::class,
+        Settings::class
     ],
-    version = 5,
+    version = 10,
     exportSchema = false
 )
 abstract class PharmScanDb: RoomDatabase() {
@@ -31,6 +26,7 @@ abstract class PharmScanDb: RoomDatabase() {
     abstract fun getCollectedDataDao(): CollectedDataDao
     abstract fun getSystemInfoDao(): SystemInfoDao
     abstract fun getPSNdcDao(): PSNdcDao
+    abstract fun getSettingsDao(): SettingsDao
 
     // companion object is a static object accessed in this class
 //    companion object {
@@ -104,3 +100,12 @@ abstract class PharmScanDb: RoomDatabase() {
 //insert into PSNdc values ("22222222222", "12345678", "12345678", 2)
 //insert into PSNdc values ("33333333333", "12345678", "12345678", 3)
 //insert into PSNdc values ("44444444444", "12345678", "12345678", 4)
+
+//insert into SystemInfo values ("999", "123456", "123456", "12345678", "1222", "1111", 1)
+
+//insert into Settings values ("coopacct", "123456", "checked", "12345678", "2", 1)
+
+//insert into PSNdc values ("11111111111", "12345678", "1", 1)
+//insert into PSNdc values ("22222222222", "12345678", "2", 2)
+//insert into PSNdc values ("33333333333", "12345678", "3", 3)
+//insert into PSNdc values ("44444444444", "12345678", "4", 4)
