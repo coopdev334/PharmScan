@@ -28,7 +28,7 @@ import androidx.navigation.compose.navArgument
 import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.Data.Tables.Settings
 import com.example.pharmscan.Data.Tables.SystemInfo
-import com.example.pharmscan.ViewModel.KyBrdNdcSearch
+import com.example.pharmscan.ViewModel.NdcSearch
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.HoldQtyKyBrdInput
 import com.example.pharmscan.ui.Dialog.NdcKyBrdInput
@@ -159,7 +159,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                         showDialog = showKyBrdInputDialog.value,
                         onAdd = {ndc ->
                             showKyBrdInputDialog.value = false
-                            KyBrdNdcSearch(ndc, pharmScanViewModel)
+                            NdcSearch(navController, ndc, pharmScanViewModel)
                         },
                         onCancel = {
                             showKyBrdInputDialog.value = false
