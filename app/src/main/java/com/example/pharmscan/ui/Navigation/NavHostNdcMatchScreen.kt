@@ -128,18 +128,33 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
                         if (areInputsValid) {
                             clearFocusAndHideKeyboard()
                             _events.send(ScreenEvent.ShowToast("success"))
-                            ndc?.let { it1 -> pksz?.let { it2 -> price?.let { it3 -> InsertNdc(navController, pharmScanViewModel, it1.value, it2.value, it3.value, qty.value, "R") } } }
-                            //navController.popBackStack()
-                        }else{
+                            ndc?.let { it1 ->
+                                pksz?.let { it2 ->
+                                    price?.let { it3 ->
+                                        InsertNdc(
+                                            navController,
+                                            pharmScanViewModel,
+                                            it1.value,
+                                            it2.value,
+                                            it3.value,
+                                            qty.value,
+                                            "R"
+                                        )
+                                    }
+                                }
+                            }
+                        } else {
                             _events.send(ScreenEvent.ShowToast("1 or more fields invalid"))
                         }
-                    }else{
+                    } else {
                         _events.send(ScreenEvent.ShowToast("Qty missing decimal pt"))
                     }
-                }else{
+                } else {
                     _events.send(ScreenEvent.ShowToast("Price missing decimal pt"))
                 }
+                _events.send(ScreenEvent.PopBackStack)
             }
+
         }
 
         fun focusOnLastSelectedTextField() {
@@ -170,6 +185,7 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
                             }
                         }
                         is ScreenEvent.MoveFocus -> focusManager.moveFocus(event.direction)
+                        is ScreenEvent.PopBackStack -> navController.popBackStack()
                     }
                 }
             }

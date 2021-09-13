@@ -106,7 +106,6 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
                             clearFocusAndHideKeyboard()
                             _events.send(ScreenEvent.ShowToast("success"))
                             InsertNdc(navController, pharmScanViewModel, ndc.value, pksz.value, price.value, qty.value, "N")
-                            navController.popBackStack()
                         }else{
                             _events.send(ScreenEvent.ShowToast("1 or more fields invalid"))
                         }
@@ -116,6 +115,7 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
                 }else{
                         _events.send(ScreenEvent.ShowToast("Price missing decimal pt"))
                 }
+                _events.send(ScreenEvent.PopBackStack)
             }
         }
 
@@ -145,6 +145,7 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
                             }
                         }
                         is ScreenEvent.MoveFocus -> focusManager.moveFocus(event.direction)
+                        is ScreenEvent.PopBackStack -> navController.popBackStack()
                     }
                 }
             }

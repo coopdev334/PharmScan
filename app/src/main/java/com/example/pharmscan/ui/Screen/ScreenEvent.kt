@@ -8,4 +8,5 @@ sealed class ScreenEvent {
     class RequestFocus(val textFieldKey: FocusedTextFieldKey) : ScreenEvent()
     object ClearFocus : ScreenEvent()
     class MoveFocus(val direction: FocusDirection = FocusDirection.Down) : ScreenEvent()
+    object PopBackStack : ScreenEvent()
 }

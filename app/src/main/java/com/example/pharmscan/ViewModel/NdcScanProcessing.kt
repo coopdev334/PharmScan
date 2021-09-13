@@ -8,6 +8,7 @@ import com.example.pharmscan.Data.Tables.PSNdc
 import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
+import kotlinx.coroutines.runBlocking
 
 fun NdcSearch(navController: NavController, ndc: String, pharmScanViewModel:PharmScanViewModel) {
     val result = pharmScanViewModel.getNdcPSNdc(ndc)
