@@ -105,7 +105,7 @@ abstract class PharmScanDb: RoomDatabase() {
 
 //insert into Settings values ("coopacct", "123456", "checked", "12345678", "2", 1)
 
-//insert into PSNdc values ("11111111111", "12345678", "1", 1)
-//insert into PSNdc values ("22222222222", "12345678", "2", 2)
-//insert into PSNdc values ("33333333333", "12345678", "3", 3)
-//insert into PSNdc values ("44444444444", "12345678", "4", 4)
+//insert into PSNdc values ("11111111111", "1.3", "1", 1)
+//insert into PSNdc values ("22222222222", "12.4", "2", 2)
+//insert into PSNdc values ("33333333333", "123.5", "3", 3)
+//insert into PSNdc values ("44444444444", "1234.6", "4", 4)

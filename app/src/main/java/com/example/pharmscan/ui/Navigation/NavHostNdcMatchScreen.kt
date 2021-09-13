@@ -26,6 +26,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
+import androidx.navigation.NavType
+import androidx.navigation.compose.navArgument
+import com.example.pharmscan.ViewModel.InsertNdc
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Screen.*
 import com.example.pharmscan.ui.Utility.ToastDisplay
@@ -37,7 +40,26 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
-    composable(Screen.NdcMatchScreen.route) {
+    composable(
+        route = Screen.NdcMatchScreen.route + "/{ndc}/{price}/{pksz}",
+        // Define argument list to pass to this composable in composable constructor
+        // arguments parameter which is a list of navArguments.
+        arguments = listOf(
+            navArgument("ndc") {
+                type = NavType.StringType
+                nullable = false
+            },
+            navArgument("price") {
+                type = NavType.StringType
+                nullable = false
+            },
+            navArgument("pksz") {
+                type = NavType.StringType
+                nullable = false
+            }
+        )
+    ) {
+
         //val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
         val focusManager = LocalFocusManager.current
@@ -51,29 +73,31 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
             )
         }
 
-        var ndc by remember { mutableStateOf(InputWrapper("", null)) }
-        var pksz by remember { mutableStateOf(InputWrapper("", null)) }
-        var price by remember { mutableStateOf(InputWrapper("", null)) }
+        var ndc by remember { mutableStateOf(it.arguments?.getString("ndc")?.let { it1 -> InputWrapper(it1, null)}) }
+        var pksz by remember { mutableStateOf(it.arguments?.getString("pksz")?.let { it1 -> InputWrapper(it1, null)}) }
+        var price by remember { mutableStateOf(it.arguments?.getString("price")?.let { it1 -> InputWrapper(it1, null)}) }
         var qty by remember { mutableStateOf(InputWrapper("", null)) }
         val ndcFocusRequester = remember { FocusRequester() }
         val pkszFocusRequester = remember { FocusRequester() }
-        val areInputsValid = ndc.errorId == null && pksz.errorId == null && price.errorId == null && qty.errorId == null
+        val priceFocusRequester = remember { FocusRequester() }
+        val qtyFocusRequester = remember { FocusRequester() }
+        val areInputsValid = ndc?.errorId == null && pksz?.errorId == null && price?.errorId == null && qty.errorId == null
         var focusedTextField = FocusedTextFieldKey.NDC
 
         //***************************************
         fun onNdcEntered(input: String) {
             val errorId = InputValidator.getNdcErrorIdOrNull(input)
-            ndc = ndc.copy(value = input, errorId = errorId)
+            ndc = ndc?.copy(value = input, errorId = errorId)
         }
 
         fun onPkSzEntered(input: String) {
             val errorId = InputValidator.getPkSzErrorIdOrNull(input)
-            pksz = pksz.copy(value = input, errorId = errorId)
+            pksz = pksz?.copy(value = input, errorId = errorId)
         }
 
         fun onPriceEntered(input: String) {
             val errorId = InputValidator.getPriceErrorIdOrNull(input)
-            price = price.copy(value = input, errorId = errorId)
+            price = price?.copy(value = input, errorId = errorId)
         }
 
         fun onQtyEntered(input: String) {
@@ -99,11 +123,13 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
 
         fun onOkClick() {
             CoroutineScope(Dispatchers.IO).launch {
-                if (isDecNumber(price.value)) {
+                if (isDecNumber(price?.value)) {
                     if (isDecNumber(qty.value)) {
                         if (areInputsValid) {
                             clearFocusAndHideKeyboard()
                             _events.send(ScreenEvent.ShowToast("success"))
+                            ndc?.let { it1 -> pksz?.let { it2 -> price?.let { it3 -> InsertNdc(navController, pharmScanViewModel, it1.value, it2.value, it3.value, qty.value, "R") } } }
+                            //navController.popBackStack()
                         }else{
                             _events.send(ScreenEvent.ShowToast("1 or more fields invalid"))
                         }
@@ -138,6 +164,8 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
                             when (event.textFieldKey) {
                                 FocusedTextFieldKey.NDC -> ndcFocusRequester.requestFocus()
                                 FocusedTextFieldKey.PKSZ -> pkszFocusRequester.requestFocus()
+                                FocusedTextFieldKey.Price -> ndcFocusRequester.requestFocus()
+                                FocusedTextFieldKey.Qty -> pkszFocusRequester.requestFocus()
                                 else -> {}
                             }
                         }
@@ -164,78 +192,84 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
                     color = MaterialTheme.colors.onBackground
                 )
             }
-            CustomTextField(
-                modifier = Modifier
-                    .focusRequester(ndcFocusRequester)
-                    .onFocusChanged { focusState ->
-                        onTextFieldFocusChanged(
-                            key = FocusedTextFieldKey.NDC,
-                            isFocused = focusState.isFocused
-                        )
-                    },
-                enabled = false,
-                label = "Ndc",
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next
-                ),
-                //visualTransformation = ::NdcFilter,
-                inputWrapper = ndc,
-                onValueChange = ::onNdcEntered,
-                onImeKeyAction = ::onNdcImeActionClick,
-                length = 11
-            )
+            ndc?.let { it1 ->
+                CustomTextField(
+                    modifier = Modifier
+                        .focusRequester(ndcFocusRequester)
+                        .onFocusChanged { focusState ->
+                            onTextFieldFocusChanged(
+                                key = FocusedTextFieldKey.NDC,
+                                isFocused = focusState.isFocused
+                            )
+                        },
+                    enabled = false,
+                    label = "Ndc",
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    //visualTransformation = ::NdcFilter,
+                    inputWrapper = it1,
+                    onValueChange = ::onNdcEntered,
+                    onImeKeyAction = ::onNdcImeActionClick,
+                    length = 11
+                )
+            }
+            Spacer(Modifier.height(10.dp))
+            pksz?.let { it1 ->
+                CustomTextField(
+                    modifier = Modifier
+                        .focusRequester(pkszFocusRequester)
+                        .onFocusChanged { focusState ->
+                            onTextFieldFocusChanged(
+                                key = FocusedTextFieldKey.PKSZ,
+                                isFocused = focusState.isFocused
+                            )
+                        },
+                    enabled = false,
+                    label = "PkSz",
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
+                    //visualTransformation = ::creditCardFilter,
+                    inputWrapper = it1,
+                    onValueChange = ::onPkSzEntered,
+                    onImeKeyAction = ::onOkClick,
+                    length = 8
+                )
+            }
+            Spacer(Modifier.height(10.dp))
+            price?.let { it1 ->
+                CustomTextField(
+                    modifier = Modifier
+                        .focusRequester(ndcFocusRequester)
+                        .onFocusChanged { focusState ->
+                            onTextFieldFocusChanged(
+                                key = FocusedTextFieldKey.Price,
+                                isFocused = focusState.isFocused
+                            )
+                        },
+                    enabled = false,
+                    label = "Price",
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    //visualTransformation = ::NdcFilter,
+                    inputWrapper = it1,
+                    onValueChange = ::onPriceEntered,
+                    onImeKeyAction = ::onNdcImeActionClick,
+                    length = 8
+                )
+            }
             Spacer(Modifier.height(10.dp))
             CustomTextField(
                 modifier = Modifier
                     .focusRequester(pkszFocusRequester)
                     .onFocusChanged { focusState ->
                         onTextFieldFocusChanged(
-                            key = FocusedTextFieldKey.PKSZ,
-                            isFocused = focusState.isFocused
-                        )
-                    },
-                enabled = false,
-                label = "PkSz",
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
-                ),
-                //visualTransformation = ::creditCardFilter,
-                inputWrapper = pksz,
-                onValueChange = ::onPkSzEntered,
-                onImeKeyAction = ::onOkClick,
-                length = 8
-            )
-            Spacer(Modifier.height(10.dp))
-            CustomTextField(
-                modifier = Modifier
-                    .focusRequester(ndcFocusRequester)
-                    .onFocusChanged { focusState ->
-                        onTextFieldFocusChanged(
-                            key = FocusedTextFieldKey.NDC,
-                            isFocused = focusState.isFocused
-                        )
-                    },
-                enabled = false,
-                label = "Price",
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next
-                ),
-                //visualTransformation = ::NdcFilter,
-                inputWrapper = price,
-                onValueChange = ::onPriceEntered,
-                onImeKeyAction = ::onNdcImeActionClick,
-                length = 8
-            )
-            Spacer(Modifier.height(10.dp))
-            CustomTextField(
-                modifier = Modifier
-                    .focusRequester(pkszFocusRequester)
-                    .onFocusChanged { focusState ->
-                        onTextFieldFocusChanged(
-                            key = FocusedTextFieldKey.PKSZ,
+                            key = FocusedTextFieldKey.Qty,
                             isFocused = focusState.isFocused
                         )
                     },

@@ -26,6 +26,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.example.pharmscan.ViewModel.InsertNdc
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Screen.*
 import com.example.pharmscan.ui.Utility.ToastDisplay
@@ -104,6 +105,8 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
                         if (areInputsValid) {
                             clearFocusAndHideKeyboard()
                             _events.send(ScreenEvent.ShowToast("success"))
+                            InsertNdc(navController, pharmScanViewModel, ndc.value, pksz.value, price.value, qty.value, "N")
+                            navController.popBackStack()
                         }else{
                             _events.send(ScreenEvent.ShowToast("1 or more fields invalid"))
                         }
