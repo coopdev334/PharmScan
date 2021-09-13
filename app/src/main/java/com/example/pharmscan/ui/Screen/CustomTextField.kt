@@ -23,6 +23,7 @@ import com.example.pharmscan.ui.Utility.ManageLength
 @Composable
 fun CustomTextField(
     modifier: Modifier,
+    enabled: Boolean,
     inputWrapper: InputWrapper,
     label: String,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
@@ -39,6 +40,7 @@ fun CustomTextField(
     Column {
         TextField(
             modifier = modifier,
+            enabled = enabled,
             value = fieldValue.value,
             onValueChange = {
                 if (it.text.length <= length) fieldValue.value = it

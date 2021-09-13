@@ -173,6 +173,7 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
                             isFocused = focusState.isFocused
                         )
                     },
+                enabled = true,
                 label = "Ndc",
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -194,6 +195,7 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
                             isFocused = focusState.isFocused
                         )
                     },
+                enabled = true,
                 label = "PkSz",
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
@@ -215,6 +217,7 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
                             isFocused = focusState.isFocused
                         )
                     },
+                enabled = true,
                 label = "Price",
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -236,6 +239,7 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
                             isFocused = focusState.isFocused
                         )
                     },
+                enabled = true,
                 label = "Qty",
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
