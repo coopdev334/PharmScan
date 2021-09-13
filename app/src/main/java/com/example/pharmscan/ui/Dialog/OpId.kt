@@ -35,7 +35,7 @@ fun GetOpId(
                 .size(240.dp, 230.dp)
                 .onPreviewKeyEvent { KeyEvent ->
                     if (KeyEvent.key.nativeKeyCode == 66) {
-                        if (!isWholeNumber(text)){
+                        if (isNotWholeNumber(text)){
                             invalidInput = true
                             text = ""
                         }else {
@@ -113,7 +113,7 @@ fun GetOpId(
                         Button(
                             modifier = Modifier.size(width = 90.dp, height = 45.dp),
                             onClick = {
-                                if (!isWholeNumber(text)){
+                                if (isNotWholeNumber(text)){
                                     invalidInput = true
                                     text = ""
                                 }else {

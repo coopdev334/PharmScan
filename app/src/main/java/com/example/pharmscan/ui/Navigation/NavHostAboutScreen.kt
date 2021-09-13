@@ -25,7 +25,6 @@ fun NavGraphBuilder.addAboutScreen(navController: NavController) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
-                //.background(Color.Yellow),
                 horizontalArrangement = Arrangement.Center
             ) {
             }

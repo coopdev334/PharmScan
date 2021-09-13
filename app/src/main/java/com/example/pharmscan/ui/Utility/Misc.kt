@@ -1,5 +1,7 @@
 package com.example.pharmscan.ui.Utility
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import android.widget.Toast
 import com.example.pharmscan.PharmScanApplication
 
@@ -13,11 +15,11 @@ fun isDecNumber(s: String?): Boolean {
 }
 
 // Determine is string value is valid whole number no decimals
-fun isWholeNumber(s: String?): Boolean {
+fun isNotWholeNumber(s: String?): Boolean {
     if (s.isNullOrEmpty()) {
-        return true
+        return false
     } else {
-        return s.matches("""^(0|[1-9]\d*)$""".toRegex())
+        return !(s.matches("""^(0|[0-9]\d*)$""".toRegex()))
     }
 }
 

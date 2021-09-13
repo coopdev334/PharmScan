@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">PharmScan</string>
+    <string name="validation_error">validation error</string>
+    <string name="success">success</string>
+    <string name="credit_card_number">Credit card number</string>
+    <string name="ndc_too_short">Requires 11 numbers</string>
+    <string name="Requires_min_1_number">Requires min 1 number</string>
+    <string name="Numeric_Only">Numeric Only</string>
+    <string name="missing_dec_pt">Invalid Dec Number</string>
+    <string name="name">Name</string>
 </resources>

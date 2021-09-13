@@ -1,5 +1,7 @@
 package com.example.pharmscan.ViewModel
 
+import androidx.lifecycle.AbstractSavedStateViewModelFactory
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.pharmscan.Repository.PharmScanRepo
@@ -8,6 +10,7 @@ import com.example.pharmscan.Repository.PharmScanRepo
 class PharmScanViewModelFactory(
     private val repo: PharmScanRepo
 ): ViewModelProvider.NewInstanceFactory() {
+
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return PharmScanViewModel(repo) as T

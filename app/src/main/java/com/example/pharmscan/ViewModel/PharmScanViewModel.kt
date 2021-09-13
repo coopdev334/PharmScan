@@ -1,11 +1,18 @@
 package com.example.pharmscan.ViewModel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.example.pharmscan.Data.Tables.*
+import com.example.pharmscan.R
 import com.example.pharmscan.Repository.PharmScanRepo
+import com.example.pharmscan.ui.Screen.*
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class PharmScanViewModel(
@@ -24,6 +31,7 @@ class PharmScanViewModel(
     fun insertHostCompName(hostCompName: HostCompName) = CoroutineScope(Dispatchers.IO).launch {
         repo.insertHostCompName(hostCompName)
     }
+
     fun deleteRowHostCompName(hostCompName: HostCompName) = CoroutineScope(Dispatchers.IO).launch {
         repo.deleteRowHostCompName(hostCompName)
     }
@@ -48,9 +56,11 @@ class PharmScanViewModel(
     fun insertCollectedData(collectedData: CollectedData) = CoroutineScope(Dispatchers.IO).launch {
         repo.insertCollectedData(collectedData)
     }
-    fun deleteCollectedDataRow(collectedData: CollectedData) = CoroutineScope(Dispatchers.IO).launch {
-        repo.deleteCollectedDataRow(collectedData)
-    }
+
+    fun deleteCollectedDataRow(collectedData: CollectedData) =
+        CoroutineScope(Dispatchers.IO).launch {
+            repo.deleteCollectedDataRow(collectedData)
+        }
 
     fun deleteAllCollectedData() = repo.deleteAllCollectedData()
     fun getAllLiveDataCollectedData() = repo.getAllLiveDataCollectedData()
@@ -59,6 +69,7 @@ class PharmScanViewModel(
     fun getAllCollectedDataOrderByTag() = repo.getAllCollectedDataOrderByTag()
     fun getAllCollectedDataOrderByNdc() = repo.getAllCollectedDataOrderByNdc()
     fun getColDataLastInsertedRow() = repo.getColDataLastInsertedRow()
+
     // TODO: use IO dispatcher when Toast removed
     fun uploadCollectedData() = CoroutineScope(Dispatchers.Main).launch {
         repo.uploadCollectedData()
@@ -77,6 +88,7 @@ class PharmScanViewModel(
     fun insertSystemInfo(systemInfo: SystemInfo) = CoroutineScope(Dispatchers.IO).launch {
         repo.insertSystemInfo(systemInfo)
     }
+
     fun deleteRowSystemInfo(systemInfo: SystemInfo) = CoroutineScope(Dispatchers.IO).launch {
         repo.deleteRowSystemInfo(systemInfo)
     }
@@ -101,6 +113,7 @@ class PharmScanViewModel(
     fun insertPSNdc(psNdc: PSNdc) = CoroutineScope(Dispatchers.IO).launch {
         repo.insertPSNdc(psNdc)
     }
+
     fun deleteRowPSNdc(psNdc: PSNdc) = CoroutineScope(Dispatchers.IO).launch {
         repo.deleteRowPSNdc(psNdc)
     }
@@ -127,6 +140,7 @@ class PharmScanViewModel(
     fun insertSettings(settings: Settings) = CoroutineScope(Dispatchers.IO).launch {
         repo.insertSettings(settings)
     }
+
     fun deleteRowSettings(settings: Settings) = CoroutineScope(Dispatchers.IO).launch {
         repo.deleteRowSettings(settings)
     }
@@ -138,4 +152,55 @@ class PharmScanViewModel(
     fun getLiveDataSettingsRow() = repo.getLiveDataSettingsRow()
     fun getSettingsRow() = repo.getSettingsRow()
 
- }
+//*****************************************************************************
+// Custom TextField auto validation of input
+//    var name = InputWrapper()
+//    var creditCardNumber = InputWrapper()
+//
+//
+//    private var focusedTextField = FocusedTextFieldKey.NAME
+//    private val _events = Channel<ScreenEvent>()
+//    val events = _events.receiveAsFlow()
+//
+//    fun onNameEntered(input: String) {
+//        val errorId = InputValidator.getNdcErrorIdOrNull(input)
+//        name = name.copy(value = input, errorId = errorId)
+//    }
+//
+//    fun onCardNumberEntered(input: String) {
+//        val errorId = InputValidator.getPkSzErrorIdOrNull(input)
+//        creditCardNumber = creditCardNumber.copy(value = input, errorId = errorId)
+//    }
+//
+//    fun onTextFieldFocusChanged(key: FocusedTextFieldKey, isFocused: Boolean) {
+//        focusedTextField = if (isFocused) key else FocusedTextFieldKey.NONE
+//    }
+//
+//    fun onNameImeActionClick() {
+//        viewModelScope.launch(Dispatchers.Default) {
+//            _events.send(ScreenEvent.MoveFocus())
+//        }
+//    }
+//
+//    fun onContinueClick() {
+//        viewModelScope.launch(Dispatchers.Default) {
+//            if (areInputsValid) clearFocusAndHideKeyboard()
+//            val msg = if (areInputsValid) "success onContinueClick" else "error onContinueClick"
+//            _events.send(ScreenEvent.ShowToast(msg))
+//        }
+//    }
+//
+//    private suspend fun clearFocusAndHideKeyboard() {
+//        _events.send(ScreenEvent.ClearFocus)
+//        _events.send(ScreenEvent.UpdateKeyboard(false))
+//        focusedTextField = FocusedTextFieldKey.NONE
+//    }
+//
+//    private fun focusOnLastSelectedTextField() {
+//        viewModelScope.launch(Dispatchers.Default) {
+//            _events.send(ScreenEvent.RequestFocus(focusedTextField))
+//            delay(250)
+//            _events.send(ScreenEvent.UpdateKeyboard(true))
+//        }
+//    }
+}
