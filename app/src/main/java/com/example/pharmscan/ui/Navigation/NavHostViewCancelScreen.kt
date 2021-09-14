@@ -48,6 +48,7 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
         var btnSelectedNdc by remember {mutableStateOf(false)}
         var textStyle = MaterialTheme.typography.subtitle1
         var ontextStyle = MaterialTheme.typography.subtitle2
+        var firstEntry = true
 
         if (showCancelCollDataDialog.value) {
             CancelCollDataRecord(
@@ -286,7 +287,10 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                         }
 
                         coroutineScope.launch {
-                            listState.scrollToItem(index = startIndex)
+                            if (firstEntry) {
+                                listState.scrollToItem(index = startIndex)
+                                firstEntry = false
+                            }
                         }
                     }
                 }
