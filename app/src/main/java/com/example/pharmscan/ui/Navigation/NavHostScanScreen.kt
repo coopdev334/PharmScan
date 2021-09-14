@@ -17,6 +17,7 @@ import androidx.compose.material.ButtonDefaults.buttonColors
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
@@ -61,22 +62,22 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
     ) {
         // Get the arguments passed to this composable by key name
         // args must be present
-        var statusBarText by remember { mutableStateOf(it.arguments!!.getString("statusBar")) }
+        var statusBarText by rememberSaveable { mutableStateOf(it.arguments!!.getString("statusBar")) }
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
-        var statusBarBkGrColor by remember { mutableStateOf(it.arguments!!.getString("bkgrColor")) }
+        var statusBarBkGrColor by rememberSaveable { mutableStateOf(it.arguments!!.getString("bkgrColor")) }
         var statusBarBkGrColorObj = Color.White
         val systemInfo: List<SystemInfo> by pharmScanViewModel.systemInfo.observeAsState(pharmScanViewModel.getSystemInfoRow())
         val settings: List<Settings> by pharmScanViewModel.settings.observeAsState(pharmScanViewModel.getSettingsRow())
 
         //val settings: State<List<Settings>?> = pharmScanViewModel.settings.observeAsState()
-        var previousStatusBarText: String? by remember { mutableStateOf("")}
-        var previousBarBkgrColor: String? by remember {mutableStateOf("")}
+        var previousStatusBarText: String? by rememberSaveable { mutableStateOf("")}
+        var previousBarBkgrColor: String? by rememberSaveable {mutableStateOf("")}
         var keyBrdInput by remember {mutableStateOf(0)}
-        val showKyBrdInputDialog = remember { mutableStateOf(false) }
-        val chgTagEnabled = remember { mutableStateOf(false) }
-        val holdEnabled = remember { mutableStateOf(false) }
-        val manPrcOn = remember { mutableStateOf(false) }
+        val showKyBrdInputDialog = rememberSaveable { mutableStateOf(false) }
+        val chgTagEnabled = rememberSaveable { mutableStateOf(false) }
+        val holdEnabled = rememberSaveable { mutableStateOf(false) }
+        val manPrcOn = rememberSaveable { mutableStateOf(false) }
         val defaultButtonColors: ButtonColors = buttonColors(
             backgroundColor = Color.Blue,
             contentColor = Color.White,
