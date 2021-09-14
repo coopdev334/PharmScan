@@ -28,8 +28,7 @@ fun NdcSearch(navController: NavController, ndc: String, pharmScanViewModel:Phar
 
 
 // Insert new record into collected data table
-fun InsertNdc(navController: NavController, pharmScanViewModel:PharmScanViewModel, ndc: String, pksz: String, price: String, qty: String, matchFlg: String) {
-    //val psndc = pharmScanViewModel.getNdcPSNdc(ndc)
+fun InsertNdc(navController: NavController, pharmScanViewModel:PharmScanViewModel, ndc: String, price: String, pksz: String, qty: String, matchFlg: String) {
     val sysinfo = pharmScanViewModel.getSystemInfoRow()
     val recnt = sysinfo[0].TotRecCount?.toInt()?.plus(1)
     val recMap = mapOf("TotRecCount" to recnt.toString())
