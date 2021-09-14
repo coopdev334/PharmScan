@@ -31,6 +31,7 @@ import com.example.pharmscan.Data.Tables.Settings
 import com.example.pharmscan.Data.Tables.SystemInfo
 import com.example.pharmscan.ViewModel.NdcSearch
 import com.example.pharmscan.ViewModel.PharmScanViewModel
+import com.example.pharmscan.ViewModel.ProcessHoldState
 import com.example.pharmscan.ui.Dialog.HoldQtyKyBrdInput
 import com.example.pharmscan.ui.Dialog.NdcKyBrdInput
 import com.example.pharmscan.ui.Dialog.TagKyBrdInput
@@ -74,10 +75,10 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         var previousStatusBarText: String? by rememberSaveable { mutableStateOf("")}
         var previousBarBkgrColor: String? by rememberSaveable {mutableStateOf("")}
         var keyBrdInput by remember {mutableStateOf(0)}
-        val showKyBrdInputDialog = rememberSaveable { mutableStateOf(false) }
+        val showKyBrdInputDialog = remember { mutableStateOf(false) }
         val chgTagEnabled = rememberSaveable { mutableStateOf(false) }
         val holdEnabled = rememberSaveable { mutableStateOf(false) }
-        val manPrcOn = rememberSaveable { mutableStateOf(false) }
+        val manPrcOn = remember { mutableStateOf(false) }
         val defaultButtonColors: ButtonColors = buttonColors(
             backgroundColor = Color.Blue,
             contentColor = Color.White,
@@ -148,12 +149,9 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                     HoldQtyKyBrdInput(
                         keyBrdInput,
                         showDialog = showKyBrdInputDialog.value,
-                        onAdd = {
+                        onAdd = {qty ->
                             showKyBrdInputDialog.value = false
-                            //val columnValue = mapOf("Tag" to ndc)
-                            //UpdateSystemInfo(pharmScanViewModel, columnValue)
-                            //statusBarBkGrColor = Color.Green
-                            //statusBarText = "*** Scan BarCode ***"
+                            ProcessHoldState(qty, pharmScanViewModel)
                         },
                         onCancel = {
                             showKyBrdInputDialog.value = false
