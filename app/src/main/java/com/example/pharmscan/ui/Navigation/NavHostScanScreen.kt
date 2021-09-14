@@ -64,13 +64,14 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         var statusBarText by remember { mutableStateOf(it.arguments!!.getString("statusBar")) }
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
-        var statusBarBkGrColor by remember { mutableStateOf(Color.Yellow) }
+        var statusBarBkGrColor by remember { mutableStateOf(it.arguments!!.getString("bkgrColor")) }
+        var statusBarBkGrColorObj = Color.White
         val systemInfo: List<SystemInfo> by pharmScanViewModel.systemInfo.observeAsState(pharmScanViewModel.getSystemInfoRow())
         val settings: List<Settings> by pharmScanViewModel.settings.observeAsState(pharmScanViewModel.getSettingsRow())
 
         //val settings: State<List<Settings>?> = pharmScanViewModel.settings.observeAsState()
         var previousStatusBarText: String? by remember { mutableStateOf("")}
-        var previousBarBkgrColor by remember {mutableStateOf(Color.White)}
+        var previousBarBkgrColor: String? by remember {mutableStateOf("")}
         var keyBrdInput by remember {mutableStateOf(0)}
         val showKyBrdInputDialog = remember { mutableStateOf(false) }
         val chgTagEnabled = remember { mutableStateOf(false) }
@@ -97,6 +98,13 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         var chgTagButtonColor by remember {mutableStateOf(defaultButtonColors)}
         var holdButtonColor by remember {mutableStateOf(defaultButtonColors)}
 
+        when (statusBarBkGrColor) {
+            "yellow" -> statusBarBkGrColorObj = Color.Yellow
+            "green" -> statusBarBkGrColorObj = Color.Green
+            "cyan" -> statusBarBkGrColorObj = Color.Cyan
+            else -> statusBarBkGrColorObj = Color.White
+        }
+
         if (systemInfo.isNullOrEmpty()) {
             // set to defaults
             pharmScanViewModel.insertSystemInfo(SystemInfo("0", "0", "0", "0", "0", "0", "0"))
@@ -114,7 +122,6 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         // Key pressed, determine what context the key applies to. Capture first key
         // and open appropriate input dialog to get remaining input from user
         if (showKyBrdInputDialog.value) {
-
             when (statusBarText) {
                 "*** Scan Tag ***" -> {
                     TagKyBrdInput(
@@ -126,7 +133,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                             holdEnabled.value = true
                             val columnValue = mapOf("Tag" to tag)
                             UpdateSystemInfo(pharmScanViewModel, columnValue)
-                            statusBarBkGrColor = Color.Green
+                            statusBarBkGrColor = "green"
                             statusBarText = "*** Scan BarCode ***"
                             chgTagButtonColor = defaultButtonColors
                         },
@@ -304,7 +311,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(50.dp))
-                            .background(statusBarBkGrColor),
+                            .background(statusBarBkGrColorObj),
                         horizontalArrangement = Arrangement.Center
                     ){
                         Text(
@@ -496,7 +503,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                     }else {
                                         previousStatusBarText = statusBarText
                                         previousBarBkgrColor = statusBarBkGrColor
-                                        statusBarBkGrColor = Color.Yellow
+                                        statusBarBkGrColor = "yellow"
                                         statusBarText = "*** Scan Tag ***"
                                         chgTagButtonColor = chgTagOnButtonColors
                                     }
@@ -517,13 +524,13 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 onClick = {
 
                                     if (statusBarText == "*** Hold ***") {
-                                        statusBarBkGrColor = Color.Green
+                                        statusBarBkGrColor = "green"
                                         statusBarText = "*** Scan BarCode ***"
                                         holdButtonColor = defaultButtonColors
                                     }else {
                                         previousStatusBarText = statusBarText
                                         previousBarBkgrColor = statusBarBkGrColor
-                                        statusBarBkGrColor = Color.Cyan
+                                        statusBarBkGrColor = "cyan"
                                         statusBarText = "*** Hold ***"
                                         holdButtonColor = holdOnButtonColors
                                     }

@@ -53,7 +53,7 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
         var ndc by remember { mutableStateOf(InputWrapper("", null)) }
         var price by remember { mutableStateOf(InputWrapper("", null)) }
         var pksz by remember { mutableStateOf(InputWrapper("", null)) }
-        var qty: InputWrapper? by remember { mutableStateOf(InputWrapper("", null)) }
+        var qty by remember { mutableStateOf(InputWrapper("", null)) }
         val ndcFocusRequester = remember { FocusRequester() }
         val pkszFocusRequester = remember { FocusRequester() }
 
@@ -62,7 +62,7 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
                 ndc.errorId != null -> return false
                 price.errorId != null -> return false
                 pksz.errorId != null -> return false
-                qty?.errorId != null -> return false
+                qty.errorId != null -> return false
                 else -> return true
             }
         }
@@ -84,12 +84,8 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
 
         fun onQtyEntered(input: String) {
             val errorId = InputValidator.getQtyErrorIdOrNull(input)
-            qty = qty?.copy(value = input, errorId = errorId)
+            qty = qty.copy(value = input, errorId = errorId)
         }
-
-//        fun onTextFieldFocusChanged(key: FocusedTextFieldKey, isFocused: Boolean) {
-//            focusedTextField = if (isFocused) key else FocusedTextFieldKey.NONE
-//        }
 
         fun onImeActionClick() {
             CoroutineScope(Dispatchers.IO).launch {
@@ -99,29 +95,15 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
 
         fun onImeActionDoneClick() {
             if (InputsValid()) {
-                InsertNdc(navController, pharmScanViewModel, ndc!!.value, price!!.value, pksz!!.value, qty!!.value, "N")
+                InsertNdc(navController, pharmScanViewModel, ndc.value, price.value, pksz.value, qty.value, "N")
                 navController.popBackStack()
             }
         }
 
-//        suspend fun clearFocusAndHideKeyboard() {
-//            _events.send(ScreenEvent.ClearFocus)
-//            _events.send(ScreenEvent.UpdateKeyboard(false))
-//            focusedTextField = FocusedTextFieldKey.NONE
-//        }
-
         fun onOkClick() {
-            InsertNdc(navController, pharmScanViewModel, ndc.value, price.value, pksz.value, qty!!.value, "N")
+            InsertNdc(navController, pharmScanViewModel, ndc.value, price.value, pksz.value, qty.value, "N")
             navController.popBackStack()
         }
-
-//        fun focusOnLastSelectedTextField() {
-//            CoroutineScope(Dispatchers.IO).launch {
-//                _events.send(ScreenEvent.RequestFocus(focusedTextField))
-//                delay(250)
-//                _events.send(ScreenEvent.UpdateKeyboard(true))
-//            }
-//        }
 
         LaunchedEffect(Unit) {
             launch {
@@ -222,7 +204,7 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
                 ),
-                inputWrapper = qty!!,
+                inputWrapper = qty,
                 onValueChange = ::onQtyEntered,
                 onImeKeyAction = ::onImeActionDoneClick,
                 length = 6
