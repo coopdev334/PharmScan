@@ -9,6 +9,8 @@ import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import kotlinx.coroutines.runBlocking
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 fun NdcSearch(navController: NavController, ndc: String, pharmScanViewModel:PharmScanViewModel) {
     val result = pharmScanViewModel.getNdcPSNdc(ndc)
@@ -29,13 +31,24 @@ fun NdcSearch(navController: NavController, ndc: String, pharmScanViewModel:Phar
 fun InsertNdc(navController: NavController, pharmScanViewModel:PharmScanViewModel, ndc: String, price: String, pksz: String, qty: String, matchFlg: String) {
     val sysinfo = pharmScanViewModel.getSystemInfoRow()
     val recnt = sysinfo[0].TotRecCount?.toInt()?.plus(1)
-    val recMap = mapOf("TotRecCount" to recnt.toString())
-    UpdateSystemInfo(pharmScanViewModel, recMap)
 
     // Build Collected Data Table record with values
     // TODO: Find where itemcost field comes from. Temporary using price
     val collectedData = CollectedData("000", "12345678", ndc, qty, price, pksz, "123", matchFlg, sysinfo[0].Tag, sysinfo[0].opid, recnt.toString(), "12/12/21", "123456", "P", price)
     pharmScanViewModel.insertCollectedData(collectedData)
+
+//    val totqty = DecimalFormat("#.#")
+//    val totamt = DecimalFormat("#.#")
+//    totqty.roundingMode = RoundingMode.FLOOR
+//    totqty.format(sysinfo[0].TotQty?.toFloat()).toFloat().plus(qty.toFloat())
+//    totamt.roundingMode = RoundingMode.FLOOR
+//    totamt.format(sysinfo[0].TotAmt?.toFloat()).toFloat().plus(price.toFloat())
+
+    val totqty =  sysinfo[0].TotQty?.toFloat()?.plus(qty.toFloat())
+    val totamt = sysinfo[0].TotAmt?.toFloat()?.plus(price.toFloat())
+
+    val sysInfoMap = mapOf("TotQty" to totqty.toString(), "TotAmt" to totamt.toString(), "TotRecCount" to recnt.toString())
+    UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
 }
 
 

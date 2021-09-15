@@ -36,5 +36,8 @@ interface CollectedDataDao {
     @Query("SELECT * FROM CollectedData WHERE iD = (SELECT MAX(iD) FROM CollectedData) LIMIT 1")
     fun getLastInsertedRow(): List<CollectedData>
 
+    @Query("SELECT qty, price FROM CollectedData WHERE :tag = loc")
+    fun getQtyPriceByTag(tag: String): List<CollectedData>
+
 
 }

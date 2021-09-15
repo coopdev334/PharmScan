@@ -69,6 +69,7 @@ class PharmScanViewModel(
     fun getAllCollectedDataOrderByTag() = repo.getAllCollectedDataOrderByTag()
     fun getAllCollectedDataOrderByNdc() = repo.getAllCollectedDataOrderByNdc()
     fun getColDataLastInsertedRow() = repo.getColDataLastInsertedRow()
+    fun getColDataQtyPriceByTag(tag: String) = repo.getColDataQtyPriceByTag(tag)
 
     // TODO: use IO dispatcher when Toast removed
     fun uploadCollectedData() = CoroutineScope(Dispatchers.Main).launch {
