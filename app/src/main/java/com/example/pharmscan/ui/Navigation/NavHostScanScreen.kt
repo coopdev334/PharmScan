@@ -133,14 +133,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                             showKyBrdInputDialog.value = false
                             chgTagEnabled.value = true
                             holdEnabled.value = true
-                            val qtyPriceList = pharmScanViewModel.getColDataQtyPriceByTag(tag)
-                            var totqty = 0.0F
-                            var totprc = 0.0F
-                                for(item in qtyPriceList) {
-                                    totqty += item.qty!!.toFloat()
-                                    totprc += item.price!!.toFloat()
-                            }
-                            val sysInfoMap = mapOf("TotQty" to totqty.toString(), "TotAmt" to totprc.toString(), "Tag" to tag)
+                            val sysInfoMap = mapOf("Tag" to tag)
                             UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
                             statusBarBkGrColor = "green"
                             statusBarText = "*** Scan BarCode ***"

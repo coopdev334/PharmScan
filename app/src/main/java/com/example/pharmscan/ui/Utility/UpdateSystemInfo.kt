@@ -3,10 +3,12 @@ package com.example.pharmscan.ui.Utility
 import com.example.pharmscan.Data.Tables.SystemInfo
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import kotlinx.coroutines.runBlocking
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 // update column values in SystemInfo table. ONLY 1 row is allowed.
 // Save current SystemInfo data, then deleteRow the 1 row and then insert new row with
-// update column values
+// updated column values
 fun UpdateSystemInfo(pharmScanViewModel: PharmScanViewModel, columnValue: Map<String, String>) {
     // Get the current SystemInfo values
     var systemInfo = pharmScanViewModel.getSystemInfoRow()
@@ -39,6 +41,27 @@ fun UpdateSystemInfo(pharmScanViewModel: PharmScanViewModel, columnValue: Map<St
 
             }
         }
+    }
+
+    // Update qty and price totals in SystemInfo table. On any updates to SystemInfo
+    // always get new totals into table for current Tag.
+    var totqty = 0.0
+    var totprc = 0.0
+    val df = DecimalFormat("######0.0") // formatter object
+    df.roundingMode = RoundingMode.FLOOR  // take 1 decimal position as is
+
+    val qtyPriceList = pharmScanViewModel.getColDataQtyPriceByTag(systemInfo[0].Tag!!)
+
+    if (!qtyPriceList.isNullOrEmpty()) {
+        for (row in qtyPriceList) {
+            totqty += row.qty!!.toDouble()
+            totprc += row.price!!.toDouble()
+        }
+        systemInfo[0].TotQty = df.format(totqty)
+        systemInfo[0].TotAmt = df.format(totprc)
+    }else{
+        systemInfo[0].TotQty = "0.0"
+        systemInfo[0].TotAmt = "0.0"
     }
 
     pharmScanViewModel.insertSystemInfo(systemInfo[0])

@@ -2,17 +2,9 @@ package com.example.pharmscan.ViewModel
 
 import androidx.lifecycle.*
 import com.example.pharmscan.Data.Tables.*
-import com.example.pharmscan.R
 import com.example.pharmscan.Repository.PharmScanRepo
-import com.example.pharmscan.ui.Screen.*
-
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class PharmScanViewModel(
