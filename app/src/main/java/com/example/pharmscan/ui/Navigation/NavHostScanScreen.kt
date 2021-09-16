@@ -138,6 +138,13 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                             statusBarBkGrColor = "green"
                             statusBarText = "*** Scan BarCode ***"
                             chgTagButtonColor = defaultButtonColors
+
+                            // TODO: temp for testing. Do warning check in network send code not here
+                            val tagchgsLimit = pharmScanViewModel.getSettingsRow()[0].FileSendTagChgs!!.toInt()
+                            val tagchgs = pharmScanViewModel.getSystemInfoRow()[0].TagChangeCount!!.toInt()
+                             if (tagchgs >= tagchgsLimit) {
+                                 navController.navigate(Screen.NoNetworkWarningScreen.route)
+                             }
                         },
                         onCancel = {
                             showKyBrdInputDialog.value = false
