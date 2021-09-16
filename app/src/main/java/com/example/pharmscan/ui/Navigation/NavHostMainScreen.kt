@@ -39,10 +39,10 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
         val showAddHostCompDialog = remember { mutableStateOf(false) }
         val hostCompNameList: List<HostCompName> by pharmScanViewModel.hostCompName.observeAsState(pharmScanViewModel.getAllHostCompName())
 
-        if (hostCompNameList.isNullOrEmpty()) {
-            // set to defaults
-            pharmScanViewModel.insertHostCompName(HostCompName("0"))
-        }
+//        if (hostCompNameList.isNullOrEmpty()) {
+//            // set to defaults
+//            pharmScanViewModel.insertHostCompName(HostCompName("0"))
+//        }
 
         if (showDelHostCompDialog.value) {
             DeleteHostComputerAlert(
