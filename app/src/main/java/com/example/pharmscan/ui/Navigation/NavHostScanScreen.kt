@@ -24,8 +24,10 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.*
+import androidx.core.text.trimmedLength
 import androidx.navigation.NavType
 import androidx.navigation.compose.navArgument
+import com.example.pharmscan.Data.ScanLiveData
 import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.Data.Tables.Settings
 import com.example.pharmscan.Data.Tables.SystemInfo
@@ -70,6 +72,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         var statusBarBkGrColorObj = Color.White
         val systemInfo: List<SystemInfo> by pharmScanViewModel.systemInfo.observeAsState(pharmScanViewModel.getSystemInfoRow())
         val settings: List<Settings> by pharmScanViewModel.settings.observeAsState(pharmScanViewModel.getSettingsRow())
+        val scanData: ScanLiveData by pharmScanViewModel.scanLiveData.observeAsState(ScanLiveData("", ""))
 
         //val settings: State<List<Settings>?> = pharmScanViewModel.settings.observeAsState()
         var previousStatusBarText: String? by rememberSaveable { mutableStateOf("")}
@@ -182,6 +185,16 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
             }
         }
 
+        // Check if barcode data came from scanner not kybrd
+        // If data found in ScanLiveData object do search
+        if (!scanData.barcodeData.isNullOrEmpty()) {
+            ToastDisplay("${scanData.barcodeData}", Toast.LENGTH_LONG)
+            // after getting data clear out scan data object
+            val barcode = scanData.barcodeData
+            val type = scanData.barcodeType
+            pharmScanViewModel.scanLiveData.value = ScanLiveData("", "")
+            NdcSearch(navController, barcode!!.substring(0..10), pharmScanViewModel)
+        }
 
         // NOTE: Changes need to be made also in all screens with the scafford settings
         Scaffold(

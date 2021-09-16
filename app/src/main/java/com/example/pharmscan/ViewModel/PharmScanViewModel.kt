@@ -1,6 +1,7 @@
 package com.example.pharmscan.ViewModel
 
 import androidx.lifecycle.*
+import com.example.pharmscan.Data.ScanLiveData
 import com.example.pharmscan.Data.Tables.*
 import com.example.pharmscan.Repository.PharmScanRepo
 import kotlinx.coroutines.CoroutineScope
@@ -144,5 +145,11 @@ class PharmScanViewModel(
 
     fun getLiveDataSettingsRow() = repo.getLiveDataSettingsRow()
     fun getSettingsRow() = repo.getSettingsRow()
+
+    // **********************************************************************
+    // Scan LiveData
+    val scanLiveData: MutableLiveData<ScanLiveData> by lazy {
+        MutableLiveData<ScanLiveData>()
+    }
 
 }
