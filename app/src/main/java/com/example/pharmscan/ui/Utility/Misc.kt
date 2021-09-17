@@ -34,10 +34,13 @@ fun isNotWholeNumber(s: String?): Boolean {
 
 // Warning: If calling Toast from a coroutine, ONLY Main dispatcher can be used.
 // Cannot be called from IO or Default
-fun ToastDisplay(message: String, length: Int) {
+fun ToastDisplay(message: String, length: Int): Toast? {
     val con = PharmScanApplication()
-
+    var t: Toast? = null
     if (con.getAppContext() != null) {
-        Toast.makeText(con.getAppContext(), message, length).show()
+        t =  Toast.makeText(con.getAppContext(), message, length)
+        t.show()
     }
+
+    return t
 }

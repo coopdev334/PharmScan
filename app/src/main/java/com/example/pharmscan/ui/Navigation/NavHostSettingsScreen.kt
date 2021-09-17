@@ -1,5 +1,6 @@
 package com.example.pharmscan.ui.Navigation
 
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
@@ -22,7 +23,11 @@ import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import androidx.compose.ui.graphics.Color
 import com.example.pharmscan.Data.Tables.Settings
+import com.example.pharmscan.PharmScanApplication
+import com.example.pharmscan.ui.Screen.InputValidator
+import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.Utility.UpdateSettings
+import com.example.pharmscan.ui.Utility.is2DecNumber
 
 fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     composable(Screen.SettingsScreen.route) {
@@ -190,20 +195,34 @@ fun PriceEntryCheckbox(pharmScanViewModel: PharmScanViewModel) {
 @Composable
 fun CostLimit(pharmScanViewModel: PharmScanViewModel) {
     var value by remember { mutableStateOf(pharmScanViewModel.getSettingsRow()[0].CostLimit) }
+    var invalid: Boolean by remember { mutableStateOf(false)}
+
+    if (invalid)
+        Column() {
+            Text(fontStyle = FontStyle.Italic, text = "Invalid")
+            Text(fontStyle = FontStyle.Italic, text = "Decimal")
+            Text(fontStyle = FontStyle.Italic, text = "Number")
+        }
 
     BasicTextField(
         value = value!!,
         onValueChange = {
-            val columnValue = mapOf("CostLimit" to it)
-            UpdateSettings(pharmScanViewModel, columnValue)
             value = it
+
+            if (is2DecNumber(it)) {
+                val columnValue = mapOf("CostLimit" to it)
+                UpdateSettings(pharmScanViewModel, columnValue)
+                invalid = false
+            }else {
+                invalid = true
+            }
         },
         decorationBox = { innerTextField ->
             Box(
                 Modifier
                     .border(border = BorderStroke(1.dp, Color.Black))
                     .padding(2.dp)
-                    .size(width = 90.dp, height = 30.dp),
+                    .size(width = 100.dp, height = 30.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
                 innerTextField()
@@ -211,6 +230,8 @@ fun CostLimit(pharmScanViewModel: PharmScanViewModel) {
         },
         textStyle = TextStyle(fontSize = 25.sp)
     )
+
+
 }
 
 @Composable
