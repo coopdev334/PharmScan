@@ -188,12 +188,45 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         // Check if barcode data came from scanner not kybrd
         // If data found in ScanLiveData object do search
         if (!scanData.barcodeData.isNullOrEmpty()) {
-            ToastDisplay("${scanData.barcodeData}", Toast.LENGTH_LONG)
+            //ToastDisplay("${scanData.barcodeType} ${scanData.barcodeData}", Toast.LENGTH_LONG)
             // after getting data clear out scan data object
             val barcode = scanData.barcodeData
             val type = scanData.barcodeType
             pharmScanViewModel.scanLiveData.value = ScanLiveData("", "")
-            NdcSearch(navController, barcode!!.substring(0..10), pharmScanViewModel)
+
+            when (statusBarText) {
+                "*** Scan Tag ***" -> {
+                    if (type == "LABEL-TYPE-CODE128") {
+                        chgTagEnabled.value = true
+                        holdEnabled.value = true
+                        val sysInfoMap = mapOf("Tag" to barcode!!)
+                        UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
+                        statusBarBkGrColor = "green"
+                        statusBarText = "*** Scan BarCode ***"
+                        chgTagButtonColor = defaultButtonColors
+                    }else {
+                        ToastDisplay("Invalid barcode Type for Hold: ${scanData.barcodeType}", Toast.LENGTH_LONG)
+                    }
+
+                }
+
+                "*** Scan BarCode ***" -> {
+                    if (type == "LABEL-TYPE-UPCA") {
+                        if (barcode!!.length == 12) {
+                            NdcSearch(navController, barcode!!.substring(0..10), pharmScanViewModel)
+                        }else {
+                            ToastDisplay("Invalid barcode length for Ndc: ${barcode!!.length}", Toast.LENGTH_LONG)
+                        }
+
+                    }else {
+                        ToastDisplay("Invalid barcode Type for Ndc: ${scanData.barcodeType}", Toast.LENGTH_LONG)
+                    }
+                }
+
+                else -> {
+                    ToastDisplay("In Hold mode. Turn off Hold mode to scan again", Toast.LENGTH_LONG)
+                }
+            }
         }
 
         // NOTE: Changes need to be made also in all screens with the scafford settings

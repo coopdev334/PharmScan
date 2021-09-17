@@ -6,11 +6,20 @@ import android.widget.Toast
 import com.example.pharmscan.PharmScanApplication
 
 // Determine is string value is valid decimal numeric with 1 decimal place
-fun isDecNumber(s: String?): Boolean {
+fun is1DecNumber(s: String?): Boolean {
     if (s.isNullOrEmpty()) {
         return false
     } else {
         return s.matches("""^(\d+\.{1}\d{1})$""".toRegex())
+    }
+}
+
+// Determine is string value is valid decimal numeric with 2 decimal places
+fun is2DecNumber(s: String?): Boolean {
+    if (s.isNullOrEmpty()) {
+        return false
+    } else {
+        return s.matches("""^(\d+\.{1}\d{2})$""".toRegex())
     }
 }
 
