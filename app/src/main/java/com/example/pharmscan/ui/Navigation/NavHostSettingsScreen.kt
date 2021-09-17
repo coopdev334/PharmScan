@@ -28,6 +28,7 @@ import com.example.pharmscan.ui.Screen.InputValidator
 import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.Utility.UpdateSettings
 import com.example.pharmscan.ui.Utility.is2DecNumber
+import com.example.pharmscan.ui.Utility.isNotWholeNumber
 
 fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     composable(Screen.SettingsScreen.route) {
@@ -197,19 +198,20 @@ fun CostLimit(pharmScanViewModel: PharmScanViewModel) {
     var value by remember { mutableStateOf(pharmScanViewModel.getSettingsRow()[0].CostLimit) }
     var invalid: Boolean by remember { mutableStateOf(false)}
 
-    if (invalid)
+    if (invalid) {
         Column() {
             Text(fontStyle = FontStyle.Italic, text = "Invalid")
             Text(fontStyle = FontStyle.Italic, text = "Decimal")
             Text(fontStyle = FontStyle.Italic, text = "Number")
         }
+    }
 
     BasicTextField(
         value = value!!,
         onValueChange = {
             value = it
 
-            if (is2DecNumber(it)) {
+            if (!it.isNullOrEmpty() && is2DecNumber(it)) {
                 val columnValue = mapOf("CostLimit" to it)
                 UpdateSettings(pharmScanViewModel, columnValue)
                 invalid = false
@@ -236,15 +238,28 @@ fun CostLimit(pharmScanViewModel: PharmScanViewModel) {
 
 @Composable
 fun TagChanges(pharmScanViewModel: PharmScanViewModel) {
-   // var value by remember { mutableStateOf(TextFieldValue(settings[0].FileSendTagChgs!!)) }
     var value by remember { mutableStateOf(pharmScanViewModel.getSettingsRow()[0].FileSendTagChgs) }
+    var invalid: Boolean by remember { mutableStateOf(false)}
+
+    if (invalid) {
+        Column() {
+            Text(fontStyle = FontStyle.Italic, text = "Invalid")
+            Text(fontStyle = FontStyle.Italic, text = "Number")
+        }
+    }
 
     BasicTextField(
         value = value!!,
         onValueChange = {
-            val columnValue = mapOf("FileSendTagChgs" to it)
-            UpdateSettings(pharmScanViewModel, columnValue)
             value = it
+
+            if (!it.isNullOrEmpty() && !isNotWholeNumber(it) && it != "0") {
+                val columnValue = mapOf("FileSendTagChgs" to it)
+                UpdateSettings(pharmScanViewModel, columnValue)
+                invalid = false
+            }else {
+                invalid = true
+            }
         },
         decorationBox = { innerTextField ->
             Box(
