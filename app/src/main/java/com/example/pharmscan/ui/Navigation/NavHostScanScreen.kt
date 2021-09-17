@@ -186,7 +186,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         }
 
         // Check if barcode data came from scanner not kybrd
-        // If data found in ScanLiveData object do search
+        // If data found in ScanLiveData object do scanner processing for tag or ndc
         if (!scanData.barcodeData.isNullOrEmpty()) {
             //ToastDisplay("${scanData.barcodeType} ${scanData.barcodeData}", Toast.LENGTH_LONG)
             // after getting data clear out scan data object

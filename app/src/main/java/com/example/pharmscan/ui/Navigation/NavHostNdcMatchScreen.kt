@@ -14,6 +14,8 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavType
@@ -45,17 +47,42 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
     ) {
 
         var ndc by remember { mutableStateOf(it.arguments?.getString("ndc")?.let { it1 -> InputWrapper(it1, null)}) }
-        var price by remember { mutableStateOf(it.arguments?.getString("price")?.let { it1 -> InputWrapper(it1, null)}) }
+        //var price by remember { mutableStateOf(it.arguments?.getString("price")?.let { it1 -> InputWrapper(it1, null)}) }
         var pksz by remember { mutableStateOf(it.arguments?.getString("pksz")?.let { it1 -> InputWrapper(it1, null)}) }
         var qty: InputWrapper? by remember { mutableStateOf(InputWrapper("", null)) }
+        val manPrcOn = remember { mutableStateOf(false) }
+        manPrcOn.value = pharmScanViewModel.getSettingsRow()[0].ManualPrice == "on"
+        var price by remember { mutableStateOf(if (manPrcOn.value)InputWrapper("", null) else it.arguments?.getString("price")?.let { it1 -> InputWrapper(it1, null)}) }
+
+        fun InputsValid (): Boolean {
+            when {
+                ndc?.value.isNullOrEmpty() -> return false
+                price?.value.isNullOrEmpty() -> return false
+                pksz?.value.isNullOrEmpty() -> return false
+                qty?.value.isNullOrEmpty() -> return false
+            }
+
+            when {
+                ndc?.errorId != null -> return false
+                price?.errorId != null -> return false
+                pksz?.errorId != null -> return false
+                qty?.errorId != null -> return false
+                else -> return true
+            }
+        }
 
         fun onQtyEntered(input: String) {
             val errorId = InputValidator.getQtyErrorIdOrNull(input)
             qty = qty?.copy(value = input, errorId = errorId)
         }
 
+        fun onPriceEntered(input: String) {
+            val errorId = InputValidator.getPriceErrorIdOrNull(input)
+            price = price?.copy(value = input, errorId = errorId)
+        }
+
         fun onImeActionClick() {
-            if (qty!!.errorId == null) {
+            if (qty!!.errorId == null && price!!.errorId == null) {
                 InsertNdc(pharmScanViewModel, ndc!!.value, price!!.value, pksz!!.value, qty!!.value, "N")
                 navController.popBackStack()
             }
@@ -92,14 +119,21 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
                 )
             }
             Spacer(Modifier.height(10.dp))
-            price?.let { it1 ->
-                TextField(
-                    enabled = false,
-                    value = it1.value,
-                    onValueChange = {},
-                    label = { Text("Price") }
-                )
-            }
+            TextFieldWithMsg(
+//                modifier = Modifier
+//                    .focusRequester(ndcFocusRequester)
+//                    .onFocusChanged {},
+                enabled = manPrcOn.value,
+                label = "Price",
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+                inputWrapper = price!!,
+                onValueChange = ::onPriceEntered,
+                onImeKeyAction = ::onImeActionClick,
+                length = 8
+            )
             Spacer(Modifier.height(10.dp))
             pksz?.let { it1 ->
                 TextField(
@@ -112,7 +146,7 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
             Spacer(Modifier.height(10.dp))
             TextFieldWithMsg(
                 enabled = true,
-                label = "Enter Qty",
+                label = "Qty",
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
@@ -142,7 +176,7 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
                 Button(
                     modifier = Modifier.size(width = 90.dp, height = 45.dp),
                     onClick = ::onOkClick,
-                    enabled = qty!!.errorId == null,
+                    enabled = InputsValid(),
                 ) {
                     Text(
                         text = " OK ",

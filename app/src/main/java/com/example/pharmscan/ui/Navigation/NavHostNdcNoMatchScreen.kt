@@ -59,6 +59,13 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
 
         fun InputsValid (): Boolean {
             when {
+                ndc.value.isNullOrEmpty() -> return false
+                price.value.isNullOrEmpty() -> return false
+                pksz.value.isNullOrEmpty() -> return false
+                qty.value.isNullOrEmpty() -> return false
+            }
+
+            when {
                 ndc.errorId != null -> return false
                 price.errorId != null -> return false
                 pksz.errorId != null -> return false

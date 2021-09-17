@@ -47,21 +47,23 @@ fun UpdateSystemInfo(pharmScanViewModel: PharmScanViewModel, columnValue: Map<St
     // always get new totals into table for current Tag.
     var totqty = 0.0
     var totprc = 0.0
-    val df = DecimalFormat("######0.0") // formatter object
-    df.roundingMode = RoundingMode.FLOOR  // take 1 decimal position as is
+    val dfq = DecimalFormat("######0.0") // formatter object
+    val dfp = DecimalFormat("######0.00") // formatter object
+    dfq.roundingMode = RoundingMode.FLOOR  // take 1 decimal position as is
+    dfp.roundingMode = RoundingMode.FLOOR  // take 2 decimal position as is
 
     val qtyPriceList = pharmScanViewModel.getColDataQtyPriceByTag(systemInfo[0].Tag!!)
 
     if (!qtyPriceList.isNullOrEmpty()) {
         for (row in qtyPriceList) {
-            totqty += row.qty!!.toDouble()
-            totprc += row.price!!.toDouble()
+            if (!row.qty.isNullOrEmpty()) totqty += row.qty!!.toDouble()
+            if (!row.price.isNullOrEmpty())totprc += row.price!!.toDouble()
         }
-        systemInfo[0].TotQty = df.format(totqty)
-        systemInfo[0].TotAmt = df.format(totprc)
+        systemInfo[0].TotQty = dfq.format(totqty)
+        systemInfo[0].TotAmt = dfp.format(totprc)
     }else{
         systemInfo[0].TotQty = "0.0"
-        systemInfo[0].TotAmt = "0.0"
+        systemInfo[0].TotAmt = "0.00"
     }
 
     pharmScanViewModel.insertSystemInfo(systemInfo[0])
