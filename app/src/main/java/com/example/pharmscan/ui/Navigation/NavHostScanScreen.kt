@@ -330,11 +330,11 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
 
                                 if (manPrcOn.value){
                                     val colVal = mapOf("ManualPrice" to "off")
-                                    ToastDisplay("Man Price Off", Toast.LENGTH_SHORT)
+                                    ToastDisplay("Manual Price OFF", Toast.LENGTH_SHORT)
                                     UpdateSettings(pharmScanViewModel, colVal)
                                 }else{
                                     val colVal = mapOf("ManualPrice" to "on")
-                                    ToastDisplay("Man Price On", Toast.LENGTH_SHORT)
+                                    ToastDisplay("Manual Price ON", Toast.LENGTH_SHORT)
                                     UpdateSettings(pharmScanViewModel, colVal)
                                 }
                                 manPrcOn.value = it

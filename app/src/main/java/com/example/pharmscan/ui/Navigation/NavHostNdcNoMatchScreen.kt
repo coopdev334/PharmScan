@@ -55,7 +55,12 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
         var pksz by remember { mutableStateOf(InputWrapper("", null)) }
         var qty by remember { mutableStateOf(InputWrapper("", null)) }
         val ndcFocusRequester = remember { FocusRequester() }
-        val pkszFocusRequester = remember { FocusRequester() }
+        //val pkszFocusRequester = remember { FocusRequester() }
+
+        DisposableEffect(Unit) {
+            ndcFocusRequester.requestFocus()
+            onDispose { }
+        }
 
         fun InputsValid (): Boolean {
             when {
@@ -124,7 +129,7 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
                         is ScreenEvent.RequestFocus -> {
                             when (event.textFieldKey) {
                                 FocusedTextFieldKey.NDC -> ndcFocusRequester.requestFocus()
-                                FocusedTextFieldKey.PKSZ -> pkszFocusRequester.requestFocus()
+                                //FocusedTextFieldKey.PKSZ -> pkszFocusRequester.requestFocus()
                                 else -> {}
                             }
                         }
@@ -154,8 +159,8 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
             }
             TextFieldWithMsg(
                 modifier = Modifier
-                    .focusRequester(ndcFocusRequester)
-                    .onFocusChanged {},
+                    .focusRequester(ndcFocusRequester),
+                   // .onFocusChanged {},
                 enabled = true,
                 label = "Ndc",
                 keyboardOptions = KeyboardOptions(
@@ -169,9 +174,9 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
             )
             Spacer(Modifier.height(10.dp))
             TextFieldWithMsg(
-                modifier = Modifier
-                    .focusRequester(ndcFocusRequester)
-                    .onFocusChanged {},
+//                modifier = Modifier
+//                    .focusRequester(ndcFocusRequester)
+//                    .onFocusChanged {},
                 enabled = true,
                 label = "Price",
                 keyboardOptions = KeyboardOptions(
@@ -186,9 +191,9 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
             )
             Spacer(Modifier.height(10.dp))
             TextFieldWithMsg(
-                modifier = Modifier
-                    .focusRequester(pkszFocusRequester)
-                    .onFocusChanged {},
+//                modifier = Modifier
+//                    .focusRequester(pkszFocusRequester)
+//                    .onFocusChanged {},
                 enabled = true,
                 label = "PkSz",
                 keyboardOptions = KeyboardOptions(
@@ -202,9 +207,9 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
             )
             Spacer(Modifier.height(10.dp))
             TextFieldWithMsg(
-                modifier = Modifier
-                    .focusRequester(pkszFocusRequester)
-                    .onFocusChanged {},
+//                modifier = Modifier
+//                    .focusRequester(pkszFocusRequester)
+//                    .onFocusChanged {},
                 enabled = true,
                 label = "Qty",
                 keyboardOptions = KeyboardOptions(

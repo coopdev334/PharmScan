@@ -14,8 +14,8 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavType
@@ -53,6 +53,20 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
         val manPrcOn = remember { mutableStateOf(false) }
         manPrcOn.value = pharmScanViewModel.getSettingsRow()[0].ManualPrice == "on"
         var price by remember { mutableStateOf(if (manPrcOn.value)InputWrapper("", null) else it.arguments?.getString("price")?.let { it1 -> InputWrapper(it1, null)}) }
+        val prcFocusRequester = remember {FocusRequester()}
+        val qtyFocusRequester = remember {FocusRequester()}
+
+        if (manPrcOn.value) {
+            DisposableEffect(Unit) {
+                prcFocusRequester.requestFocus()
+                onDispose { }
+            }
+        }else {
+            DisposableEffect(Unit) {
+                qtyFocusRequester.requestFocus()
+                onDispose { }
+            }
+        }
 
         fun InputsValid (): Boolean {
             when {
@@ -120,9 +134,9 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
             }
             Spacer(Modifier.height(10.dp))
             TextFieldWithMsg(
-//                modifier = Modifier
-//                    .focusRequester(ndcFocusRequester)
-//                    .onFocusChanged {},
+                modifier = Modifier
+                    .focusRequester(prcFocusRequester),
+                   // .onFocusChanged {},
                 enabled = manPrcOn.value,
                 label = "Price",
                 keyboardOptions = KeyboardOptions(
@@ -145,6 +159,8 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
             }
             Spacer(Modifier.height(10.dp))
             TextFieldWithMsg(
+                modifier = Modifier
+                    .focusRequester(qtyFocusRequester),
                 enabled = true,
                 label = "Qty",
                 keyboardOptions = KeyboardOptions(
@@ -157,6 +173,12 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
                 length = 6
             )
             Spacer(Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                if (manPrcOn.value)Text("Manual Price ON")
+            }
             Row(
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.End,
