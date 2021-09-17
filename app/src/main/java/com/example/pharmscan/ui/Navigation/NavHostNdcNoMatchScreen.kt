@@ -18,7 +18,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -30,7 +29,6 @@ import com.example.pharmscan.ViewModel.InsertNdc
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Screen.*
 import com.example.pharmscan.ui.Utility.ToastDisplay
-import com.example.pharmscan.ui.Utility.isDecNumber
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
@@ -39,7 +37,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     composable(Screen.NdcNoMatchScreen.route) {
-        //val context = LocalContext.current
+
         val lifecycleOwner = LocalLifecycleOwner.current
         val focusManager = LocalFocusManager.current
         val keyboardController = LocalSoftwareKeyboardController.current
@@ -53,15 +51,22 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
         }
 
         var ndc by remember { mutableStateOf(InputWrapper("", null)) }
-        var pksz by remember { mutableStateOf(InputWrapper("", null)) }
         var price by remember { mutableStateOf(InputWrapper("", null)) }
+        var pksz by remember { mutableStateOf(InputWrapper("", null)) }
         var qty by remember { mutableStateOf(InputWrapper("", null)) }
         val ndcFocusRequester = remember { FocusRequester() }
         val pkszFocusRequester = remember { FocusRequester() }
-        val areInputsValid = ndc.errorId == null && pksz.errorId == null && price.errorId == null && qty.errorId == null
-        var focusedTextField = FocusedTextFieldKey.NDC
 
-//***************************************
+        fun InputsValid (): Boolean {
+            when {
+                ndc.errorId != null -> return false
+                price.errorId != null -> return false
+                pksz.errorId != null -> return false
+                qty.errorId != null -> return false
+                else -> return true
+            }
+        }
+
         fun onNdcEntered(input: String) {
             val errorId = InputValidator.getNdcErrorIdOrNull(input)
             ndc = ndc.copy(value = input, errorId = errorId)
@@ -82,51 +87,23 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
             qty = qty.copy(value = input, errorId = errorId)
         }
 
-        fun onTextFieldFocusChanged(key: FocusedTextFieldKey, isFocused: Boolean) {
-            focusedTextField = if (isFocused) key else FocusedTextFieldKey.NONE
-        }
-
-        fun onNdcImeActionClick() {
+        fun onImeActionClick() {
             CoroutineScope(Dispatchers.IO).launch {
                 _events.send(ScreenEvent.MoveFocus())
             }
         }
 
-        suspend fun clearFocusAndHideKeyboard() {
-            _events.send(ScreenEvent.ClearFocus)
-            _events.send(ScreenEvent.UpdateKeyboard(false))
-            focusedTextField = FocusedTextFieldKey.NONE
+        fun onImeActionDoneClick() {
+            if (InputsValid()) {
+                InsertNdc(pharmScanViewModel, ndc.value, price.value, pksz.value, qty.value, "N")
+                navController.popBackStack()
+            }
         }
 
         fun onOkClick() {
-            CoroutineScope(Dispatchers.IO).launch {
-                if (isDecNumber(price.value)) {
-                    if (isDecNumber(qty.value)) {
-                        if (areInputsValid) {
-                            clearFocusAndHideKeyboard()
-                            _events.send(ScreenEvent.ShowToast("success"))
-                            InsertNdc(navController, pharmScanViewModel, ndc.value, pksz.value, price.value, qty.value, "N")
-                        }else{
-                            _events.send(ScreenEvent.ShowToast("1 or more fields invalid"))
-                        }
-                    }else{
-                        _events.send(ScreenEvent.ShowToast("Qty missing decimal pt"))
-                    }
-                }else{
-                        _events.send(ScreenEvent.ShowToast("Price missing decimal pt"))
-                }
-                _events.send(ScreenEvent.PopBackStack)
-            }
+            InsertNdc(pharmScanViewModel, ndc.value, price.value, pksz.value, qty.value, "N")
+            navController.popBackStack()
         }
-
-        fun focusOnLastSelectedTextField() {
-            CoroutineScope(Dispatchers.IO).launch {
-                _events.send(ScreenEvent.RequestFocus(focusedTextField))
-                delay(250)
-                _events.send(ScreenEvent.UpdateKeyboard(true))
-            }
-        }
-//************************************
 
         LaunchedEffect(Unit) {
             launch {
@@ -168,59 +145,26 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
                     color = MaterialTheme.colors.onBackground
                 )
             }
-            CustomTextField(
+            TextFieldWithMsg(
                 modifier = Modifier
                     .focusRequester(ndcFocusRequester)
-                    .onFocusChanged { focusState ->
-                        onTextFieldFocusChanged(
-                            key = FocusedTextFieldKey.NDC,
-                            isFocused = focusState.isFocused
-                        )
-                    },
+                    .onFocusChanged {},
                 enabled = true,
                 label = "Ndc",
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next
                 ),
-                //visualTransformation = ::NdcFilter,
                 inputWrapper = ndc,
                 onValueChange = ::onNdcEntered,
-                onImeKeyAction = ::onNdcImeActionClick,
+                onImeKeyAction = ::onImeActionClick,
                 length = 11
             )
             Spacer(Modifier.height(10.dp))
-            CustomTextField(
-                modifier = Modifier
-                    .focusRequester(pkszFocusRequester)
-                    .onFocusChanged { focusState ->
-                        onTextFieldFocusChanged(
-                            key = FocusedTextFieldKey.PKSZ,
-                            isFocused = focusState.isFocused
-                        )
-                    },
-                enabled = true,
-                label = "PkSz",
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
-                ),
-                //visualTransformation = ::creditCardFilter,
-                inputWrapper = pksz,
-                onValueChange = ::onPkSzEntered,
-                onImeKeyAction = ::onOkClick,
-                length = 8
-            )
-            Spacer(Modifier.height(10.dp))
-            CustomTextField(
+            TextFieldWithMsg(
                 modifier = Modifier
                     .focusRequester(ndcFocusRequester)
-                    .onFocusChanged { focusState ->
-                        onTextFieldFocusChanged(
-                            key = FocusedTextFieldKey.NDC,
-                            isFocused = focusState.isFocused
-                        )
-                    },
+                    .onFocusChanged {},
                 enabled = true,
                 label = "Price",
                 keyboardOptions = KeyboardOptions(
@@ -230,29 +174,39 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
                 //visualTransformation = ::NdcFilter,
                 inputWrapper = price,
                 onValueChange = ::onPriceEntered,
-                onImeKeyAction = ::onNdcImeActionClick,
+                onImeKeyAction = ::onImeActionClick,
                 length = 8
             )
             Spacer(Modifier.height(10.dp))
-            CustomTextField(
+            TextFieldWithMsg(
                 modifier = Modifier
                     .focusRequester(pkszFocusRequester)
-                    .onFocusChanged { focusState ->
-                        onTextFieldFocusChanged(
-                            key = FocusedTextFieldKey.PKSZ,
-                            isFocused = focusState.isFocused
-                        )
-                    },
+                    .onFocusChanged {},
+                enabled = true,
+                label = "PkSz",
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
+                ),
+                inputWrapper = pksz,
+                onValueChange = ::onPkSzEntered,
+                onImeKeyAction = ::onImeActionClick,
+                length = 8
+            )
+            Spacer(Modifier.height(10.dp))
+            TextFieldWithMsg(
+                modifier = Modifier
+                    .focusRequester(pkszFocusRequester)
+                    .onFocusChanged {},
                 enabled = true,
                 label = "Qty",
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
                 ),
-                //visualTransformation = ::creditCardFilter,
                 inputWrapper = qty,
                 onValueChange = ::onQtyEntered,
-                onImeKeyAction = ::onOkClick,
+                onImeKeyAction = ::onImeActionDoneClick,
                 length = 6
             )
             Spacer(Modifier.height(8.dp))
@@ -275,22 +229,7 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
                 Button(
                     modifier = Modifier.size(width = 90.dp, height = 45.dp),
                     onClick = ::onOkClick,
-                    enabled = areInputsValid,
-//                    onClick = {
-//                        text.trim()
-//                        if (text.length < 11){
-//                            invalidLength = true
-//                            text = ""
-//                        }else {
-//                            if (isNotWholeNumber(text)){
-//                                onAdd(text)
-//                            }else {
-//                                invalidLength = false
-//                                invalidNumeric = true
-//                                text = ""
-//                            }
-//                        }
-//                    }
+                    enabled = InputsValid(),
                 ) {
                     Text(
                         text = " OK ",
@@ -300,8 +239,6 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
             }
 
         }
-
-
     }
 }
 

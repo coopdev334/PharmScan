@@ -21,8 +21,8 @@ import com.example.pharmscan.ui.Utility.ManageLength
 
 
 @Composable
-fun CustomTextField(
-    modifier: Modifier,
+fun TextFieldWithMsg(
+    modifier: Modifier = Modifier,
     enabled: Boolean,
     inputWrapper: InputWrapper,
     label: String,

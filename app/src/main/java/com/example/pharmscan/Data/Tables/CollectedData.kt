@@ -18,7 +18,7 @@ data class CollectedData (
     val	matchflg: String?,
     val	loc: String?,
     val	operid: String?,
-    val	recount: String?,
+    var	recount: String?,
     val	date: String?,
     val	seconds: String?,
     val	itemtyp: String?,
