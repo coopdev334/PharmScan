@@ -67,6 +67,33 @@ class MainActivity() : ComponentActivity() {
         }
     }
 
+    override fun onResume() {
+        // Disable scanner when app starts
+        val intent = Intent()
+        intent.setAction("com.symbol.datawedge.api.ACTION")
+        intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "DISABLE_PLUGIN")
+        sendBroadcast(intent)
+        super.onResume()
+    }
+
+//        override fun onRestart() {
+//        // Disable scanner when app starts
+//        val intent = Intent()
+//        intent.setAction("com.symbol.datawedge.api.ACTION")
+//        intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "DISABLE_PLUGIN")
+//        sendBroadcast(intent)
+//        super.onRestart()
+//    }
+
+        override fun onPause() {
+            // Disable scanner when app starts
+            val intent = Intent()
+            intent.setAction("com.symbol.datawedge.api.ACTION")
+            intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "DISABLE_PLUGIN")
+            sendBroadcast(intent)
+        super.onPause()
+    }
+
 
     // The code below is for a different method of working with broadcast receivers
     // This method registers and unregisters the receiver instead of using

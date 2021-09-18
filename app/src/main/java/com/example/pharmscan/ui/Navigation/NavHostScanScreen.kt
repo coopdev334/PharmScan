@@ -1,6 +1,7 @@
 package com.example.pharmscan.ui.Navigation
 
 import android.content.Intent
+import android.content.IntentFilter
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
@@ -34,6 +35,7 @@ import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.Data.Tables.Settings
 import com.example.pharmscan.Data.Tables.SystemInfo
 import com.example.pharmscan.PharmScanApplication
+import com.example.pharmscan.PharmScanBroadcastReceiver
 import com.example.pharmscan.ViewModel.NdcSearch
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ViewModel.ProcessHoldState
@@ -107,18 +109,21 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         var holdButtonColor by remember {mutableStateOf(defaultButtonColors)}
 
         // Enable scanner on scan screen entry and disable on leaving scan screen
+        val con = PharmScanApplication()
+        val intent = Intent()
+        intent.setAction("com.symbol.datawedge.api.ACTION")
+        intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "ENABLE_PLUGIN")
+        con.getAppContext()?.sendBroadcast(intent)
+
         DisposableEffect(Unit) {
-            val con = PharmScanApplication()
-            val intent = Intent()
-            intent.setAction("com.symbol.datawedge.api.ACTION")
-            intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "ENABLE_PLUGIN")
-            con.getAppContext()?.sendBroadcast(intent)
+
             onDispose {
                 val con = PharmScanApplication()
                 val intent = Intent()
                 intent.setAction("com.symbol.datawedge.api.ACTION")
                 intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "DISABLE_PLUGIN")
-                con.getAppContext()?.sendBroadcast(intent) }
+                con.getAppContext()?.sendBroadcast(intent)
+            }
         }
 
         when (statusBarBkGrColor) {
