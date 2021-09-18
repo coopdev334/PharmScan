@@ -1,7 +1,9 @@
 package com.example.pharmscan.ui.Navigation
 
 import android.media.AudioAttributes
+import android.media.RingtoneManager
 import android.media.SoundPool
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -20,6 +22,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.BuildConfig
+import com.example.pharmscan.PharmScanApplication
+import android.media.ToneGenerator
+
+import android.media.AudioManager
+
+
+
 
 fun NavGraphBuilder.addAboutScreen(navController: NavController) {
 
@@ -78,8 +87,37 @@ fun NavGraphBuilder.addAboutScreen(navController: NavController) {
                     .align(alignment = Alignment.Start)
                     .padding(start = 20.dp)
                     .clickable {
+                        // Sound Stuff
+                        /*
+                        val notification: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+                        val r = RingtoneManager.getRingtone(PharmScanApplication.context, notification)
+                        r.play()
+                        */
+                        val toneG = ToneGenerator(AudioManager.STREAM_ALARM, 100)
+                        toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200)
 
-                    }
+                    },
+                style = MaterialTheme.typography.h5,
+                color = MaterialTheme.colors.onBackground
+            )
+            Text(
+                text = "Test Three Times",
+                fontSize = 40.sp,
+                modifier = Modifier
+                    .align(alignment = Alignment.Start)
+                    .padding(start = 20.dp)
+                    .clickable {
+                        // Sound Stuff
+                        /*
+                        val notification: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+                        val r = RingtoneManager.getRingtone(PharmScanApplication.context, notification)
+                        r.play()
+                        */
+                        val toneGG = ToneGenerator(AudioManager.STREAM_ALARM, 100)
+                        toneGG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 1000)
+
+
+                    },
                 style = MaterialTheme.typography.h5,
                 color = MaterialTheme.colors.onBackground
             )
