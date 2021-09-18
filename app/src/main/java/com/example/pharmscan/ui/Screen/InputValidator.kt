@@ -1,7 +1,8 @@
 package com.example.pharmscan.ui.Screen
 
 import com.example.pharmscan.R
-import com.example.pharmscan.ui.Utility.isDecNumber
+import com.example.pharmscan.ui.Utility.is1DecNumber
+import com.example.pharmscan.ui.Utility.is2DecNumber
 import com.example.pharmscan.ui.Utility.isNotWholeNumber
 
 object InputValidator {
@@ -25,14 +26,14 @@ object InputValidator {
 
     fun getPriceErrorIdOrNull(input: String): Int? {
         return when {
-            !isDecNumber(input) -> R.string.missing_dec_pt
+            !is2DecNumber(input) -> R.string.missing_dec_pt
             else -> null
         }
     }
 
     fun getQtyErrorIdOrNull(input: String): Int? {
         return when {
-            !isDecNumber(input) -> R.string.missing_dec_pt
+            !is1DecNumber(input) -> R.string.missing_dec_pt
              //etc..
             else -> null
         }
