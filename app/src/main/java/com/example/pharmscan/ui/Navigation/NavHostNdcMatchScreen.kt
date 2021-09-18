@@ -15,10 +15,12 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavType
-import androidx.navigation.compose.navArgument
+import androidx.navigation.navArgument
+//import androidx.navigation.compose.navArgument
 import com.example.pharmscan.ViewModel.InsertNdc
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Screen.*
@@ -52,11 +54,13 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
         var qty: InputWrapper? by remember { mutableStateOf(InputWrapper("", null)) }
         val manPrcOn = remember { mutableStateOf(false) }
         var costLimitExceed = remember { mutableStateOf(false) }
-        manPrcOn.value = pharmScanViewModel.getSettingsRow()[0].ManualPrice == "on"
+        val settings = pharmScanViewModel.getSettingsRow()
+        manPrcOn.value = settings[0].ManualPrice == "on"
         var price by remember { mutableStateOf(if (manPrcOn.value)InputWrapper("", null) else it.arguments?.getString("price")?.let { it1 -> InputWrapper(it1, null)}) }
         val prcFocusRequester = remember {FocusRequester()}
         val qtyFocusRequester = remember {FocusRequester()}
-        val costLimit = pharmScanViewModel.getSettingsRow()[0].CostLimit
+        val costLimit = settings[0].CostLimit?.toDouble()
+
 
         if (manPrcOn.value) {
             DisposableEffect(Unit) {
@@ -70,11 +74,13 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
             }
         }
 
+        // Check if price has exceeded costlimit value. If price exceeds costlimit
+        // alert user to enter exact tenths for open items instead of default .5 qty
         costLimitExceed.value= false
 
-        if (!price?.value.isNullOrEmpty()) {
+        if (!price?.value.isNullOrEmpty() && costLimit!! > 0.00) {
             if (is2DecNumber(price?.value)) {
-                if (price?.value!!.toDouble() > costLimit!!.toDouble()) {
+                if (price?.value!!.toDouble() > costLimit) {
                     costLimitExceed.value = true
                 }
             }
@@ -196,10 +202,12 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
                         Text(
                             color = Color.Red,
                             fontStyle = FontStyle.Italic,
+                            fontWeight = FontWeight.Bold,
                             text = "Cost Limit Exceeded")
                         Text(
                             color = Color.Red,
                             fontStyle = FontStyle.Italic,
+                            fontWeight = FontWeight.Bold,
                             text = "Enter Exact Tenths For Qty")
                     }else {
                         if (manPrcOn.value)Text("Manual Price ON")

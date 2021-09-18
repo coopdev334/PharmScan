@@ -27,7 +27,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.*
 import androidx.core.text.trimmedLength
 import androidx.navigation.NavType
-import androidx.navigation.compose.navArgument
+import androidx.navigation.navArgument
+//import androidx.navigation.compose.navArgument
 import com.example.pharmscan.Data.ScanLiveData
 import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.Data.Tables.Settings
