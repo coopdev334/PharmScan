@@ -1,5 +1,7 @@
 package com.example.pharmscan.ui.Navigation
 
+import android.media.AudioAttributes
+import android.media.SoundPool
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -7,6 +9,10 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -16,6 +22,8 @@ import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.BuildConfig
 
 fun NavGraphBuilder.addAboutScreen(navController: NavController) {
+
+
     composable(Screen.AboutScreen.route) {
 
         Column(
@@ -63,6 +71,19 @@ fun NavGraphBuilder.addAboutScreen(navController: NavController) {
                 style = MaterialTheme.typography.body1,
                 color = MaterialTheme.colors.onBackground
             )
+            Text(
+                text = "Test Sound",
+                fontSize = 40.sp,
+                modifier = Modifier
+                    .align(alignment = Alignment.Start)
+                    .padding(start = 20.dp)
+                    .clickable {
+
+                    }
+                style = MaterialTheme.typography.h5,
+                color = MaterialTheme.colors.onBackground
+            )
         }
+
     }
 }
