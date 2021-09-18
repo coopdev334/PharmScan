@@ -51,6 +51,12 @@ class MainActivity() : ComponentActivity() {
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT)
         PharmScanApplication.context?.registerReceiver(receiver, intentFilter)
 
+        // Disable scanner when app starts
+        val intent = Intent()
+        intent.setAction("com.symbol.datawedge.api.ACTION")
+        intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "DISABLE_PLUGIN")
+        sendBroadcast(intent)
+
         setContent {
             PharmScanTheme {
                 // A surface container using the 'background' color from the theme
