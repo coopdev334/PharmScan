@@ -226,7 +226,9 @@ fun TagKyBrdInput(
                                     invalidInput = true
                                     text = ""
                                 }else {
-                                    onAdd(text)
+                                    if (text.isNotEmpty()) {
+                                        onAdd(text)
+                                    }
                                 }
                             }
                         ) {

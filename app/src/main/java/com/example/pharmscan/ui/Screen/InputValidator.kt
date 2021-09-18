@@ -39,4 +39,11 @@ object InputValidator {
         }
     }
 
+    fun getHostAcctErrorIdOrNull(input: String): Int? {
+        return null
+    }
+
+    fun getHostPasswordErrorIdOrNull(input: String): Int? {
+        return null
+    }
 }

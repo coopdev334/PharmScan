@@ -1,5 +1,6 @@
 package com.example.pharmscan.ui.Navigation
 
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
@@ -26,11 +27,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.*
 import androidx.core.text.trimmedLength
 import androidx.navigation.NavType
-import androidx.navigation.compose.navArgument
+import androidx.navigation.navArgument
+//import androidx.navigation.compose.navArgument
 import com.example.pharmscan.Data.ScanLiveData
 import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.Data.Tables.Settings
 import com.example.pharmscan.Data.Tables.SystemInfo
+import com.example.pharmscan.PharmScanApplication
 import com.example.pharmscan.ViewModel.NdcSearch
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ViewModel.ProcessHoldState
@@ -102,6 +105,21 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         )
         var chgTagButtonColor by remember {mutableStateOf(defaultButtonColors)}
         var holdButtonColor by remember {mutableStateOf(defaultButtonColors)}
+
+        // Enable scanner on scan screen entry and disable on leaving scan screen
+        DisposableEffect(Unit) {
+            val con = PharmScanApplication()
+            val intent = Intent()
+            intent.setAction("com.symbol.datawedge.api.ACTION")
+            intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "ENABLE_PLUGIN")
+            con.getAppContext()?.sendBroadcast(intent)
+            onDispose {
+                val con = PharmScanApplication()
+                val intent = Intent()
+                intent.setAction("com.symbol.datawedge.api.ACTION")
+                intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "DISABLE_PLUGIN")
+                con.getAppContext()?.sendBroadcast(intent) }
+        }
 
         when (statusBarBkGrColor) {
             "yellow" -> statusBarBkGrColorObj = Color.Yellow
@@ -580,11 +598,19 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                         statusBarText = "*** Scan BarCode ***"
                                         holdButtonColor = defaultButtonColors
                                     }else {
-                                        previousStatusBarText = statusBarText
-                                        previousBarBkgrColor = statusBarBkGrColor
-                                        statusBarBkGrColor = "cyan"
-                                        statusBarText = "*** Hold ***"
-                                        holdButtonColor = holdOnButtonColors
+                                        val colDataRecCnt = pharmScanViewModel.getAllCollectedData()
+                                        if (colDataRecCnt.isNullOrEmpty()) {
+                                            ToastDisplay(
+                                                "Must have Last Scan for Hold",
+                                                Toast.LENGTH_LONG
+                                            )
+                                        }else {
+                                            previousStatusBarText = statusBarText
+                                            previousBarBkgrColor = statusBarBkGrColor
+                                            statusBarBkGrColor = "cyan"
+                                            statusBarText = "*** Hold ***"
+                                            holdButtonColor = holdOnButtonColors
+                                        }
                                     }
                                 },
                                 colors = holdButtonColor
