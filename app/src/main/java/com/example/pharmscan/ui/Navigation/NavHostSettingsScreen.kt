@@ -201,6 +201,14 @@ fun CostLimit(pharmScanViewModel: PharmScanViewModel) {
             Text(fontStyle = FontStyle.Italic, text = "Decimal")
             Text(fontStyle = FontStyle.Italic, text = "Number")
         }
+    }else {
+        if(value == "0.00") {
+            Column() {
+                Text(fontStyle = FontStyle.Italic, text = "CostLimit")
+                Text(fontStyle = FontStyle.Italic, text = "Disabled")
+                //Text(fontStyle = FontStyle.Italic, text = "Number")
+            }
+        }
     }
 
     BasicTextField(

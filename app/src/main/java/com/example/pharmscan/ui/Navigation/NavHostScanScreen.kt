@@ -598,11 +598,19 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                         statusBarText = "*** Scan BarCode ***"
                                         holdButtonColor = defaultButtonColors
                                     }else {
-                                        previousStatusBarText = statusBarText
-                                        previousBarBkgrColor = statusBarBkGrColor
-                                        statusBarBkGrColor = "cyan"
-                                        statusBarText = "*** Hold ***"
-                                        holdButtonColor = holdOnButtonColors
+                                        val colDataRecCnt = pharmScanViewModel.getAllCollectedData()
+                                        if (colDataRecCnt.isNullOrEmpty()) {
+                                            ToastDisplay(
+                                                "Must have Last Scan for Hold",
+                                                Toast.LENGTH_LONG
+                                            )
+                                        }else {
+                                            previousStatusBarText = statusBarText
+                                            previousBarBkgrColor = statusBarBkGrColor
+                                            statusBarBkGrColor = "cyan"
+                                            statusBarText = "*** Hold ***"
+                                            holdButtonColor = holdOnButtonColors
+                                        }
                                     }
                                 },
                                 colors = holdButtonColor
