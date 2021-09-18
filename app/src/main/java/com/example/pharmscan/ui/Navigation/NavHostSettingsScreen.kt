@@ -25,10 +25,7 @@ import androidx.compose.ui.graphics.Color
 import com.example.pharmscan.Data.Tables.Settings
 import com.example.pharmscan.PharmScanApplication
 import com.example.pharmscan.ui.Screen.InputValidator
-import com.example.pharmscan.ui.Utility.ToastDisplay
-import com.example.pharmscan.ui.Utility.UpdateSettings
-import com.example.pharmscan.ui.Utility.is2DecNumber
-import com.example.pharmscan.ui.Utility.isNotWholeNumber
+import com.example.pharmscan.ui.Utility.*
 
 fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     composable(Screen.SettingsScreen.route) {
@@ -209,7 +206,7 @@ fun CostLimit(pharmScanViewModel: PharmScanViewModel) {
     BasicTextField(
         value = value!!,
         onValueChange = {
-            value = it
+            value = ManageLength(it,7)
 
             if (!it.isNullOrEmpty() && is2DecNumber(it)) {
                 val columnValue = mapOf("CostLimit" to it)
@@ -251,7 +248,7 @@ fun TagChanges(pharmScanViewModel: PharmScanViewModel) {
     BasicTextField(
         value = value!!,
         onValueChange = {
-            value = it
+            value = ManageLength(it,4)
 
             if (!it.isNullOrEmpty() && !isNotWholeNumber(it) && it != "0") {
                 val columnValue = mapOf("FileSendTagChgs" to it)
