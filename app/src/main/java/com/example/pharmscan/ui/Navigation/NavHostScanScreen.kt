@@ -205,7 +205,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                         statusBarText = "*** Scan BarCode ***"
                         chgTagButtonColor = defaultButtonColors
                     }else {
-                        ToastDisplay("Invalid barcode Type for Hold: ${scanData.barcodeType}", Toast.LENGTH_LONG)
+                        ToastDisplay("Invalid barcode Type for Tag: ${scanData.barcodeType}", Toast.LENGTH_LONG)
                     }
 
                 }

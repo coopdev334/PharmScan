@@ -8,14 +8,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-//import androidx.compose.runtime.Composable
-//import androidx.compose.runtime.mutableStateOf
-//import androidx.compose.runtime.remember
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavType
@@ -23,6 +22,7 @@ import androidx.navigation.compose.navArgument
 import com.example.pharmscan.ViewModel.InsertNdc
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Screen.*
+import com.example.pharmscan.ui.Utility.is2DecNumber
 
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
@@ -51,10 +51,12 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
         var pksz by remember { mutableStateOf(it.arguments?.getString("pksz")?.let { it1 -> InputWrapper(it1, null)}) }
         var qty: InputWrapper? by remember { mutableStateOf(InputWrapper("", null)) }
         val manPrcOn = remember { mutableStateOf(false) }
+        var costLimitExceed = remember { mutableStateOf(false) }
         manPrcOn.value = pharmScanViewModel.getSettingsRow()[0].ManualPrice == "on"
         var price by remember { mutableStateOf(if (manPrcOn.value)InputWrapper("", null) else it.arguments?.getString("price")?.let { it1 -> InputWrapper(it1, null)}) }
         val prcFocusRequester = remember {FocusRequester()}
         val qtyFocusRequester = remember {FocusRequester()}
+        val costLimit = pharmScanViewModel.getSettingsRow()[0].CostLimit
 
         if (manPrcOn.value) {
             DisposableEffect(Unit) {
@@ -65,6 +67,16 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
             DisposableEffect(Unit) {
                 qtyFocusRequester.requestFocus()
                 onDispose { }
+            }
+        }
+
+        costLimitExceed.value= false
+
+        if (!price?.value.isNullOrEmpty()) {
+            if (is2DecNumber(price?.value)) {
+                if (price?.value!!.toDouble() > costLimit!!.toDouble()) {
+                    costLimitExceed.value = true
+                }
             }
         }
 
@@ -177,7 +189,22 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
             ) {
-                if (manPrcOn.value)Text("Manual Price ON")
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (costLimitExceed.value) {
+                        Text(
+                            color = Color.Red,
+                            fontStyle = FontStyle.Italic,
+                            text = "Cost Limit Exceeded")
+                        Text(
+                            color = Color.Red,
+                            fontStyle = FontStyle.Italic,
+                            text = "Enter Exact Tenths For Qty")
+                    }else {
+                        if (manPrcOn.value)Text("Manual Price ON")
+                    }
+                }
             }
             Row(
                 modifier = Modifier.fillMaxSize(),
