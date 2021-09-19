@@ -43,10 +43,10 @@ fun UpdateSystemInfo(pharmScanViewModel: PharmScanViewModel, columnValue: Map<St
         }
     }
 
-    // Update qty and price totals in SystemInfo table. On any updates to SystemInfo
+    // Update qty and qty*price totals in SystemInfo table. On any updates to SystemInfo
     // always get new totals into table for current Tag.
     var totqty = 0.0
-    var totprc = 0.0
+    var totamt = 0.0
     val dfq = DecimalFormat("######0.0") // formatter object
     val dfp = DecimalFormat("######0.00") // formatter object
     dfq.roundingMode = RoundingMode.FLOOR  // take 1 decimal position as is
@@ -57,10 +57,10 @@ fun UpdateSystemInfo(pharmScanViewModel: PharmScanViewModel, columnValue: Map<St
     if (!qtyPriceList.isNullOrEmpty()) {
         for (row in qtyPriceList) {
             if (!row.qty.isNullOrEmpty()) totqty += row.qty!!.toDouble()
-            if (!row.price.isNullOrEmpty())totprc += row.price!!.toDouble()
+            if (!row.price.isNullOrEmpty()) totamt += row.price!!.toDouble() * row.qty!!.toDouble()
         }
         systemInfo[0].TotQty = dfq.format(totqty)
-        systemInfo[0].TotAmt = dfp.format(totprc)
+        systemInfo[0].TotAmt = dfp.format(totamt)
     }else{
         systemInfo[0].TotQty = "0.0"
         systemInfo[0].TotAmt = "0.00"

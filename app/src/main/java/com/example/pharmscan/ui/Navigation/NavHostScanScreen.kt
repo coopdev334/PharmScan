@@ -166,11 +166,11 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                             chgTagButtonColor = defaultButtonColors
 
                             // TODO: temp for testing. Do warning check in network send code not here
-                            val tagchgsLimit = pharmScanViewModel.getSettingsRow()[0].FileSendTagChgs!!.toInt()
-                            val tagchgs = pharmScanViewModel.getSystemInfoRow()[0].TagChangeCount!!.toInt()
-                             if (tagchgs >= tagchgsLimit) {
-                                 navController.navigate(Screen.NoNetworkWarningScreen.route)
-                             }
+//                            val tagchgsLimit = pharmScanViewModel.getSettingsRow()[0].FileSendTagChgs!!.toInt()
+//                            val tagchgs = pharmScanViewModel.getSystemInfoRow()[0].TagChangeCount!!.toInt()
+//                             if (tagchgs >= tagchgsLimit) {
+//                                 navController.navigate(Screen.NoNetworkWarningScreen.route)
+//                             }
                         },
                         onCancel = {
                             showKyBrdInputDialog.value = false
@@ -222,30 +222,40 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                     if (type == "LABEL-TYPE-CODE128") {
                         chgTagEnabled.value = true
                         holdEnabled.value = true
-                        val sysInfoMap = mapOf("Tag" to barcode!!)
-                        UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
-                        statusBarBkGrColor = "green"
-                        statusBarText = "*** Scan BarCode ***"
-                        chgTagButtonColor = defaultButtonColors
+                        var sysInfoMap: Map<String, String>
+                        if (barcode!!.isNullOrEmpty()){
+                            ToastDisplay("Error! Empty/Null barcode data returned}", Toast.LENGTH_LONG)
+                        }else {
+                            if (barcode!!.length == 4) {
+                                sysInfoMap = mapOf("Tag" to barcode)
+                                UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
+                                statusBarBkGrColor = "green"
+                                statusBarText = "*** Scan BarCode ***"
+                                chgTagButtonColor = defaultButtonColors
+                            }else {
+                                ToastDisplay("Code128 Tag barcode invalid length}", Toast.LENGTH_LONG)
+                            }
+                        }
                     }else {
                         ToastDisplay("Invalid barcode Type for Tag: ${scanData.barcodeType}", Toast.LENGTH_LONG)
                     }
-
                 }
 
                 "*** Scan BarCode ***" -> {
                     if (type == "LABEL-TYPE-UPCA") {
-                        if (barcode!!.length == 12) {
-                            NdcSearch(navController, barcode!!.substring(0..10), pharmScanViewModel)
+                        if (barcode!!.isNullOrEmpty()){
+                            ToastDisplay("Error! Empty/Null barcode data returned}", Toast.LENGTH_LONG)
                         }else {
-                            ToastDisplay("Invalid barcode length for Ndc: ${barcode!!.length}", Toast.LENGTH_LONG)
+                            if (barcode!!.length == 12) {
+                                NdcSearch(navController, barcode!!.substring(0..10), pharmScanViewModel)
+                            } else {
+                                ToastDisplay("Invalid barcode length for Ndc: ${barcode!!.length}", Toast.LENGTH_LONG)
+                            }
                         }
-
                     }else {
                         ToastDisplay("Invalid barcode Type for Ndc: ${scanData.barcodeType}", Toast.LENGTH_LONG)
                     }
                 }
-
                 else -> {
                     ToastDisplay("In Hold mode. Turn off Hold mode to scan again", Toast.LENGTH_LONG)
                 }

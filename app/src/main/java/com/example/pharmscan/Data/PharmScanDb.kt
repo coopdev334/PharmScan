@@ -108,4 +108,4 @@ abstract class PharmScanDb: RoomDatabase() {
 //insert into PSNdc values ("11111111111", "1.25", "1", 1)
 //insert into PSNdc values ("22222222222", "10.50", "2", 2)
 //insert into PSNdc values ("33333333333", "12.50", "3", 3)
-//insert into PSNdc values ("30781713593", "4.10", "4", 5)
+//insert into PSNdc values ("00781713593", "000163.16", "00000003", 6)

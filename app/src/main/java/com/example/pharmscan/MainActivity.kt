@@ -15,12 +15,14 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.ViewModelProvider
 import com.example.pharmscan.Data.PharmScanDb
 import com.example.pharmscan.Data.ScanLiveData
+import com.example.pharmscan.Data.Tables.PSNdc
 import com.example.pharmscan.Repository.PharmScanRepo
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ViewModel.PharmScanViewModelFactory
 import com.example.pharmscan.ui.Navigation.Navigate
 import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.theme.PharmScanTheme
+import java.io.File
 
 class MainActivity() : ComponentActivity() {
     private lateinit var psViewModel: PharmScanViewModel
@@ -57,6 +59,8 @@ class MainActivity() : ComponentActivity() {
         intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "DISABLE_PLUGIN")
         sendBroadcast(intent)
 
+        readFileLineByLineUsingForEachLine(psViewModel, "/sdcard/Download/psndc.dat")
+        ///sdcard/Download/psndc.dat
         setContent {
             PharmScanTheme {
                 // A surface container using the 'background' color from the theme
@@ -149,6 +153,17 @@ class PharmScanBroadcastReceiver(pharmScanViewModel: PharmScanViewModel) : Broad
             psViewModel.scanLiveData.value = ScanLiveData(decodedData, decodedLabelType)
 
         }
+    }
+
+}
+
+fun readFileLineByLineUsingForEachLine(pharmScanViewModel: PharmScanViewModel, fileName: String){
+    var psndc = PSNdc("","","")
+    File(fileName).forEachLine {
+        psndc.ndc = it.substring(0..10)
+        psndc.price = it.substring(11..18)
+        psndc.packsz = it.substring(19..26)
+        pharmScanViewModel.insertPSNdc(psndc)
     }
 
 }

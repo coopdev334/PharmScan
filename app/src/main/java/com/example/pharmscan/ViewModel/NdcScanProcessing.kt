@@ -2,16 +2,34 @@ package com.example.pharmscan.ViewModel
 
 import androidx.navigation.NavController
 import com.example.pharmscan.Data.Tables.CollectedData
+import com.example.pharmscan.Data.Tables.PSNdc
 import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import kotlinx.coroutines.runBlocking
+import java.io.File
 
 fun NdcSearch(navController: NavController, ndc: String, pharmScanViewModel:PharmScanViewModel) {
-    val result = pharmScanViewModel.getNdcPSNdc(ndc)
+    // First formula - replace leading digit with a 0 then take remaining digits NOT including trailing check digit
+    val ndcFirst = "0" + ndc.substring(1..10)
+    var result = pharmScanViewModel.getNdcPSNdc(ndcFirst)
 
     if (result.isNullOrEmpty()) {
-        navController.navigate(Screen.NdcNoMatchScreen.route)
+        // Apply Second formula - Take position 1 - 5
+        val ndcSecond = ndc.substring(1..5) + "0" + ndc.substring(6..10)
+        result = pharmScanViewModel.getNdcPSNdc(ndcSecond)
+        if (result.isNullOrEmpty()) {
+            // Apply Third formula - Take position 0 - 10 no formula applied just take first 11 digits
+            val ndcThird = ndc.substring(0..10)
+            result = pharmScanViewModel.getNdcPSNdc(ndcThird)
+            if (result.isNullOrEmpty()) {
+                navController.navigate(Screen.NdcNoMatchScreen.route)
+            }else {
+                navController.navigate(Screen.NdcMatchScreen.withArgs(result[0].ndc!!, result[0].price!!, result[0].packsz!!))
+            }
+        }else{
+            navController.navigate(Screen.NdcMatchScreen.withArgs(result[0].ndc!!, result[0].price!!, result[0].packsz!!))
+        }
     }else{
         navController.navigate(Screen.NdcMatchScreen.withArgs(result[0].ndc!!, result[0].price!!, result[0].packsz!!))
     }
@@ -58,4 +76,6 @@ fun ProcessHoldState(qty: String, pharmScanViewModel:PharmScanViewModel) {
     val columnMap = mapOf("TotRecCount" to recnt.toString())
     UpdateSystemInfo(pharmScanViewModel, columnMap)
 }
+
+
 
