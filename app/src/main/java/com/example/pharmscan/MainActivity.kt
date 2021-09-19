@@ -24,6 +24,7 @@ import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ViewModel.PharmScanViewModelFactory
 import com.example.pharmscan.ui.Navigation.Navigate
 import com.example.pharmscan.ui.theme.PharmScanTheme
+import kotlinx.coroutines.runBlocking
 import java.io.File
 
 class MainActivity() : ComponentActivity() {
@@ -69,14 +70,23 @@ class MainActivity() : ComponentActivity() {
     // Reading the data
     fun readFileLineByLineUsingForEachLine(pharmScanViewModel: PharmScanViewModel, fileName: String){
         checkPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE, 101)
-        pharmScanViewModel.deleteAllPSNdc()
+
+        runBlocking {
+            val job = pharmScanViewModel.deleteAllPSNdc()
+            job.join()
+        }
+
         var psndc = PSNdc("","","")
         File(fileName).forEachLine {
             psndc.ndc = it.substring(0..10)
             psndc.price = it.substring(11..16) + "." + it.substring(17..18)
             psndc.packsz = it.substring(19..26)
-            pharmScanViewModel.insertPSNdc(psndc)
+            runBlocking {
+                val job = pharmScanViewModel.insertPSNdc(psndc)
+                job.join()
+            }
         }
+        Log.d("TESTING", "DONE WITH PSNDC DATABASE")
     }
     // Function to check and request permission.
     fun checkPermission(permission: String, requestCode: Int) {
@@ -93,8 +103,8 @@ class MainActivity() : ComponentActivity() {
                 requestCode
             )
         } else {
-            Toast.makeText(this@MainActivity, "Permission already granted", Toast.LENGTH_SHORT)
-                .show()
+            //Toast.makeText(this@MainActivity, "Permission already granted", Toast.LENGTH_SHORT)
+             //   .show()
         }
     }
 
