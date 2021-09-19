@@ -11,6 +11,7 @@ sealed class Screen(val route: String) {
     object NetIdScreen : Screen("NetId")
     object NdcNoMatchScreen : Screen("NdcNoMatch")
     object NdcMatchScreen : Screen("NdcMatch")
+    object NoNetworkWarningScreen : Screen("NoNetworkWarning")
 
     // Helper function to append variable number of arguments to route
     // Note this works for mandatory arguments only

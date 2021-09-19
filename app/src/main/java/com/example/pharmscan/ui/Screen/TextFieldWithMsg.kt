@@ -14,15 +14,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.pharmscan.ui.Utility.ManageLength
 
 
 @Composable
-fun CustomTextField(
-    modifier: Modifier,
+fun TextFieldWithMsg(
+    modifier: Modifier = Modifier,
     enabled: Boolean,
     inputWrapper: InputWrapper,
     label: String,
@@ -46,7 +48,15 @@ fun CustomTextField(
                 if (it.text.length <= length) fieldValue.value = it
                 onValueChange(fieldValue.value.text)
             },
-            label = { Text(label) },
+            label = {
+                if (enabled)
+                    Text(
+                        fontSize = 35.sp,
+                        fontWeight = FontWeight.Bold,
+                        text =label
+                    )else
+                        Text(label)
+            },
             isError = inputWrapper.errorId != null,
             visualTransformation = visualTransformation,
             keyboardOptions = keyboardOptions,

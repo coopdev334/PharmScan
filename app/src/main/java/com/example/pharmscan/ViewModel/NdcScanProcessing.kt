@@ -1,7 +1,5 @@
 package com.example.pharmscan.ViewModel
 
-import android.widget.Toast
-import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.Data.Tables.PSNdc
@@ -9,35 +7,75 @@ import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import kotlinx.coroutines.runBlocking
+import java.io.File
 
 fun NdcSearch(navController: NavController, ndc: String, pharmScanViewModel:PharmScanViewModel) {
-    val result = pharmScanViewModel.getNdcPSNdc(ndc)
+    // First formula - replace leading digit with a 0 then take remaining digits NOT including trailing check digit
+    val ndcFirst = "0" + ndc.substring(1..10)
+    var result = pharmScanViewModel.getNdcPSNdc(ndcFirst)
 
     if (result.isNullOrEmpty()) {
-        ToastDisplay("No Match", Toast.LENGTH_LONG)
-        navController.navigate(Screen.NdcNoMatchScreen.route)
+        // Apply Second formula - Take position 1 - 5
+        val ndcSecond = ndc.substring(1..5) + "0" + ndc.substring(6..10)
+        result = pharmScanViewModel.getNdcPSNdc(ndcSecond)
+        if (result.isNullOrEmpty()) {
+            // Apply Third formula - Take position 0 - 10 no formula applied just take first 11 digits
+            val ndcThird = ndc.substring(0..10)
+            result = pharmScanViewModel.getNdcPSNdc(ndcThird)
+            if (result.isNullOrEmpty()) {
+                navController.navigate(Screen.NdcNoMatchScreen.route)
+            }else {
+                navController.navigate(Screen.NdcMatchScreen.withArgs(result[0].ndc!!, result[0].price!!, result[0].packsz!!))
+            }
+        }else{
+            navController.navigate(Screen.NdcMatchScreen.withArgs(result[0].ndc!!, result[0].price!!, result[0].packsz!!))
+        }
     }else{
-        // Insert new record into PSNdc table
-        // TODO: get qty from user and other data
-        //val collectedData = CollectedData("111", "12345678", ndc, "123456", "12345678", "12345678", "123", "R", "1111", "123", "1001", "12/12/21", "123456", "P", "12345678")
-        //pharmScanViewModel.insertCollectedData(collectedData)
-        ToastDisplay("Match: ", Toast.LENGTH_LONG)
         navController.navigate(Screen.NdcMatchScreen.withArgs(result[0].ndc!!, result[0].price!!, result[0].packsz!!))
     }
 }
 
 
 // Insert new record into collected data table
-fun InsertNdc(navController: NavController, pharmScanViewModel:PharmScanViewModel, ndc: String, pksz: String, price: String, qty: String, matchFlg: String) {
-    //val psndc = pharmScanViewModel.getNdcPSNdc(ndc)
+fun InsertNdc(pharmScanViewModel:PharmScanViewModel, ndc: String, price: String, pksz: String, qty: String, matchFlg: String) {
     val sysinfo = pharmScanViewModel.getSystemInfoRow()
-    val recnt = sysinfo[0].TotRecCount?.toInt()?.plus(1)
-    val recMap = mapOf("TotRecCount" to recnt.toString())
-    UpdateSystemInfo(pharmScanViewModel, recMap)
+    var recnt: Int? = 1
+    val collectedDataLastRow = pharmScanViewModel.getColDataLastInsertedRow()  // get last collected data row
+    if (!collectedDataLastRow.isNullOrEmpty()) {
+        recnt = collectedDataLastRow[0].recount?.toInt()?.plus(1)         // add 1 to record count
+    }
 
     // Build Collected Data Table record with values
     // TODO: Find where itemcost field comes from. Temporary using price
     val collectedData = CollectedData("000", "12345678", ndc, qty, price, pksz, "123", matchFlg, sysinfo[0].Tag, sysinfo[0].opid, recnt.toString(), "12/12/21", "123456", "P", price)
-    pharmScanViewModel.insertCollectedData(collectedData)
+    runBlocking {
+        val job = pharmScanViewModel.insertCollectedData(collectedData)
+        job.join()  // wait for insert to complete
+    }
+
+    val sysInfoMap = mapOf("TotRecCount" to recnt.toString())
+    UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
 }
+
+
+fun ProcessHoldState(qty: String, pharmScanViewModel:PharmScanViewModel) {
+    var recnt: Int? = 1
+    val collectedDataLastRow = pharmScanViewModel.getColDataLastInsertedRow()  // get last collected data row
+    if (!collectedDataLastRow.isNullOrEmpty()) {
+        recnt = collectedDataLastRow[0].recount?.toInt()?.plus(1)         // add 1 to record count
+    }
+
+    // Build Collected Data Table record with values
+    // TODO: Find where itemcost field comes from. Temporary using price
+    val newCollectedData = CollectedData(collectedDataLastRow[0].dept, collectedDataLastRow[0].prodcd, collectedDataLastRow[0].ndc, qty, collectedDataLastRow[0].price, collectedDataLastRow[0].packsz, collectedDataLastRow[0].xstock, collectedDataLastRow[0].matchflg, collectedDataLastRow[0].loc, collectedDataLastRow[0].operid, recnt.toString(), collectedDataLastRow[0].date, collectedDataLastRow[0].seconds, collectedDataLastRow[0].itemtyp, collectedDataLastRow[0].itemcst)
+    runBlocking {
+        val job = pharmScanViewModel.insertCollectedData(newCollectedData)
+        job.join()
+    }
+
+    val columnMap = mapOf("TotRecCount" to recnt.toString())
+    UpdateSystemInfo(pharmScanViewModel, columnMap)
+}
+
+
 

@@ -1,5 +1,7 @@
 package com.example.pharmscan.ui.Navigation
 
+import android.content.Intent
+import android.content.IntentFilter
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
@@ -17,19 +19,26 @@ import androidx.compose.material.ButtonDefaults.buttonColors
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.*
+import androidx.core.text.trimmedLength
 import androidx.navigation.NavType
-import androidx.navigation.compose.navArgument
+import androidx.navigation.navArgument
+//import androidx.navigation.compose.navArgument
+import com.example.pharmscan.Data.ScanLiveData
 import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.Data.Tables.Settings
 import com.example.pharmscan.Data.Tables.SystemInfo
+import com.example.pharmscan.PharmScanApplication
+import com.example.pharmscan.PharmScanBroadcastReceiver
 import com.example.pharmscan.ViewModel.NdcSearch
 import com.example.pharmscan.ViewModel.PharmScanViewModel
+import com.example.pharmscan.ViewModel.ProcessHoldState
 import com.example.pharmscan.ui.Dialog.HoldQtyKyBrdInput
 import com.example.pharmscan.ui.Dialog.NdcKyBrdInput
 import com.example.pharmscan.ui.Dialog.TagKyBrdInput
@@ -61,20 +70,22 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
     ) {
         // Get the arguments passed to this composable by key name
         // args must be present
-        var statusBarText by remember { mutableStateOf(it.arguments!!.getString("statusBar")) }
+        var statusBarText by rememberSaveable { mutableStateOf(it.arguments!!.getString("statusBar")) }
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
-        var statusBarBkGrColor by remember { mutableStateOf(Color.Yellow) }
+        var statusBarBkGrColor by rememberSaveable { mutableStateOf(it.arguments!!.getString("bkgrColor")) }
+        var statusBarBkGrColorObj = Color.White
         val systemInfo: List<SystemInfo> by pharmScanViewModel.systemInfo.observeAsState(pharmScanViewModel.getSystemInfoRow())
         val settings: List<Settings> by pharmScanViewModel.settings.observeAsState(pharmScanViewModel.getSettingsRow())
+        val scanData: ScanLiveData by pharmScanViewModel.scanLiveData.observeAsState(ScanLiveData("", ""))
 
         //val settings: State<List<Settings>?> = pharmScanViewModel.settings.observeAsState()
-        var previousStatusBarText: String? by remember { mutableStateOf("")}
-        var previousBarBkgrColor by remember {mutableStateOf(Color.White)}
+        var previousStatusBarText: String? by rememberSaveable { mutableStateOf("")}
+        var previousBarBkgrColor: String? by rememberSaveable {mutableStateOf("")}
         var keyBrdInput by remember {mutableStateOf(0)}
         val showKyBrdInputDialog = remember { mutableStateOf(false) }
-        val chgTagEnabled = remember { mutableStateOf(false) }
-        val holdEnabled = remember { mutableStateOf(false) }
+        val chgTagEnabled = rememberSaveable { mutableStateOf(false) }
+        val holdEnabled = rememberSaveable { mutableStateOf(false) }
         val manPrcOn = remember { mutableStateOf(false) }
         val defaultButtonColors: ButtonColors = buttonColors(
             backgroundColor = Color.Blue,
@@ -97,6 +108,31 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         var chgTagButtonColor by remember {mutableStateOf(defaultButtonColors)}
         var holdButtonColor by remember {mutableStateOf(defaultButtonColors)}
 
+        // Enable scanner on scan screen entry and disable on leaving scan screen
+        val con = PharmScanApplication()
+        val intent = Intent()
+        intent.setAction("com.symbol.datawedge.api.ACTION")
+        intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "ENABLE_PLUGIN")
+        con.getAppContext()?.sendBroadcast(intent)
+
+        DisposableEffect(Unit) {
+
+            onDispose {
+                val con = PharmScanApplication()
+                val intent = Intent()
+                intent.setAction("com.symbol.datawedge.api.ACTION")
+                intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "DISABLE_PLUGIN")
+                con.getAppContext()?.sendBroadcast(intent)
+            }
+        }
+
+        when (statusBarBkGrColor) {
+            "yellow" -> statusBarBkGrColorObj = Color.Yellow
+            "green" -> statusBarBkGrColorObj = Color.Green
+            "cyan" -> statusBarBkGrColorObj = Color.Cyan
+            else -> statusBarBkGrColorObj = Color.White
+        }
+
         if (systemInfo.isNullOrEmpty()) {
             // set to defaults
             pharmScanViewModel.insertSystemInfo(SystemInfo("0", "0", "0", "0", "0", "0", "0"))
@@ -114,7 +150,6 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         // Key pressed, determine what context the key applies to. Capture first key
         // and open appropriate input dialog to get remaining input from user
         if (showKyBrdInputDialog.value) {
-
             when (statusBarText) {
                 "*** Scan Tag ***" -> {
                     TagKyBrdInput(
@@ -124,11 +159,18 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                             showKyBrdInputDialog.value = false
                             chgTagEnabled.value = true
                             holdEnabled.value = true
-                            val columnValue = mapOf("Tag" to tag)
-                            UpdateSystemInfo(pharmScanViewModel, columnValue)
-                            statusBarBkGrColor = Color.Green
+                            val sysInfoMap = mapOf("Tag" to tag)
+                            UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
+                            statusBarBkGrColor = "green"
                             statusBarText = "*** Scan BarCode ***"
                             chgTagButtonColor = defaultButtonColors
+
+                            // TODO: temp for testing. Do warning check in network send code not here
+//                            val tagchgsLimit = pharmScanViewModel.getSettingsRow()[0].FileSendTagChgs!!.toInt()
+//                            val tagchgs = pharmScanViewModel.getSystemInfoRow()[0].TagChangeCount!!.toInt()
+//                             if (tagchgs >= tagchgsLimit) {
+//                                 navController.navigate(Screen.NoNetworkWarningScreen.route)
+//                             }
                         },
                         onCancel = {
                             showKyBrdInputDialog.value = false
@@ -140,12 +182,9 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                     HoldQtyKyBrdInput(
                         keyBrdInput,
                         showDialog = showKyBrdInputDialog.value,
-                        onAdd = {
+                        onAdd = {qty ->
                             showKyBrdInputDialog.value = false
-                            //val columnValue = mapOf("Tag" to ndc)
-                            //UpdateSystemInfo(pharmScanViewModel, columnValue)
-                            //statusBarBkGrColor = Color.Green
-                            //statusBarText = "*** Scan BarCode ***"
+                            ProcessHoldState(qty, pharmScanViewModel)
                         },
                         onCancel = {
                             showKyBrdInputDialog.value = false
@@ -169,6 +208,59 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
             }
         }
 
+        // Check if barcode data came from scanner not kybrd
+        // If data found in ScanLiveData object do scanner processing for tag or ndc
+        if (!scanData.barcodeData.isNullOrEmpty()) {
+            //ToastDisplay("${scanData.barcodeType} ${scanData.barcodeData}", Toast.LENGTH_LONG)
+            // after getting data clear out scan data object
+            val barcode = scanData.barcodeData
+            val type = scanData.barcodeType
+            pharmScanViewModel.scanLiveData.value = ScanLiveData("", "")
+
+            when (statusBarText) {
+                "*** Scan Tag ***" -> {
+                    if (type == "LABEL-TYPE-CODE128") {
+                        chgTagEnabled.value = true
+                        holdEnabled.value = true
+                        var sysInfoMap: Map<String, String>
+                        if (barcode!!.isNullOrEmpty()){
+                            ToastDisplay("Error! Empty/Null barcode data returned}", Toast.LENGTH_LONG)
+                        }else {
+                            if (barcode!!.length == 4) {
+                                sysInfoMap = mapOf("Tag" to barcode)
+                                UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
+                                statusBarBkGrColor = "green"
+                                statusBarText = "*** Scan BarCode ***"
+                                chgTagButtonColor = defaultButtonColors
+                            }else {
+                                ToastDisplay("Code128 Tag barcode invalid length}", Toast.LENGTH_LONG)
+                            }
+                        }
+                    }else {
+                        ToastDisplay("Invalid barcode Type for Tag: ${scanData.barcodeType}", Toast.LENGTH_LONG)
+                    }
+                }
+
+                "*** Scan BarCode ***" -> {
+                    if (type == "LABEL-TYPE-UPCA") {
+                        if (barcode!!.isNullOrEmpty()){
+                            ToastDisplay("Error! Empty/Null barcode data returned}", Toast.LENGTH_LONG)
+                        }else {
+                            if (barcode!!.length == 12) {
+                                NdcSearch(navController, barcode!!.substring(0..10), pharmScanViewModel)
+                            } else {
+                                ToastDisplay("Invalid barcode length for Ndc: ${barcode!!.length}", Toast.LENGTH_LONG)
+                            }
+                        }
+                    }else {
+                        ToastDisplay("Invalid barcode Type for Ndc: ${scanData.barcodeType}", Toast.LENGTH_LONG)
+                    }
+                }
+                else -> {
+                    ToastDisplay("In Hold mode. Turn off Hold mode to scan again", Toast.LENGTH_LONG)
+                }
+            }
+        }
 
         // NOTE: Changes need to be made also in all screens with the scafford settings
         Scaffold(
@@ -271,11 +363,11 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
 
                                 if (manPrcOn.value){
                                     val colVal = mapOf("ManualPrice" to "off")
-                                    ToastDisplay("Man Price Off", Toast.LENGTH_SHORT)
+                                    ToastDisplay("Manual Price OFF", Toast.LENGTH_SHORT)
                                     UpdateSettings(pharmScanViewModel, colVal)
                                 }else{
                                     val colVal = mapOf("ManualPrice" to "on")
-                                    ToastDisplay("Man Price On", Toast.LENGTH_SHORT)
+                                    ToastDisplay("Manual Price ON", Toast.LENGTH_SHORT)
                                     UpdateSettings(pharmScanViewModel, colVal)
                                 }
                                 manPrcOn.value = it
@@ -304,7 +396,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(50.dp))
-                            .background(statusBarBkGrColor),
+                            .background(statusBarBkGrColorObj),
                         horizontalArrangement = Arrangement.Center
                     ){
                         Text(
@@ -496,7 +588,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                     }else {
                                         previousStatusBarText = statusBarText
                                         previousBarBkgrColor = statusBarBkGrColor
-                                        statusBarBkGrColor = Color.Yellow
+                                        statusBarBkGrColor = "yellow"
                                         statusBarText = "*** Scan Tag ***"
                                         chgTagButtonColor = chgTagOnButtonColors
                                     }
@@ -517,15 +609,23 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 onClick = {
 
                                     if (statusBarText == "*** Hold ***") {
-                                        statusBarBkGrColor = Color.Green
+                                        statusBarBkGrColor = "green"
                                         statusBarText = "*** Scan BarCode ***"
                                         holdButtonColor = defaultButtonColors
                                     }else {
-                                        previousStatusBarText = statusBarText
-                                        previousBarBkgrColor = statusBarBkGrColor
-                                        statusBarBkGrColor = Color.Cyan
-                                        statusBarText = "*** Hold ***"
-                                        holdButtonColor = holdOnButtonColors
+                                        val colDataRecCnt = pharmScanViewModel.getAllCollectedData()
+                                        if (colDataRecCnt.isNullOrEmpty()) {
+                                            ToastDisplay(
+                                                "Must have Last Scan for Hold",
+                                                Toast.LENGTH_LONG
+                                            )
+                                        }else {
+                                            previousStatusBarText = statusBarText
+                                            previousBarBkgrColor = statusBarBkGrColor
+                                            statusBarBkGrColor = "cyan"
+                                            statusBarText = "*** Hold ***"
+                                            holdButtonColor = holdOnButtonColors
+                                        }
                                     }
                                 },
                                 colors = holdButtonColor

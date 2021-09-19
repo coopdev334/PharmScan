@@ -1,18 +1,11 @@
 package com.example.pharmscan.ViewModel
 
 import androidx.lifecycle.*
+import com.example.pharmscan.Data.ScanLiveData
 import com.example.pharmscan.Data.Tables.*
-import com.example.pharmscan.R
 import com.example.pharmscan.Repository.PharmScanRepo
-import com.example.pharmscan.ui.Screen.*
-
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class PharmScanViewModel(
@@ -69,6 +62,7 @@ class PharmScanViewModel(
     fun getAllCollectedDataOrderByTag() = repo.getAllCollectedDataOrderByTag()
     fun getAllCollectedDataOrderByNdc() = repo.getAllCollectedDataOrderByNdc()
     fun getColDataLastInsertedRow() = repo.getColDataLastInsertedRow()
+    fun getColDataQtyPriceByTag(tag: String) = repo.getColDataQtyPriceByTag(tag)
 
     // TODO: use IO dispatcher when Toast removed
     fun uploadCollectedData() = CoroutineScope(Dispatchers.Main).launch {
@@ -152,55 +146,10 @@ class PharmScanViewModel(
     fun getLiveDataSettingsRow() = repo.getLiveDataSettingsRow()
     fun getSettingsRow() = repo.getSettingsRow()
 
-//*****************************************************************************
-// Custom TextField auto validation of input
-//    var name = InputWrapper()
-//    var creditCardNumber = InputWrapper()
-//
-//
-//    private var focusedTextField = FocusedTextFieldKey.NAME
-//    private val _events = Channel<ScreenEvent>()
-//    val events = _events.receiveAsFlow()
-//
-//    fun onNameEntered(input: String) {
-//        val errorId = InputValidator.getNdcErrorIdOrNull(input)
-//        name = name.copy(value = input, errorId = errorId)
-//    }
-//
-//    fun onCardNumberEntered(input: String) {
-//        val errorId = InputValidator.getPkSzErrorIdOrNull(input)
-//        creditCardNumber = creditCardNumber.copy(value = input, errorId = errorId)
-//    }
-//
-//    fun onTextFieldFocusChanged(key: FocusedTextFieldKey, isFocused: Boolean) {
-//        focusedTextField = if (isFocused) key else FocusedTextFieldKey.NONE
-//    }
-//
-//    fun onNameImeActionClick() {
-//        viewModelScope.launch(Dispatchers.Default) {
-//            _events.send(ScreenEvent.MoveFocus())
-//        }
-//    }
-//
-//    fun onContinueClick() {
-//        viewModelScope.launch(Dispatchers.Default) {
-//            if (areInputsValid) clearFocusAndHideKeyboard()
-//            val msg = if (areInputsValid) "success onContinueClick" else "error onContinueClick"
-//            _events.send(ScreenEvent.ShowToast(msg))
-//        }
-//    }
-//
-//    private suspend fun clearFocusAndHideKeyboard() {
-//        _events.send(ScreenEvent.ClearFocus)
-//        _events.send(ScreenEvent.UpdateKeyboard(false))
-//        focusedTextField = FocusedTextFieldKey.NONE
-//    }
-//
-//    private fun focusOnLastSelectedTextField() {
-//        viewModelScope.launch(Dispatchers.Default) {
-//            _events.send(ScreenEvent.RequestFocus(focusedTextField))
-//            delay(250)
-//            _events.send(ScreenEvent.UpdateKeyboard(true))
-//        }
-//    }
+    // **********************************************************************
+    // Scan LiveData
+    val scanLiveData: MutableLiveData<ScanLiveData> by lazy {
+        MutableLiveData<ScanLiveData>()
+    }
+
 }

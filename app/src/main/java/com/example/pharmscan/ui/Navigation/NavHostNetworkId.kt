@@ -1,111 +1,151 @@
 package com.example.pharmscan.ui.Navigation
 
-import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.example.pharmscan.ui.Screen.Screen
-import com.example.pharmscan.ViewModel.PharmScanViewModel
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import com.example.pharmscan.ViewModel.InsertNdc
+import com.example.pharmscan.ViewModel.PharmScanViewModel
+import com.example.pharmscan.ui.Screen.*
+import com.example.pharmscan.ui.Utility.UpdateSettings
 
-
+@ExperimentalComposeUiApi
 fun NavGraphBuilder.addNetIdScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
-    composable(Screen.NetIdScreen.route) {
-        var text by remember {mutableStateOf("")}
+    composable(route = Screen.NetIdScreen.route) {
+        val settings = pharmScanViewModel.getSettingsRow()
+        var hostacct: InputWrapper? by remember { mutableStateOf(InputWrapper(settings[0].hostAcct!!, null)) }
+        var hostpassword: InputWrapper? by remember { mutableStateOf(InputWrapper(settings[0].hostPassword!!, null)) }
+        val acctFocusRequester = remember {FocusRequester()}
+
+        DisposableEffect(Unit) {
+            acctFocusRequester.requestFocus()
+            onDispose { }
+        }
+
+        fun InputsValid (): Boolean {
+            when {
+                hostacct?.value.isNullOrEmpty() -> return false
+                hostpassword?.value.isNullOrEmpty() -> return false
+            }
+
+            when {
+                hostacct?.errorId != null -> return false
+                hostpassword?.errorId != null -> return false
+                else -> return true
+            }
+        }
+
+        fun onHostacctEntered(input: String) {
+            val errorId = InputValidator.getHostAcctErrorIdOrNull(input)
+            hostacct = hostacct?.copy(value = input, errorId = errorId)
+        }
+
+        fun onHostpasswordEntered(input: String) {
+            val errorId = InputValidator.getHostPasswordErrorIdOrNull(input)
+            hostpassword = hostpassword?.copy(value = input, errorId = errorId)
+        }
+
+        fun onImeActionClick() {
+            if (hostacct!!.errorId == null && hostpassword!!.errorId == null) {
+                val columnValue = mapOf("hostAcct" to hostacct!!.value, "hostPassword" to hostpassword!!.value)
+                UpdateSettings(pharmScanViewModel, columnValue)
+                navController.popBackStack()
+            }
+        }
+
+        fun onOkClick() {
+            val columnValue = mapOf("hostAcct" to hostacct!!.value, "hostPassword" to hostpassword!!.value)
+            UpdateSettings(pharmScanViewModel, columnValue)
+            navController.popBackStack()
+        }
 
         Column(
-            modifier = Modifier.padding(start = 10.dp, end = 8.dp),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Center
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(all = 5.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
-                //.background(Color.Yellow),
                 horizontalArrangement = Arrangement.Center
-            ) {
-
+            ){
+                Text(
+                    text = "Network Id",
+                    style = MaterialTheme.typography.h5,
+                    color = MaterialTheme.colors.onBackground
+                )
             }
-            Text(
-                text = "<-",
-                fontSize = 40.sp,
+            Spacer(Modifier.height(10.dp))
+            TextFieldWithMsg(
                 modifier = Modifier
-                    .align(alignment = Alignment.Start)
-                    .padding(start = 20.dp)
-                    .clickable {
+                    .focusRequester(acctFocusRequester),
+                // .onFocusChanged {},
+                enabled = true,
+                label = "HostAccount",
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+                inputWrapper = hostacct!!,
+                onValueChange = ::onHostacctEntered,
+                onImeKeyAction = ::onImeActionClick,
+                length = 8
+            )
+            Spacer(Modifier.height(10.dp))
+            TextFieldWithMsg(
+                enabled = true,
+                label = "HostPassword",
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                inputWrapper = hostpassword!!,
+                onValueChange = ::onHostpasswordEntered,
+                onImeKeyAction = ::onImeActionClick,
+                length = 6
+            )
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                TextButton(
+                    modifier = Modifier.size(width = 90.dp, height = 45.dp),
+                    onClick = {
                         navController.popBackStack()
-                    },
-                style = MaterialTheme.typography.h5,
-                color = MaterialTheme.colors.onBackground
-            )
-            Text(
-                text = "Network Id",
-                style = MaterialTheme.typography.h3,
-                color = MaterialTheme.colors.onBackground
-            )
-            Spacer(modifier = Modifier.height(height = 30.dp))
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(MaterialTheme.colors.secondary)
-            )
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                    },
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Host Account",
-                    style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.onBackground
-                )
+                    }
+                ) {
+                    Text(
+                        text = "Cancel",
+                        style = MaterialTheme.typography.h5
+                    )
+                }
+                Button(
+                    modifier = Modifier.size(width = 90.dp, height = 45.dp),
+                    onClick = ::onOkClick,
+                    enabled = InputsValid(),
+                ) {
+                    Text(
+                        text = " OK ",
+                        style = MaterialTheme.typography.h6
+                    )
+                }
             }
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(MaterialTheme.colors.secondary)
-            )
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Host Password",
-                    style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.onBackground
-                )
-                //PriceEntryCheckbox()
-            }
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(MaterialTheme.colors.secondary)
-            )
         }
     }
 }
