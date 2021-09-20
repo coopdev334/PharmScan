@@ -1,6 +1,5 @@
 package com.example.pharmscan.ui.Navigation
 
-import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,13 +22,14 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-//import androidx.navigation.compose.navArgument
-import com.example.pharmscan.PharmScanApplication
+import com.example.pharmscan.Data.Tables.PSNdc
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.GetOpId
 import com.example.pharmscan.ui.Screen.Screen
+import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import java.io.File
 
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
@@ -61,6 +61,24 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                     showEnterOpIdDialog.value = false
                     val columnValue = mapOf("opid" to opid)
                     UpdateSystemInfo(pharmScanViewModel, columnValue)
+                    val settings = pharmScanViewModel.getSettingsRow()
+                    if (!settings.isNullOrEmpty()) {
+                        if (settings[0].AutoLoadNdcFile == "on") {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                var sysInfoMap = mapOf("NdcLoading" to "on")
+                                UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
+                                readFileLineByLineUsingForEachLine(
+                                    pharmScanViewModel,
+                                    "/sdcard/Download/psndc.dat"
+                                )
+                                sysInfoMap = mapOf("NdcLoading" to "off")
+                                UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
+                            }
+                        }
+                    }else {
+                        ToastDisplay("Settings table empty", Toast.LENGTH_SHORT)
+                    }
+
                     navController.navigate(Screen.ScanScreen.withArgs("*** Scan Tag ***", "yellow"))
                 }
             )
@@ -223,4 +241,27 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
             }
         )
     }
+}
+
+suspend fun readFileLineByLineUsingForEachLine(pharmScanViewModel: PharmScanViewModel, fileName: String){
+    var psndc = PSNdc("","","")
+
+    //checkPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE, 101)
+
+    runBlocking {
+        val job = pharmScanViewModel.deleteAllPSNdc()
+        job.join()
+    }
+
+    File(fileName).forEachLine {
+        psndc.ndc = it.substring(0..10)
+        psndc.price = it.substring(11..16) + "." + it.substring(17..18)
+        psndc.packsz = it.substring(19..26)
+
+        runBlocking {
+            val job = pharmScanViewModel.insertPSNdc(psndc)
+            job.join()
+        }
+    }
+
 }

@@ -17,7 +17,7 @@ import com.example.pharmscan.Data.Tables.*
         PSNdc::class,
         Settings::class
     ],
-    version = 10,
+    version = 14,
     exportSchema = false
 )
 abstract class PharmScanDb: RoomDatabase() {

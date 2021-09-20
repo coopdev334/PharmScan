@@ -1,7 +1,6 @@
 package com.example.pharmscan.ui.Navigation
 
 import android.content.Intent
-import android.content.IntentFilter
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
@@ -26,16 +25,15 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.*
-import androidx.core.text.trimmedLength
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-//import androidx.navigation.compose.navArgument
 import com.example.pharmscan.Data.ScanLiveData
 import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.Data.Tables.Settings
 import com.example.pharmscan.Data.Tables.SystemInfo
 import com.example.pharmscan.PharmScanApplication
-import com.example.pharmscan.PharmScanBroadcastReceiver
+import com.example.pharmscan.R
 import com.example.pharmscan.ViewModel.NdcSearch
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ViewModel.ProcessHoldState
@@ -78,8 +76,6 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         val systemInfo: List<SystemInfo> by pharmScanViewModel.systemInfo.observeAsState(pharmScanViewModel.getSystemInfoRow())
         val settings: List<Settings> by pharmScanViewModel.settings.observeAsState(pharmScanViewModel.getSettingsRow())
         val scanData: ScanLiveData by pharmScanViewModel.scanLiveData.observeAsState(ScanLiveData("", ""))
-
-        //val settings: State<List<Settings>?> = pharmScanViewModel.settings.observeAsState()
         var previousStatusBarText: String? by rememberSaveable { mutableStateOf("")}
         var previousBarBkgrColor: String? by rememberSaveable {mutableStateOf("")}
         var keyBrdInput by remember {mutableStateOf(0)}
@@ -135,12 +131,12 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
 
         if (systemInfo.isNullOrEmpty()) {
             // set to defaults
-            pharmScanViewModel.insertSystemInfo(SystemInfo("0", "0", "0", "0", "0", "0", "0"))
+            pharmScanViewModel.insertSystemInfo(SystemInfo("0", "0", "0", "0", "0", "0", "0", "off"))
         }
 
         if (settings.isNullOrEmpty()) {
             // set to defaults
-            pharmScanViewModel.insertSettings(Settings("0", "0", "0", "0", "0"))
+            pharmScanViewModel.insertSettings(Settings("0", "0", "0", "0", "0", "0"))
         }else{
             manPrcOn.value = settings[0].ManualPrice == "on"
         }
@@ -355,7 +351,10 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 ToastDisplay("clicked", Toast.LENGTH_SHORT)
                             }
                         ) {
-                            Icon(Icons.Filled.Create, contentDescription = "")
+                            if (systemInfo[0].NdcLoading == "on") {
+                                //Icon(Icons.Filled.AddCircle, contentDescription = "")
+                                Image(painterResource(R.drawable.ic_baseline_download_for_offline_24),"content description")
+                            }
                         }
                         IconToggleButton(
                             checked = manPrcOn.value,
@@ -556,7 +555,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                         horizontalArrangement = Arrangement.SpaceEvenly
                                     ) {
                                         Text(
-                                            text = "Price:${collectedData[0].price}   PkSz:${collectedData[0].packsz}",
+                                            text = "Price:${collectedData[0].price!!.trimStart { it == '0' }}   PkSz:${collectedData[0].packsz!!.trimStart { it == '0' }}",
                                             style = MaterialTheme.typography.h6,
                                             color = MaterialTheme.colors.onBackground
                                         )
@@ -663,4 +662,3 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         LaunchedEffect(Unit) {requester.requestFocus()}
     }
 }
-

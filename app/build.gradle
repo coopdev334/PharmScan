@@ -104,6 +104,10 @@ dependencies {
     implementation 'androidx.compose.runtime:runtime-livedata:1.0.2'
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.1"
 
+    //  Reading Files From External
+    implementation "androidx.fragment:fragment:1.2.0"
+
+    implementation "androidx.compose.animation:animation-graphics:1.1.0-alpha04"
 }
 
 def getVersionPropertiesValue()

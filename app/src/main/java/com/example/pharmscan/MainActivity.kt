@@ -1,17 +1,19 @@
 package com.example.pharmscan
 
+import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.net.ConnectivityManager
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.WindowManager
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.pharmscan.Data.PharmScanDb
 import com.example.pharmscan.Data.ScanLiveData
@@ -20,15 +22,14 @@ import com.example.pharmscan.Repository.PharmScanRepo
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ViewModel.PharmScanViewModelFactory
 import com.example.pharmscan.ui.Navigation.Navigate
-import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.theme.PharmScanTheme
-import java.io.File
 
 class MainActivity() : ComponentActivity() {
     private lateinit var psViewModel: PharmScanViewModel
     private lateinit var receiver: PharmScanBroadcastReceiver
 
     // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
+    @ExperimentalAnimationGraphicsApi
     @ExperimentalFoundationApi
     @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +60,20 @@ class MainActivity() : ComponentActivity() {
         intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "DISABLE_PLUGIN")
         sendBroadcast(intent)
 
-        readFileLineByLineUsingForEachLine(psViewModel, "/sdcard/Download/psndc.dat")
+        //Log.d("TESTING", "Checking the " + Manifest.permission.READ_EXTERNAL_STORAGE + " permissions.")
+        if (ContextCompat.checkSelfPermission(
+                this@MainActivity,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_DENIED
+        ) {
+            // Requesting the permission
+            ActivityCompat.requestPermissions(
+                this@MainActivity,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                101
+            )
+        }
+
         ///sdcard/Download/psndc.dat
         setContent {
             PharmScanTheme {
@@ -157,13 +171,5 @@ class PharmScanBroadcastReceiver(pharmScanViewModel: PharmScanViewModel) : Broad
 
 }
 
-fun readFileLineByLineUsingForEachLine(pharmScanViewModel: PharmScanViewModel, fileName: String){
-    var psndc = PSNdc("","","")
-    File(fileName).forEachLine {
-        psndc.ndc = it.substring(0..10)
-        psndc.price = it.substring(11..18)
-        psndc.packsz = it.substring(19..26)
-        pharmScanViewModel.insertPSNdc(psndc)
-    }
 
-}
+

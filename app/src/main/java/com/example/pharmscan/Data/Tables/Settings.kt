@@ -12,7 +12,8 @@ data class Settings (
     var	hostPassword: String?,
     var	ManualPrice: String?,
     var	CostLimit: String?,
-    var	FileSendTagChgs: String?
+    var	FileSendTagChgs: String?,
+    var	AutoLoadNdcFile: String?
 ) {
     @PrimaryKey(autoGenerate = true)
     var iD: Int? = null
