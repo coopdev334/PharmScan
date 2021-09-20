@@ -33,7 +33,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
         val settings: List<Settings> by pharmScanViewModel.settings.observeAsState(pharmScanViewModel.getSettingsRow())
 
         if (settings.isNullOrEmpty()) {
-            pharmScanViewModel.insertSettings(Settings("", "", "", "", ""))
+            pharmScanViewModel.insertSettings(Settings("", "", "", "", "", ""))
         }
 
         Column(
@@ -164,6 +164,26 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                     .height(1.dp)
                     .background(MaterialTheme.colors.secondary)
             )
+            Spacer(modifier = Modifier.height(height = 10.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Auto Load NdcFile",
+                    style = MaterialTheme.typography.h5,
+                    color = MaterialTheme.colors.onBackground
+                )
+                AutoLoadNdcCheckbox(pharmScanViewModel)
+            }
+            Spacer(modifier = Modifier.height(height = 10.dp))
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(MaterialTheme.colors.secondary)
+            )
         }
     }
 }
@@ -278,5 +298,27 @@ fun TagChanges(pharmScanViewModel: PharmScanViewModel) {
             }
         },
         textStyle = TextStyle(fontSize = 25.sp)
+    )
+}
+
+@Composable
+fun AutoLoadNdcCheckbox(pharmScanViewModel: PharmScanViewModel) {
+    var checkedState by remember { mutableStateOf(pharmScanViewModel.getSettingsRow()[0].AutoLoadNdcFile == "on") }
+
+    checkedState = pharmScanViewModel.getSettingsRow()[0].AutoLoadNdcFile == "on"
+
+    Checkbox(
+        modifier = Modifier.size(width = 40.dp, height = 20.dp),
+        checked = checkedState,
+        onCheckedChange = {
+            if (it) {
+                val columnValue = mapOf("AutoLoadNdcFile" to "on")
+                UpdateSettings(pharmScanViewModel, columnValue)
+            }else{
+                val columnValue = mapOf("AutoLoadNdcFile" to "off")
+                UpdateSettings(pharmScanViewModel, columnValue)
+            }
+            checkedState = it
+        }
     )
 }

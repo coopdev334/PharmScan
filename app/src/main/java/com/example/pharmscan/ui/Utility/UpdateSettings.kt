@@ -15,7 +15,7 @@ fun UpdateSettings(pharmScanViewModel: PharmScanViewModel, columnValue: Map<Stri
 
         if (settingsRow.isNullOrEmpty()) {
             // set to defaults then update columns
-            settingsRow = listOf(Settings("0", "0", "0", "0", "0"))
+            settingsRow = listOf(Settings("0", "0", "0", "0", "0", "off"))
         } else {
             val job = pharmScanViewModel.deleteAllSettings()
             job.join() // wait for deleteRow to complete
@@ -29,6 +29,7 @@ fun UpdateSettings(pharmScanViewModel: PharmScanViewModel, columnValue: Map<Stri
             "ManualPrice" -> settingsRow[0].ManualPrice = item.value
             "CostLimit" -> settingsRow[0].CostLimit = item.value
             "FileSendTagChgs" -> settingsRow[0].FileSendTagChgs = item.value
+            "AutoLoadNdcFile" -> settingsRow[0].AutoLoadNdcFile = item.value
         }
     }
 
