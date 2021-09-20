@@ -1,5 +1,7 @@
 package com.example.pharmscan.ViewModel
 
+import android.media.AudioManager
+import android.media.ToneGenerator
 import androidx.navigation.NavController
 import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.Data.Tables.PSNdc
@@ -23,14 +25,22 @@ fun NdcSearch(navController: NavController, ndc: String, pharmScanViewModel:Phar
             val ndcThird = ndc.substring(0..10)
             result = pharmScanViewModel.getNdcPSNdc(ndcThird)
             if (result.isNullOrEmpty()) {
+                val toneG = ToneGenerator(AudioManager.STREAM_ALARM, 100)
+                toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 1000)
                 navController.navigate(Screen.NdcNoMatchScreen.route)
             }else {
+                val toneGG = ToneGenerator(AudioManager.STREAM_ALARM, 100)
+                toneGG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200)
                 navController.navigate(Screen.NdcMatchScreen.withArgs(result[0].ndc!!, result[0].price!!, result[0].packsz!!))
             }
         }else{
+            val toneGG = ToneGenerator(AudioManager.STREAM_ALARM, 100)
+            toneGG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200)
             navController.navigate(Screen.NdcMatchScreen.withArgs(result[0].ndc!!, result[0].price!!, result[0].packsz!!))
         }
     }else{
+        val toneGG = ToneGenerator(AudioManager.STREAM_ALARM, 100)
+        toneGG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200)
         navController.navigate(Screen.NdcMatchScreen.withArgs(result[0].ndc!!, result[0].price!!, result[0].packsz!!))
     }
 }

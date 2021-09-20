@@ -584,12 +584,14 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                         statusBarText = previousStatusBarText
                                         statusBarBkGrColor = previousBarBkgrColor
                                         chgTagButtonColor = defaultButtonColors
+                                        holdEnabled.value = true
                                     }else {
                                         previousStatusBarText = statusBarText
                                         previousBarBkgrColor = statusBarBkGrColor
                                         statusBarBkGrColor = "yellow"
                                         statusBarText = "*** Scan Tag ***"
                                         chgTagButtonColor = chgTagOnButtonColors
+                                        holdEnabled.value = false
                                     }
                                     coroutineScope.launch(Dispatchers.Default) {
                                         // TODO: Implement Changetagscan function
@@ -606,24 +608,25 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                     .clip(RoundedCornerShape(50.dp))
                                     .size(width = 130.dp, height = 50.dp),
                                 onClick = {
-
                                     if (statusBarText == "*** Hold ***") {
                                         statusBarBkGrColor = "green"
                                         statusBarText = "*** Scan BarCode ***"
                                         holdButtonColor = defaultButtonColors
-                                    }else {
+                                        chgTagEnabled.value= true
+                                    } else {
                                         val colDataRecCnt = pharmScanViewModel.getAllCollectedData()
                                         if (colDataRecCnt.isNullOrEmpty()) {
                                             ToastDisplay(
                                                 "Must have Last Scan for Hold",
                                                 Toast.LENGTH_LONG
                                             )
-                                        }else {
+                                        } else {
                                             previousStatusBarText = statusBarText
                                             previousBarBkgrColor = statusBarBkGrColor
                                             statusBarBkGrColor = "cyan"
                                             statusBarText = "*** Hold ***"
                                             holdButtonColor = holdOnButtonColors
+                                            chgTagEnabled.value = false
                                         }
                                     }
                                 },
