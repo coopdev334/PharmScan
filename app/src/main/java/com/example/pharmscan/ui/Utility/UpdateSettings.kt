@@ -15,7 +15,7 @@ fun UpdateSettings(pharmScanViewModel: PharmScanViewModel, columnValue: Map<Stri
 
         if (settingsRow.isNullOrEmpty()) {
             // set to defaults then update columns
-            settingsRow = listOf(Settings("0", "0", "0", "0", "0", "off"))
+            settingsRow = listOf(Settings("0", "0", "0", "0", "0", "on"))
         } else {
             val job = pharmScanViewModel.deleteAllSettings()
             job.join() // wait for deleteRow to complete
@@ -40,7 +40,7 @@ fun UpdateSettings(pharmScanViewModel: PharmScanViewModel, columnValue: Map<Stri
 // Delete the existing 1 row and then insert 1 new row with
 // updated column values
 fun UpdateSettings(pharmScanViewModel: PharmScanViewModel, settings: Settings) {
-    var settingsRow = pharmScanViewModel.getSettingsRow()
+    val settingsRow = pharmScanViewModel.getSettingsRow()
 
     runBlocking {
         // Check if no row inserted yet

@@ -152,15 +152,14 @@ class PharmScanBroadcastReceiver(pharmScanViewModel: PharmScanViewModel) : Broad
 
     override fun onReceive(context: Context?, intent: Intent?) {
         val action = intent?.getAction()
-        val bundle = intent?.getExtras()
         //ToastDisplay("onReceive", Toast.LENGTH_LONG)
 
         if (action == "com.example.pharmscan.ACTION") {
             // receive Datawedge scan
-            val decodedSource = intent.getStringExtra("com.symbol.datawedge.source")
+            //val decodedSource = intent.getStringExtra("com.symbol.datawedge.source")
             val decodedData = intent.getStringExtra("com.symbol.datawedge.data_string")
             val decodedLabelType = intent.getStringExtra("com.symbol.datawedge.label_type")
-            val output = "$decodedData | $decodedLabelType"
+            //val output = "$decodedData | $decodedLabelType"
             //ToastDisplay(output, Toast.LENGTH_LONG)
             // Update Livedata in viewModel. Scan screen will then recompose and handle
             // processing the scan data looking for a match

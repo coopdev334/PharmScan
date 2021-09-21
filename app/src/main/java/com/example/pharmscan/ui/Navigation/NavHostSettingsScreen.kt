@@ -33,7 +33,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
         val settings: List<Settings> by pharmScanViewModel.settings.observeAsState(pharmScanViewModel.getSettingsRow())
 
         if (settings.isNullOrEmpty()) {
-            pharmScanViewModel.insertSettings(Settings("", "", "", "", "", ""))
+            pharmScanViewModel.insertSettings(Settings("", "", "off", "", "", "on"))
         }
 
         Column(
