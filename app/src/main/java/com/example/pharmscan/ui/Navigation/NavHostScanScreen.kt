@@ -72,7 +72,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
         var statusBarBkGrColor by rememberSaveable { mutableStateOf(it.arguments!!.getString("bkgrColor")) }
-        var statusBarBkGrColorObj = Color.White
+        var statusBarBkGrColorObj: Color
         val systemInfo: List<SystemInfo> by pharmScanViewModel.systemInfo.observeAsState(pharmScanViewModel.getSystemInfoRow())
         val settings: List<Settings> by pharmScanViewModel.settings.observeAsState(pharmScanViewModel.getSettingsRow())
         val scanData: ScanLiveData by pharmScanViewModel.scanLiveData.observeAsState(ScanLiveData("", ""))
@@ -136,7 +136,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
 
         if (settings.isNullOrEmpty()) {
             // set to defaults
-            pharmScanViewModel.insertSettings(Settings("0", "0", "0", "0", "0", "0"))
+            pharmScanViewModel.insertSettings(Settings("0", "0", "0", "0", "0", "on"))
         }else{
             manPrcOn.value = settings[0].ManualPrice == "on"
         }
@@ -222,7 +222,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                         if (barcode!!.isNullOrEmpty()){
                             ToastDisplay("Error! Empty/Null barcode data returned}", Toast.LENGTH_LONG)
                         }else {
-                            if (barcode!!.length == 4) {
+                            if (barcode.length == 4) {
                                 sysInfoMap = mapOf("Tag" to barcode)
                                 UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
                                 statusBarBkGrColor = "green"
@@ -242,10 +242,10 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                         if (barcode!!.isNullOrEmpty()){
                             ToastDisplay("Error! Empty/Null barcode data returned}", Toast.LENGTH_LONG)
                         }else {
-                            if (barcode!!.length == 12) {
-                                NdcSearch(navController, barcode!!.substring(0..10), pharmScanViewModel)
+                            if (barcode.length == 12) {
+                                NdcSearch(navController, barcode.substring(0..10), pharmScanViewModel)
                             } else {
-                                ToastDisplay("Invalid barcode length for Ndc: ${barcode!!.length}", Toast.LENGTH_LONG)
+                                ToastDisplay("Invalid barcode length for Ndc: ${barcode.length}", Toast.LENGTH_LONG)
                             }
                         }
                     }else {
@@ -422,11 +422,19 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                             .fillMaxWidth(),
                                         horizontalArrangement = Arrangement.Center
                                     ) {
-                                        Text(
-                                            text = "Tag: ${systemInfo[0].Tag}           ${systemInfo[0].TagChangeCount}/${settings[0].FileSendTagChgs}",
-                                            style = MaterialTheme.typography.h5,
-                                            color = MaterialTheme.colors.onBackground
-                                        )
+                                        if (!systemInfo.isNullOrEmpty() && !settings.isNullOrEmpty()) {
+                                            Text(
+                                                text = "Tag: ${systemInfo[0].Tag}           ${systemInfo[0].TagChangeCount}/${settings[0].FileSendTagChgs}",
+                                                style = MaterialTheme.typography.h5,
+                                                color = MaterialTheme.colors.onBackground
+                                            )
+                                        }else {
+                                            Text(
+                                                text = "Tag: empty           empty/empty",
+                                                style = MaterialTheme.typography.h5,
+                                                color = MaterialTheme.colors.onBackground
+                                            )
+                                        }
                                     }
                                     Row(
                                         modifier = Modifier
@@ -584,12 +592,14 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                         statusBarText = previousStatusBarText
                                         statusBarBkGrColor = previousBarBkgrColor
                                         chgTagButtonColor = defaultButtonColors
+                                        holdEnabled.value = true
                                     }else {
                                         previousStatusBarText = statusBarText
                                         previousBarBkgrColor = statusBarBkGrColor
                                         statusBarBkGrColor = "yellow"
                                         statusBarText = "*** Scan Tag ***"
                                         chgTagButtonColor = chgTagOnButtonColors
+                                        holdEnabled.value = false
                                     }
                                     coroutineScope.launch(Dispatchers.Default) {
                                         // TODO: Implement Changetagscan function
@@ -606,24 +616,25 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                     .clip(RoundedCornerShape(50.dp))
                                     .size(width = 130.dp, height = 50.dp),
                                 onClick = {
-
                                     if (statusBarText == "*** Hold ***") {
                                         statusBarBkGrColor = "green"
                                         statusBarText = "*** Scan BarCode ***"
                                         holdButtonColor = defaultButtonColors
-                                    }else {
+                                        chgTagEnabled.value= true
+                                    } else {
                                         val colDataRecCnt = pharmScanViewModel.getAllCollectedData()
                                         if (colDataRecCnt.isNullOrEmpty()) {
                                             ToastDisplay(
                                                 "Must have Last Scan for Hold",
                                                 Toast.LENGTH_LONG
                                             )
-                                        }else {
+                                        } else {
                                             previousStatusBarText = statusBarText
                                             previousBarBkgrColor = statusBarBkGrColor
                                             statusBarBkGrColor = "cyan"
                                             statusBarText = "*** Hold ***"
                                             holdButtonColor = holdOnButtonColors
+                                            chgTagEnabled.value = false
                                         }
                                     }
                                 },
