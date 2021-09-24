@@ -343,6 +343,19 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                         style = MaterialTheme.typography.caption,
                         color = MaterialTheme.colors.onBackground
                     )
+                    Spacer(modifier = Modifier.height(height = 10.dp))
+
+                    Text(
+                        text = "View Ndc Table",
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                scaffoldState.drawerState.close()
+                                navController.navigate(Screen.ViewNdcScreen.route)
+                            }
+                        },
+                        style = MaterialTheme.typography.caption,
+                        color = MaterialTheme.colors.onBackground
+                    )
 
                     Spacer(modifier = Modifier.height(height = 10.dp))
 
@@ -374,7 +387,11 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                     actions = {
                         IconButton(
                             onClick = {
-                                ToastDisplay("clicked", Toast.LENGTH_SHORT)
+                                if (!systemInfo.isNullOrEmpty()) {
+                                    if (systemInfo[0].NdcLoading == "on") {
+                                        ToastDisplay("Downloading...", Toast.LENGTH_SHORT)
+                                    }
+                                }
                             }
                         ) {
                             if (!systemInfo.isNullOrEmpty()) {
@@ -487,13 +504,21 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                             .fillMaxWidth(),
                                         horizontalArrangement = Arrangement.SpaceEvenly
                                     ) {
+                                        var totQty = "0.0"
+                                        var totAmt = "0.00"
+
+                                        if (!systemInfo.isNullOrEmpty()) {
+                                            totQty = systemInfo[0].TotQty!!
+                                            totAmt = systemInfo[0].TotAmt!!
+                                        }
+
                                         Text(
-                                            text = "Qty: " + systemInfo[0].TotQty,
+                                            text = "Qty: " + totQty,
                                             style = MaterialTheme.typography.h6,
                                             color = MaterialTheme.colors.onBackground
                                         )
                                         Text(
-                                            text = "Amount: " + systemInfo[0].TotAmt,
+                                            text = "Amount: " + totAmt,
                                             style = MaterialTheme.typography.h6,
                                             color = MaterialTheme.colors.onBackground
                                         )
@@ -534,8 +559,14 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                             .fillMaxWidth(),
                                         horizontalArrangement = Arrangement.SpaceEvenly
                                     ) {
+                                        var totRecCnt = "0"
+
+                                        if (!systemInfo.isNullOrEmpty()) {
+                                            totRecCnt = systemInfo[0].TotRecCount!!
+                                        }
+
                                         Text(
-                                            text = "Rec Count: " + systemInfo[0].TotRecCount,
+                                            text = "Rec Count: " + totRecCnt,
                                             style = MaterialTheme.typography.h5,
                                             color = MaterialTheme.colors.onBackground
                                         )

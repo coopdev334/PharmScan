@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Screen.*
+import kotlinx.coroutines.runBlocking
 
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.addResetDatabaseScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
@@ -25,11 +26,41 @@ fun NavGraphBuilder.addResetDatabaseScreen(navController: NavController, pharmSc
 
 
         fun onOkClick() {
-            if (checkedStateColData) pharmScanViewModel.deleteAllCollectedData()
-            if (checkedStateHostCompName) pharmScanViewModel.deleteAllHostCompName()
-            if (checkedStateNdc) pharmScanViewModel.deleteAllPSNdc()
-            if (checkedStateSettings) pharmScanViewModel.deleteAllSettings()
-            if (checkedStateSystemInfo) pharmScanViewModel.deleteAllSystemInfo()
+            if (checkedStateColData) {
+                runBlocking {
+                    val job = pharmScanViewModel.deleteAllCollectedData()
+                    job.join()
+                }
+
+            }
+
+            if (checkedStateHostCompName) {
+                runBlocking {
+                    val job = pharmScanViewModel.deleteAllHostCompName()
+                    job.join()
+                }
+            }
+
+            if (checkedStateNdc) {
+                runBlocking {
+                    val job = pharmScanViewModel.deleteAllPSNdc()
+                    job.join()
+                }
+            }
+
+            if (checkedStateSettings) {
+                runBlocking {
+                    val job = pharmScanViewModel.deleteAllSettings()
+                    job.join()
+                }
+            }
+
+            if (checkedStateSystemInfo) {
+                runBlocking {
+                    val job = pharmScanViewModel.deleteAllSystemInfo()
+                    job.join()
+                }
+            }
 
             navController.popBackStack()
         }

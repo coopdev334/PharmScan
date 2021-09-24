@@ -130,6 +130,19 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                         style = MaterialTheme.typography.caption,
                         color = MaterialTheme.colors.onBackground
                     )
+                    Spacer(modifier = Modifier.height(height = 10.dp))
+
+                    Text(
+                        text = "View Ndc Table",
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                scaffoldState.drawerState.close()
+                                navController.navigate(Screen.ViewNdcScreen.route)
+                            }
+                        },
+                        style = MaterialTheme.typography.caption,
+                        color = MaterialTheme.colors.onBackground
+                    )
 
                     Spacer(modifier = Modifier.height(height = 10.dp))
 
@@ -255,8 +268,8 @@ suspend fun readFileLineByLineUsingForEachLine(pharmScanViewModel: PharmScanView
 
     File(fileName).forEachLine {
         psndc.ndc = it.substring(0..10)
-        psndc.price = it.substring(11..16) + "." + it.substring(17..18)
-        psndc.packsz = it.substring(19..26)
+        psndc.price = it.substring(11..16).trimStart { it == '0' } + "." + it.substring(17..18)
+        psndc.packsz = it.substring(19..26).trimStart { it == '0' }
 
         runBlocking {
             val job = pharmScanViewModel.insertPSNdc(psndc)
