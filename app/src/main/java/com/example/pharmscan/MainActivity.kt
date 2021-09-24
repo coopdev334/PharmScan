@@ -22,6 +22,7 @@ import com.example.pharmscan.Repository.PharmScanRepo
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ViewModel.PharmScanViewModelFactory
 import com.example.pharmscan.ui.Navigation.Navigate
+import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import com.example.pharmscan.ui.theme.PharmScanTheme
 
 class MainActivity() : ComponentActivity() {
@@ -74,7 +75,11 @@ class MainActivity() : ComponentActivity() {
             )
         }
 
-        ///sdcard/Download/psndc.dat
+        // Intialize database settings
+        val sysInfoMap = mapOf("NdcLoading" to "off")
+        UpdateSystemInfo(psViewModel, sysInfoMap)
+
+
         setContent {
             PharmScanTheme {
                 // A surface container using the 'background' color from the theme

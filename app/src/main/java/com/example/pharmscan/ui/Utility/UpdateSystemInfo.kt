@@ -70,5 +70,8 @@ fun UpdateSystemInfo(pharmScanViewModel: PharmScanViewModel, columnValue: Map<St
         systemInfo[0].TotAmt = "0.00"
     }
 
-    pharmScanViewModel.insertSystemInfo(systemInfo[0])
+    runBlocking {
+        val job = pharmScanViewModel.insertSystemInfo(systemInfo[0])
+        job.join()
+    }
 }

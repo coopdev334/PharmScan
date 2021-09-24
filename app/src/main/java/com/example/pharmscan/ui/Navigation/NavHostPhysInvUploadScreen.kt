@@ -71,11 +71,7 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                             if (sysInfo[0].NdcLoading == "off") {
                                 ToastDisplay("Downloading Started...", Toast.LENGTH_SHORT)
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    var sysInfoMap = mapOf("NdcLoading" to "on")
-                                    UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
                                     readFileLineByLineUsingForEachLine(pharmScanViewModel,"/sdcard/Download/psndc.dat")
-                                    sysInfoMap = mapOf("NdcLoading" to "off")
-                                    UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
                                 }
                             }
                         }
@@ -249,6 +245,8 @@ suspend fun readFileLineByLineUsingForEachLine(pharmScanViewModel: PharmScanView
     var psndc = PSNdc("","","")
 
     //checkPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE, 101)
+    var sysInfoMap = mapOf("NdcLoading" to "on")
+    UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
 
     runBlocking {
         val job = pharmScanViewModel.deleteAllPSNdc()
@@ -265,5 +263,8 @@ suspend fun readFileLineByLineUsingForEachLine(pharmScanViewModel: PharmScanView
             job.join()
         }
     }
+
+    sysInfoMap = mapOf("NdcLoading" to "off")
+    UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
 
 }

@@ -89,6 +89,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         val ndcLoading = remember { mutableStateOf(false) }
         val sysInfoNotInitialized = remember { mutableStateOf(true) }
         val settingsNotInitialized = remember { mutableStateOf(true) }
+        val toastObj = remember { mutableStateOf(Toast(PharmScanApplication.context)) }
 
         val defaultButtonColors: ButtonColors = buttonColors(
             backgroundColor = Color.Blue,
@@ -140,6 +141,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
             // set to defaults
             sysInfoNotInitialized.value = false
             UpdateSystemInfo(pharmScanViewModel)
+            toastObj.value.cancel()
             ToastDisplay("WARNING: SystemInfo Table Not Initialized", Toast.LENGTH_LONG)
         }
 
@@ -153,7 +155,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
 
                 // Check if settings table has ONLY default row meaning user never setup settings table
                 if (settings[0].FileSendTagChgs == "0") {
-                    ToastDisplay("WARNING: Settings Not Setup", Toast.LENGTH_LONG)
+                    toastObj.value = ToastDisplay("WARNING: Settings Not FULLY Setup", Toast.LENGTH_SHORT)!!
                 }
             }
         }
@@ -237,6 +239,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                         holdEnabled.value = true
                         var sysInfoMap: Map<String, String>
                         if (barcode!!.isNullOrEmpty()){
+                            toastObj.value.cancel()
                             ToastDisplay("Error! Empty/Null barcode data returned}", Toast.LENGTH_LONG)
                         }else {
                             if (barcode.length == 4) {
@@ -246,10 +249,12 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 statusBarText = "*** Scan BarCode ***"
                                 chgTagButtonColor = defaultButtonColors
                             }else {
+                                toastObj.value.cancel()
                                 ToastDisplay("Code128 Tag barcode invalid length}", Toast.LENGTH_LONG)
                             }
                         }
                     }else {
+                        toastObj.value.cancel()
                         ToastDisplay("Invalid barcode Type for Tag: ${scanData.barcodeType}", Toast.LENGTH_LONG)
                     }
                 }
@@ -257,19 +262,23 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                 "*** Scan BarCode ***" -> {
                     if (type == "LABEL-TYPE-UPCA") {
                         if (barcode!!.isNullOrEmpty()){
+                            toastObj.value.cancel()
                             ToastDisplay("Error! Empty/Null barcode data returned}", Toast.LENGTH_LONG)
                         }else {
                             if (barcode.length == 12) {
                                 NdcSearch(navController, barcode.substring(0..10), pharmScanViewModel)
                             } else {
+                                toastObj.value.cancel()
                                 ToastDisplay("Invalid barcode length for Ndc: ${barcode.length}", Toast.LENGTH_LONG)
                             }
                         }
                     }else {
+                        toastObj.value.cancel()
                         ToastDisplay("Invalid barcode Type for Ndc: ${scanData.barcodeType}", Toast.LENGTH_LONG)
                     }
                 }
                 else -> {
+                    toastObj.value.cancel()
                     ToastDisplay("In Hold mode. Turn off Hold mode to scan again", Toast.LENGTH_LONG)
                 }
             }
@@ -368,19 +377,24 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 ToastDisplay("clicked", Toast.LENGTH_SHORT)
                             }
                         ) {
-                            if (systemInfo[0].NdcLoading == "on") {
-                                //Icon(Icons.Filled.AddCircle, contentDescription = "")
-                                Image(
-                                    painter = painterResource(R.drawable.ic_baseline_download_for_offline_24),
-                                    contentDescription = "content description",
-                                    colorFilter = ColorFilter.tint(Color.Red, BlendMode.ColorDodge),
-                                    modifier = Modifier.fillMaxSize()
-                                )
-                                ndcLoading.value = true
-                            }else {
-                                if (ndcLoading.value && systemInfo[0].NdcLoading == "off") {
-                                    ndcLoading.value = false
-                                    ToastDisplay("Ndc Done Loading Db", Toast.LENGTH_SHORT)
+                            if (!systemInfo.isNullOrEmpty()) {
+                                if (systemInfo[0].NdcLoading == "on") {
+                                    //Icon(Icons.Filled.AddCircle, contentDescription = "")
+                                    Image(
+                                        painter = painterResource(R.drawable.ic_baseline_download_for_offline_24),
+                                        contentDescription = "content description",
+                                        colorFilter = ColorFilter.tint(
+                                            Color.Red,
+                                            BlendMode.ColorDodge
+                                        ),
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                    ndcLoading.value = true
+                                } else {
+                                    if (ndcLoading.value && systemInfo[0].NdcLoading == "off") {
+                                        ndcLoading.value = false
+                                        ToastDisplay("Ndc Done Loading Db", Toast.LENGTH_SHORT)
+                                    }
                                 }
                             }
                         }

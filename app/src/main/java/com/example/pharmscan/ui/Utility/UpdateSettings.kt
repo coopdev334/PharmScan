@@ -55,5 +55,8 @@ fun UpdateSettings(pharmScanViewModel: PharmScanViewModel, settings: Settings) {
         }
     }
 
-    pharmScanViewModel.insertSettings(settings)
+    runBlocking {
+        val job =     pharmScanViewModel.insertSettings(settings)
+        job.join()
+    }
 }

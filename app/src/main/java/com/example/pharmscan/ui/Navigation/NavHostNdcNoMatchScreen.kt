@@ -107,13 +107,13 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
 
         fun onImeActionDoneClick() {
             if (InputsValid()) {
-                InsertNdc(pharmScanViewModel, ndc.value, price.value, pksz.value, qty.value, "N")
+                InsertNdc(pharmScanViewModel, ndc.value, price.value, pksz.value, qty.value, "R")
                 navController.popBackStack()
             }
         }
 
         fun onOkClick() {
-            InsertNdc(pharmScanViewModel, ndc.value, price.value, pksz.value, qty.value, "N")
+            InsertNdc(pharmScanViewModel, ndc.value, price.value, pksz.value, qty.value, "R")
             navController.popBackStack()
         }
 

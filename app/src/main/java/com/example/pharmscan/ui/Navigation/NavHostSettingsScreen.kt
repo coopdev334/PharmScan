@@ -33,6 +33,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
 
         val settings: List<Settings> by pharmScanViewModel.settings.observeAsState(pharmScanViewModel.getSettingsRow())
         val settingsNotInitialized = remember { mutableStateOf(true) }
+        val scrollState = rememberScrollState()
 
         if (settings.isNullOrEmpty() && settingsNotInitialized.value) {
             settingsNotInitialized.value = false
@@ -76,117 +77,145 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                     .background(MaterialTheme.colors.secondary)
             )
             Spacer(modifier = Modifier.height(height = 10.dp))
-            Row(
+            Column (
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        navController.navigate(Screen.NetIdScreen.route)
-                    },
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Network Id",
-                    style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.onBackground
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+                    ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            navController.navigate(Screen.NetIdScreen.route)
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Network Id",
+                        style = MaterialTheme.typography.h5,
+                        color = MaterialTheme.colors.onBackground
+                    )
+                }
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(MaterialTheme.colors.secondary)
+                )
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Manual Price",
+                        style = MaterialTheme.typography.h5,
+                        color = MaterialTheme.colors.onBackground
+                    )
+                    PriceEntryCheckbox(pharmScanViewModel)
+                }
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(MaterialTheme.colors.secondary)
+                )
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Cost Limit",
+                        style = MaterialTheme.typography.h5,
+                        color = MaterialTheme.colors.onBackground
+                    )
+                    CostLimit(pharmScanViewModel)
+                }
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(MaterialTheme.colors.secondary)
+                )
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Tag Changes",
+                        style = MaterialTheme.typography.h5,
+                        color = MaterialTheme.colors.onBackground
+                    )
+                    Text(
+                        text = "(FileSend)",
+                        style = TextStyle(
+                            fontFamily = FontFamily.Default,
+                            fontWeight = FontWeight.Light,
+                            fontStyle = FontStyle.Italic,
+                            fontSize = 15.sp
+                        ),
+                        color = MaterialTheme.colors.onBackground
+                    )
+                    TagChanges(pharmScanViewModel)
+                }
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(MaterialTheme.colors.secondary)
+                )
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Auto Load NdcFile",
+                        style = MaterialTheme.typography.h5,
+                        color = MaterialTheme.colors.onBackground
+                    )
+                    AutoLoadNdcCheckbox(pharmScanViewModel)
+                }
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(MaterialTheme.colors.secondary)
+                )
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            navController.navigate(Screen.ResetDatabaseScreen.route)
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Reset Database",
+                        style = MaterialTheme.typography.h5,
+                        color = MaterialTheme.colors.onBackground
+                    )
+                }
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(MaterialTheme.colors.secondary)
                 )
             }
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(MaterialTheme.colors.secondary)
-            )
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Manual Price",
-                    style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.onBackground
-                )
-                PriceEntryCheckbox(pharmScanViewModel)
-            }
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(MaterialTheme.colors.secondary)
-            )
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Cost Limit",
-                    style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.onBackground
-                )
-                CostLimit(pharmScanViewModel)
-            }
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(MaterialTheme.colors.secondary)
-            )
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Tag Changes",
-                    style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.onBackground
-                )
-                Text(
-                    text = "(FileSend)",
-                    style = TextStyle(
-                        fontFamily = FontFamily.Default,
-                        fontWeight = FontWeight.Light,
-                        fontStyle = FontStyle.Italic,
-                        fontSize = 15.sp
-                    ),
-                    color = MaterialTheme.colors.onBackground
-                )
-                TagChanges(pharmScanViewModel)
-            }
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(MaterialTheme.colors.secondary)
-            )
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Auto Load NdcFile",
-                    style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.onBackground
-                )
-                AutoLoadNdcCheckbox(pharmScanViewModel)
-            }
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(MaterialTheme.colors.secondary)
-            )
         }
     }
 }
@@ -322,6 +351,31 @@ fun TagChanges(pharmScanViewModel: PharmScanViewModel) {
 
 @Composable
 fun AutoLoadNdcCheckbox(pharmScanViewModel: PharmScanViewModel) {
+    var checkedState by remember { mutableStateOf(true) }
+    val settings = pharmScanViewModel.getSettingsRow()
+
+    if (!settings.isNullOrEmpty()) {
+        checkedState = pharmScanViewModel.getSettingsRow()[0].AutoLoadNdcFile == "on"
+    }
+
+    Checkbox(
+        modifier = Modifier.size(width = 40.dp, height = 20.dp),
+        checked = checkedState,
+        onCheckedChange = {
+            if (it) {
+                val columnValue = mapOf("AutoLoadNdcFile" to "on")
+                UpdateSettings(pharmScanViewModel, columnValue)
+            }else{
+                val columnValue = mapOf("AutoLoadNdcFile" to "off")
+                UpdateSettings(pharmScanViewModel, columnValue)
+            }
+            checkedState = it
+        }
+    )
+}
+
+@Composable
+fun ResetDatabase(pharmScanViewModel: PharmScanViewModel) {
     var checkedState by remember { mutableStateOf(true) }
     val settings = pharmScanViewModel.getSettingsRow()
 
