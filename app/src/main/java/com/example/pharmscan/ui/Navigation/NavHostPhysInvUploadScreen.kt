@@ -8,6 +8,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -22,18 +24,32 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.Data.Tables.PSNdc
 import com.example.pharmscan.Data.Tables.Settings
+import com.example.pharmscan.Data.Tables.SystemInfo
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.GetOpId
 import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import kotlinx.coroutines.*
-import java.io.File
+import java.io.*
+import java.net.Socket
+import android.system.Os.socket
+
+import android.R
+import android.content.Intent
+import android.util.Log
+
+import android.widget.EditText
+import com.example.pharmscan.Network.NetworkThread
+
 
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
+
+
     composable(
         route = Screen.PhysInvUploadScreen.route + "/{hostCompName}",
         // Define argument list to pass to this composable in composable constructor
@@ -51,6 +67,9 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
         val showEnterOpIdDialog = remember { mutableStateOf(false) }
+        val settings: List<Settings> by pharmScanViewModel.settings.observeAsState(pharmScanViewModel.getSettingsRow())
+        val tableOfData: List<CollectedData> by pharmScanViewModel.collectedData.observeAsState(pharmScanViewModel.getAllCollectedData())
+
 
         if (showEnterOpIdDialog.value) {
             GetOpId(
@@ -231,7 +250,19 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                             Text(
                                 text = "Upload Collected Data",
                                 style = MaterialTheme.typography.h5,
-                                color = MaterialTheme.colors.background
+                                color = MaterialTheme.colors.background,
+                                modifier = Modifier.clickable {
+                                    if (!settings.isEmpty()) {
+                                        val hostAccountName = settings[0].hostAcct
+                                        val hostAccountPassword = settings[0].hostPassword
+                                        val sendingData = tableOfData
+                                        val PORT = 2325;
+                                        val query = "testquery"
+                                        val nThread = NetworkThread()
+                                        nThread.handleIncomingData(hostName = hostAccountName, hostPassword = hostAccountPassword,
+                                            port = PORT, data = query)
+                                    }
+                                }
                             )
                         }
                     }

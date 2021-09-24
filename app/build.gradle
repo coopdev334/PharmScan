@@ -85,7 +85,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
     implementation "androidx.lifecycle:lifecycle-common-java8:2.3.1"
 
-
+    // For JDK access'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.10"
 
 
     // Lifecycle components
