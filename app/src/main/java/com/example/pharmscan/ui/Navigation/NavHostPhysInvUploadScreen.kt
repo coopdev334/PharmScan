@@ -23,6 +23,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.pharmscan.Data.Tables.PSNdc
+import com.example.pharmscan.Data.Tables.Settings
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.GetOpId
 import com.example.pharmscan.ui.Screen.Screen
@@ -64,19 +65,16 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                     val settings = pharmScanViewModel.getSettingsRow()
                     if (!settings.isNullOrEmpty()) {
                         if (settings[0].AutoLoadNdcFile == "on") {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                var sysInfoMap = mapOf("NdcLoading" to "on")
-                                UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
-                                readFileLineByLineUsingForEachLine(
-                                    pharmScanViewModel,
-                                    "/sdcard/Download/psndc.dat"
-                                )
-                                sysInfoMap = mapOf("NdcLoading" to "off")
-                                UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
+                            // Check if already downloading. If currenlty still downloading
+                            // don't start downloading again.
+                            val sysInfo = pharmScanViewModel.getSystemInfoRow()
+                            if (sysInfo[0].NdcLoading == "off") {
+                                ToastDisplay("Downloading Started...", Toast.LENGTH_SHORT)
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    readFileLineByLineUsingForEachLine(pharmScanViewModel,"/sdcard/Download/psndc.dat")
+                                }
                             }
                         }
-                    }else {
-                        ToastDisplay("Settings table empty", Toast.LENGTH_SHORT)
                     }
 
                     navController.navigate(Screen.ScanScreen.withArgs("*** Scan Tag ***", "yellow"))
@@ -247,6 +245,8 @@ suspend fun readFileLineByLineUsingForEachLine(pharmScanViewModel: PharmScanView
     var psndc = PSNdc("","","")
 
     //checkPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE, 101)
+    var sysInfoMap = mapOf("NdcLoading" to "on")
+    UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
 
     runBlocking {
         val job = pharmScanViewModel.deleteAllPSNdc()
@@ -263,5 +263,8 @@ suspend fun readFileLineByLineUsingForEachLine(pharmScanViewModel: PharmScanView
             job.join()
         }
     }
+
+    sysInfoMap = mapOf("NdcLoading" to "off")
+    UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
 
 }

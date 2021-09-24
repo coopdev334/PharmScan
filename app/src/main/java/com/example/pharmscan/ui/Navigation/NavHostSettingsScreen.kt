@@ -26,14 +26,18 @@ import com.example.pharmscan.Data.Tables.Settings
 import com.example.pharmscan.PharmScanApplication
 import com.example.pharmscan.ui.Screen.InputValidator
 import com.example.pharmscan.ui.Utility.*
+import kotlinx.coroutines.runBlocking
 
 fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     composable(Screen.SettingsScreen.route) {
 
         val settings: List<Settings> by pharmScanViewModel.settings.observeAsState(pharmScanViewModel.getSettingsRow())
+        val settingsNotInitialized = remember { mutableStateOf(true) }
+        val scrollState = rememberScrollState()
 
-        if (settings.isNullOrEmpty()) {
-            pharmScanViewModel.insertSettings(Settings("", "", "off", "", "", "on"))
+        if (settings.isNullOrEmpty() && settingsNotInitialized.value) {
+            settingsNotInitialized.value = false
+            UpdateSettings(pharmScanViewModel)
         }
 
         Column(
@@ -73,126 +77,158 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                     .background(MaterialTheme.colors.secondary)
             )
             Spacer(modifier = Modifier.height(height = 10.dp))
-            Row(
+            Column (
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        navController.navigate(Screen.NetIdScreen.route)
-                    },
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Network Id",
-                    style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.onBackground
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+                    ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            navController.navigate(Screen.NetIdScreen.route)
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Network Id",
+                        style = MaterialTheme.typography.h5,
+                        color = MaterialTheme.colors.onBackground
+                    )
+                }
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(MaterialTheme.colors.secondary)
+                )
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Manual Price",
+                        style = MaterialTheme.typography.h5,
+                        color = MaterialTheme.colors.onBackground
+                    )
+                    PriceEntryCheckbox(pharmScanViewModel)
+                }
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(MaterialTheme.colors.secondary)
+                )
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Cost Limit",
+                        style = MaterialTheme.typography.h5,
+                        color = MaterialTheme.colors.onBackground
+                    )
+                    CostLimit(pharmScanViewModel)
+                }
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(MaterialTheme.colors.secondary)
+                )
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Tag Changes",
+                        style = MaterialTheme.typography.h5,
+                        color = MaterialTheme.colors.onBackground
+                    )
+                    Text(
+                        text = "(FileSend)",
+                        style = TextStyle(
+                            fontFamily = FontFamily.Default,
+                            fontWeight = FontWeight.Light,
+                            fontStyle = FontStyle.Italic,
+                            fontSize = 15.sp
+                        ),
+                        color = MaterialTheme.colors.onBackground
+                    )
+                    TagChanges(pharmScanViewModel)
+                }
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(MaterialTheme.colors.secondary)
+                )
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Auto Load NdcFile",
+                        style = MaterialTheme.typography.h5,
+                        color = MaterialTheme.colors.onBackground
+                    )
+                    AutoLoadNdcCheckbox(pharmScanViewModel)
+                }
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(MaterialTheme.colors.secondary)
+                )
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            navController.navigate(Screen.ResetDatabaseScreen.route)
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Reset Database",
+                        style = MaterialTheme.typography.h5,
+                        color = MaterialTheme.colors.onBackground
+                    )
+                }
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(MaterialTheme.colors.secondary)
                 )
             }
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(MaterialTheme.colors.secondary)
-            )
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Manual Price",
-                    style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.onBackground
-                )
-                PriceEntryCheckbox(pharmScanViewModel)
-            }
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(MaterialTheme.colors.secondary)
-            )
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Cost Limit",
-                    style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.onBackground
-                )
-                CostLimit(pharmScanViewModel)
-            }
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(MaterialTheme.colors.secondary)
-            )
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Tag Changes",
-                    style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.onBackground
-                )
-                Text(
-                    text = "(FileSend)",
-                    style = TextStyle(
-                        fontFamily = FontFamily.Default,
-                        fontWeight = FontWeight.Light,
-                        fontStyle = FontStyle.Italic,
-                        fontSize = 15.sp
-                    ),
-                    color = MaterialTheme.colors.onBackground
-                )
-                TagChanges(pharmScanViewModel)
-            }
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(MaterialTheme.colors.secondary)
-            )
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Auto Load NdcFile",
-                    style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.onBackground
-                )
-                AutoLoadNdcCheckbox(pharmScanViewModel)
-            }
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(MaterialTheme.colors.secondary)
-            )
         }
     }
 }
 
 @Composable
 fun PriceEntryCheckbox(pharmScanViewModel: PharmScanViewModel) {
-    var checkedState by remember { mutableStateOf(pharmScanViewModel.getSettingsRow()[0].ManualPrice == "on") }
+    var checkedState by remember { mutableStateOf(false) }
 
-    checkedState = pharmScanViewModel.getSettingsRow()[0].ManualPrice == "on"
+    val settings = pharmScanViewModel.getSettingsRow()
+
+    if (!settings.isNullOrEmpty()) {
+        checkedState = pharmScanViewModel.getSettingsRow()[0].ManualPrice == "on"
+    }
 
     Checkbox(
         modifier = Modifier.size(width = 40.dp, height = 20.dp),
@@ -212,8 +248,15 @@ fun PriceEntryCheckbox(pharmScanViewModel: PharmScanViewModel) {
 
 @Composable
 fun CostLimit(pharmScanViewModel: PharmScanViewModel) {
-    var value by remember { mutableStateOf(pharmScanViewModel.getSettingsRow()[0].CostLimit) }
+    var value by remember { mutableStateOf("0")}
     var invalid: Boolean by remember { mutableStateOf(false)}
+    val settingsNotInitialized = remember { mutableStateOf(true) }
+    val settings = pharmScanViewModel.getSettingsRow()
+
+    if (!settings.isNullOrEmpty() && settingsNotInitialized.value) {
+        settingsNotInitialized.value = false
+        value = settings[0].CostLimit.toString()
+    }
 
     if (invalid) {
         Column() {
@@ -263,8 +306,13 @@ fun CostLimit(pharmScanViewModel: PharmScanViewModel) {
 
 @Composable
 fun TagChanges(pharmScanViewModel: PharmScanViewModel) {
-    var value by remember { mutableStateOf(pharmScanViewModel.getSettingsRow()[0].FileSendTagChgs) }
+    var value by remember { mutableStateOf("0") }
     var invalid: Boolean by remember { mutableStateOf(false)}
+    val settings = pharmScanViewModel.getSettingsRow()
+
+    if (!settings.isNullOrEmpty()) {
+        value = pharmScanViewModel.getSettingsRow()[0].FileSendTagChgs.toString()
+    }
 
     if (invalid) {
         Column() {
@@ -303,9 +351,37 @@ fun TagChanges(pharmScanViewModel: PharmScanViewModel) {
 
 @Composable
 fun AutoLoadNdcCheckbox(pharmScanViewModel: PharmScanViewModel) {
-    var checkedState by remember { mutableStateOf(pharmScanViewModel.getSettingsRow()[0].AutoLoadNdcFile == "on") }
+    var checkedState by remember { mutableStateOf(true) }
+    val settings = pharmScanViewModel.getSettingsRow()
 
-    checkedState = pharmScanViewModel.getSettingsRow()[0].AutoLoadNdcFile == "on"
+    if (!settings.isNullOrEmpty()) {
+        checkedState = pharmScanViewModel.getSettingsRow()[0].AutoLoadNdcFile == "on"
+    }
+
+    Checkbox(
+        modifier = Modifier.size(width = 40.dp, height = 20.dp),
+        checked = checkedState,
+        onCheckedChange = {
+            if (it) {
+                val columnValue = mapOf("AutoLoadNdcFile" to "on")
+                UpdateSettings(pharmScanViewModel, columnValue)
+            }else{
+                val columnValue = mapOf("AutoLoadNdcFile" to "off")
+                UpdateSettings(pharmScanViewModel, columnValue)
+            }
+            checkedState = it
+        }
+    )
+}
+
+@Composable
+fun ResetDatabase(pharmScanViewModel: PharmScanViewModel) {
+    var checkedState by remember { mutableStateOf(true) }
+    val settings = pharmScanViewModel.getSettingsRow()
+
+    if (!settings.isNullOrEmpty()) {
+        checkedState = pharmScanViewModel.getSettingsRow()[0].AutoLoadNdcFile == "on"
+    }
 
     Checkbox(
         modifier = Modifier.size(width = 40.dp, height = 20.dp),

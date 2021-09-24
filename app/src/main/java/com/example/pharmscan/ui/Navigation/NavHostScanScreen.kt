@@ -23,7 +23,9 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavType
@@ -45,6 +47,7 @@ import com.example.pharmscan.ui.Utility.UpdateSettings
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
 @ExperimentalComposeUiApi
@@ -83,6 +86,11 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         val chgTagEnabled = rememberSaveable { mutableStateOf(false) }
         val holdEnabled = rememberSaveable { mutableStateOf(false) }
         val manPrcOn = remember { mutableStateOf(false) }
+        val ndcLoading = remember { mutableStateOf(false) }
+        val sysInfoNotInitialized = remember { mutableStateOf(true) }
+        val settingsNotInitialized = remember { mutableStateOf(true) }
+        val toastObj = remember { mutableStateOf(Toast(PharmScanApplication.context)) }
+
         val defaultButtonColors: ButtonColors = buttonColors(
             backgroundColor = Color.Blue,
             contentColor = Color.White,
@@ -129,16 +137,27 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
             else -> statusBarBkGrColorObj = Color.White
         }
 
-        if (systemInfo.isNullOrEmpty()) {
+        if (systemInfo.isNullOrEmpty() && sysInfoNotInitialized.value) {
             // set to defaults
-            pharmScanViewModel.insertSystemInfo(SystemInfo("0", "0", "0", "0", "0", "0", "0", "off"))
+            sysInfoNotInitialized.value = false
+            UpdateSystemInfo(pharmScanViewModel)
+            toastObj.value.cancel()
+            ToastDisplay("WARNING: SystemInfo Table Not Initialized", Toast.LENGTH_LONG)
         }
 
-        if (settings.isNullOrEmpty()) {
-            // set to defaults
-            pharmScanViewModel.insertSettings(Settings("0", "0", "0", "0", "0", "on"))
+        if (settings.isNullOrEmpty() && settingsNotInitialized.value) {
+            settingsNotInitialized.value = false
+            UpdateSettings(pharmScanViewModel)
+            ToastDisplay("WARNING: Settings Table is Empty", Toast.LENGTH_LONG)
         }else{
-            manPrcOn.value = settings[0].ManualPrice == "on"
+            if (!settings.isNullOrEmpty()) {
+                manPrcOn.value = settings[0].ManualPrice == "on"
+
+                // Check if settings table has ONLY default row meaning user never setup settings table
+                if (settings[0].FileSendTagChgs == "0") {
+                    toastObj.value = ToastDisplay("WARNING: Settings Not FULLY Setup", Toast.LENGTH_SHORT)!!
+                }
+            }
         }
 
         val requester = FocusRequester()
@@ -220,6 +239,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                         holdEnabled.value = true
                         var sysInfoMap: Map<String, String>
                         if (barcode!!.isNullOrEmpty()){
+                            toastObj.value.cancel()
                             ToastDisplay("Error! Empty/Null barcode data returned}", Toast.LENGTH_LONG)
                         }else {
                             if (barcode.length == 4) {
@@ -229,10 +249,12 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 statusBarText = "*** Scan BarCode ***"
                                 chgTagButtonColor = defaultButtonColors
                             }else {
+                                toastObj.value.cancel()
                                 ToastDisplay("Code128 Tag barcode invalid length}", Toast.LENGTH_LONG)
                             }
                         }
                     }else {
+                        toastObj.value.cancel()
                         ToastDisplay("Invalid barcode Type for Tag: ${scanData.barcodeType}", Toast.LENGTH_LONG)
                     }
                 }
@@ -240,19 +262,23 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                 "*** Scan BarCode ***" -> {
                     if (type == "LABEL-TYPE-UPCA") {
                         if (barcode!!.isNullOrEmpty()){
+                            toastObj.value.cancel()
                             ToastDisplay("Error! Empty/Null barcode data returned}", Toast.LENGTH_LONG)
                         }else {
                             if (barcode.length == 12) {
                                 NdcSearch(navController, barcode.substring(0..10), pharmScanViewModel)
                             } else {
+                                toastObj.value.cancel()
                                 ToastDisplay("Invalid barcode length for Ndc: ${barcode.length}", Toast.LENGTH_LONG)
                             }
                         }
                     }else {
+                        toastObj.value.cancel()
                         ToastDisplay("Invalid barcode Type for Ndc: ${scanData.barcodeType}", Toast.LENGTH_LONG)
                     }
                 }
                 else -> {
+                    toastObj.value.cancel()
                     ToastDisplay("In Hold mode. Turn off Hold mode to scan again", Toast.LENGTH_LONG)
                 }
             }
@@ -351,9 +377,25 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 ToastDisplay("clicked", Toast.LENGTH_SHORT)
                             }
                         ) {
-                            if (systemInfo[0].NdcLoading == "on") {
-                                //Icon(Icons.Filled.AddCircle, contentDescription = "")
-                                Image(painterResource(R.drawable.ic_baseline_download_for_offline_24),"content description")
+                            if (!systemInfo.isNullOrEmpty()) {
+                                if (systemInfo[0].NdcLoading == "on") {
+                                    //Icon(Icons.Filled.AddCircle, contentDescription = "")
+                                    Image(
+                                        painter = painterResource(R.drawable.ic_baseline_download_for_offline_24),
+                                        contentDescription = "content description",
+                                        colorFilter = ColorFilter.tint(
+                                            Color.Red,
+                                            BlendMode.ColorDodge
+                                        ),
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                    ndcLoading.value = true
+                                } else {
+                                    if (ndcLoading.value && systemInfo[0].NdcLoading == "off") {
+                                        ndcLoading.value = false
+                                        ToastDisplay("Ndc Done Loading Db", Toast.LENGTH_SHORT)
+                                    }
+                                }
                             }
                         }
                         IconToggleButton(
@@ -422,19 +464,23 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                             .fillMaxWidth(),
                                         horizontalArrangement = Arrangement.Center
                                     ) {
-                                        if (!systemInfo.isNullOrEmpty() && !settings.isNullOrEmpty()) {
-                                            Text(
-                                                text = "Tag: ${systemInfo[0].Tag}           ${systemInfo[0].TagChangeCount}/${settings[0].FileSendTagChgs}",
-                                                style = MaterialTheme.typography.h5,
-                                                color = MaterialTheme.colors.onBackground
-                                            )
-                                        }else {
-                                            Text(
-                                                text = "Tag: empty           empty/empty",
-                                                style = MaterialTheme.typography.h5,
-                                                color = MaterialTheme.colors.onBackground
-                                            )
+
+                                        var tag = "0"
+                                        var fileSendTagChgs = "0"
+                                        var tagChangeCount  = "0"
+
+                                        if (!systemInfo.isNullOrEmpty()) {
+                                            tag = systemInfo[0].Tag!!
+                                            tagChangeCount = systemInfo[0].TagChangeCount!!
                                         }
+                                        if (!settings.isNullOrEmpty()) {
+                                            fileSendTagChgs = settings[0].FileSendTagChgs!!
+                                        }
+                                        Text(
+                                            text = "Tag: $tag            $tagChangeCount/$fileSendTagChgs",
+                                            style = MaterialTheme.typography.h5,
+                                            color = MaterialTheme.colors.onBackground
+                                        )
                                     }
                                     Row(
                                         modifier = Modifier

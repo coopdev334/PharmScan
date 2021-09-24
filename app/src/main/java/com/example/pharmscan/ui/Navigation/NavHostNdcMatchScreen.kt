@@ -48,19 +48,21 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
         )
     ) {
 
-        var ndc by remember { mutableStateOf(it.arguments?.getString("ndc")?.let { it1 -> InputWrapper(it1, null)}) }
-        //var price by remember { mutableStateOf(it.arguments?.getString("price")?.let { it1 -> InputWrapper(it1, null)}) }
-        var pksz by remember { mutableStateOf(it.arguments?.getString("pksz")?.let { it1 -> InputWrapper(it1, null)}) }
-        var qty: InputWrapper? by remember { mutableStateOf(InputWrapper("", null)) }
         val manPrcOn = remember { mutableStateOf(false) }
+        var ndc by remember { mutableStateOf(it.arguments?.getString("ndc")?.let { it1 -> InputWrapper(it1, null)}) }
+        var price by remember { mutableStateOf(if (manPrcOn.value)InputWrapper("", null) else it.arguments?.getString("price")?.let { it1 -> InputWrapper(it1.trimStart{it == '0'}, null)}) }
+        var pksz by remember { mutableStateOf(it.arguments?.getString("pksz")?.let { it1 -> InputWrapper(it1.trimStart{it == '0'}, null)}) }
+        var qty: InputWrapper? by remember { mutableStateOf(InputWrapper("", null)) }
         var costLimitExceed = remember { mutableStateOf(false) }
         val settings = pharmScanViewModel.getSettingsRow()
-        manPrcOn.value = settings[0].ManualPrice == "on"
-        var price by remember { mutableStateOf(if (manPrcOn.value)InputWrapper("", null) else it.arguments?.getString("price")?.let { it1 -> InputWrapper(it1, null)}) }
         val prcFocusRequester = remember {FocusRequester()}
         val qtyFocusRequester = remember {FocusRequester()}
-        val costLimit = settings[0].CostLimit?.toDouble()
+        var costLimit = 0.00
 
+        if (!settings.isNullOrEmpty()) {
+            manPrcOn.value = settings[0].ManualPrice == "on"
+            costLimit = settings[0].CostLimit?.toDouble()!!
+        }
 
         if (manPrcOn.value) {
             DisposableEffect(Unit) {
@@ -78,7 +80,7 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
         // alert user to enter exact tenths for open items instead of default .5 qty
         costLimitExceed.value= false
 
-        if (!price?.value.isNullOrEmpty() && costLimit!! > 0.00) {
+        if (!price?.value.isNullOrEmpty() && costLimit > 0.00) {
             if (is2DecNumber(price?.value)) {
                 if (price?.value!!.toDouble() > costLimit) {
                     costLimitExceed.value = true
@@ -115,13 +117,13 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
 
         fun onImeActionClick() {
             if (qty!!.errorId == null && price!!.errorId == null) {
-                InsertNdc(pharmScanViewModel, ndc!!.value, price!!.value, pksz!!.value, qty!!.value, "N")
+                InsertNdc(pharmScanViewModel, ndc!!.value, price!!.value, pksz!!.value, qty!!.value, "P")
                 navController.popBackStack()
             }
         }
 
         fun onOkClick() {
-            InsertNdc(pharmScanViewModel, ndc!!.value, price!!.value, pksz!!.value, qty!!.value, "N")
+            InsertNdc(pharmScanViewModel, ndc!!.value, price!!.value, pksz!!.value, qty!!.value, "P")
             navController.popBackStack()
         }
 

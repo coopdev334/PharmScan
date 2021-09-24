@@ -13,7 +13,7 @@ interface SystemInfoDao {
     @Delete
     suspend fun deleteRow(systemInfo: SystemInfo)
 
-    @Query("DELETE FROM Settings")
+    @Query("DELETE FROM SystemInfo")
     suspend fun deleteAll()
 
     @Query("SELECT * FROM SystemInfo LIMIT 1")
