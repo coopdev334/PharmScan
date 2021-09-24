@@ -261,6 +261,7 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                                         val nThread = NetworkThread()
                                         nThread.handleIncomingData(hostName = hostAccountName, hostPassword = hostAccountPassword,
                                             port = PORT, data = query)
+                                        Log.d("TESTING NETWORK", "At end of upload button clickable")
                                     }
                                 }
                             )
