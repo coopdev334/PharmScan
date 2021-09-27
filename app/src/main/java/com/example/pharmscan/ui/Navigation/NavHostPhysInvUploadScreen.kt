@@ -234,12 +234,7 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                         Button(
                             modifier = Modifier.clip(RoundedCornerShape(50.dp)),
                             onClick = {
-                            // upload data using network wifi to host
-//                                val con = PharmScanApplication()
-//                                if (con.getAppContext() != null) {
-//                                    Toast.makeText(con.getAppContext(), "kldsajflkjsdlfk", Toast.LENGTH_SHORT).show()
-//                                }
-                            pharmScanViewModel.uploadCollectedData()
+                                pharmScanViewModel.uploadCollectedData()
                         }) {
                             Text(
                                 text = "Upload Collected Data",

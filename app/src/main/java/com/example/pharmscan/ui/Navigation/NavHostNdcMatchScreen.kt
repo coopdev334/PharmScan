@@ -166,7 +166,7 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
                 inputWrapper = price!!,
                 onValueChange = ::onPriceEntered,
                 onImeKeyAction = ::onImeActionClick,
-                length = 8
+                length = 9
             )
             Spacer(Modifier.height(10.dp))
             pksz?.let { it1 ->
@@ -190,7 +190,7 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
                 inputWrapper = qty!!,
                 onValueChange = ::onQtyEntered,
                 onImeKeyAction = ::onImeActionClick,
-                length = 6
+                length = 7
             )
             Spacer(Modifier.height(8.dp))
             Row(

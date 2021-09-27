@@ -69,12 +69,12 @@ fun HoldQtyKyBrdInput(
                         value = text,
                         onValueChange = {
                             if (invalidInput || !reformat) {
-                                text = ManageLength(it, 8)
+                                text = ManageLength(it, 7)
                             }else{
-                                if (it.length > 8 || it.isEmpty()) {
+                                if (it.length > 7 || it.isEmpty()) {
                                     reformat = false
                                 }
-                                text = ManageLength(ReformatText(it, 8), 8)
+                                text = ManageLength(ReformatText(it, 8), 7)
                             }
                         },
                         label = {

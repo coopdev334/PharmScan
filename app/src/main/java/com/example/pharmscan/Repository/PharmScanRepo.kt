@@ -27,7 +27,7 @@ class PharmScanRepo(
     fun getAllCollectedDataOrderByTag() = daoCollectedData.getAllOrderByTag()
     fun getAllCollectedDataOrderByNdc() = daoCollectedData.getAllOrderByNdc()
     fun getColDataLastInsertedRow() = daoCollectedData.getLastInsertedRow()
-    suspend fun uploadCollectedData() = repoUploadCollectedData()
+    suspend fun uploadCollectedData() = repoUploadCollectedData(daoCollectedData)
     fun getColDataQtyPriceByTag(tag: String) = daoCollectedData.getQtyPriceByTag(tag)
 
     // SystemInfo db SQL
