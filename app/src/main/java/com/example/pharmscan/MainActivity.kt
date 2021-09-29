@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
@@ -24,6 +25,10 @@ import com.example.pharmscan.ViewModel.PharmScanViewModelFactory
 import com.example.pharmscan.ui.Navigation.Navigate
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import com.example.pharmscan.ui.theme.PharmScanTheme
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStreamWriter
 
 class MainActivity() : ComponentActivity() {
     private lateinit var psViewModel: PharmScanViewModel
@@ -61,6 +66,7 @@ class MainActivity() : ComponentActivity() {
         intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "DISABLE_PLUGIN")
         sendBroadcast(intent)
 
+        writeToFile("TESTING", applicationContext)
         //Log.d("TESTING", "Checking the " + Manifest.permission.READ_EXTERNAL_STORAGE + " permissions.")
         if (ContextCompat.checkSelfPermission(
                 this@MainActivity,
@@ -186,6 +192,28 @@ class PharmScanBroadcastReceiver(pharmScanViewModel: PharmScanViewModel) : Broad
         }
     }
 
+}
+
+public fun writeToFile(data: String, context: Context) {
+    val path: File? = context.getExternalFilesDir(null)
+    Log.d("TESTING", path.toString())
+    val file: File? = File(path,"PharmaScanLogs.txt")
+    val stream = FileOutputStream(file)
+    try {
+        stream.write(data.toByteArray())
+    }
+    finally {
+        stream.close()
+    }
+    /*
+    try {
+        val outputStreamWriter =
+            OutputStreamWriter(context.openFileOutput("PharmaScanLogs.txt", Context.MODE_PRIVATE))
+        outputStreamWriter.write(data)
+        outputStreamWriter.close()
+    } catch (e: IOException) {
+        Log.e("Exception", "File write failed: " + e.toString())
+    }*/
 }
 
 
