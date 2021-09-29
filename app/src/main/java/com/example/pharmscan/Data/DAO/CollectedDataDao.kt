@@ -16,7 +16,7 @@ interface CollectedDataDao {
     suspend fun deleteRow(collectedData: CollectedData)
 
     @Query("DELETE FROM CollectedData")
-    fun deleteAll()
+    suspend fun deleteAll()
 
     @Query("SELECT * FROM CollectedData")
     fun getAllLiveData(): LiveData<List<CollectedData>>

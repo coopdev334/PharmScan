@@ -20,14 +20,14 @@ class PharmScanRepo(
     // CollectedData db SQL
     suspend fun insertCollectedData(collectedData: CollectedData) = daoCollectedData.insert(collectedData)
     suspend fun deleteCollectedDataRow(collectedData: CollectedData) = daoCollectedData.deleteRow(collectedData)
-    fun deleteAllCollectedData() = daoCollectedData.deleteAll()
+    suspend fun deleteAllCollectedData() = daoCollectedData.deleteAll()
     fun getAllLiveDataCollectedData() = daoCollectedData.getAllLiveData()
     fun getAllCollectedData() = daoCollectedData.getAll()
     fun getAllCollectedDataOrderByRecCnt() = daoCollectedData.getAllOrderByRecCnt()
     fun getAllCollectedDataOrderByTag() = daoCollectedData.getAllOrderByTag()
     fun getAllCollectedDataOrderByNdc() = daoCollectedData.getAllOrderByNdc()
     fun getColDataLastInsertedRow() = daoCollectedData.getLastInsertedRow()
-    suspend fun uploadCollectedData() = repoUploadCollectedData()
+    suspend fun uploadCollectedData() = repoUploadCollectedData(daoCollectedData)
     fun getColDataQtyPriceByTag(tag: String) = daoCollectedData.getQtyPriceByTag(tag)
 
     // SystemInfo db SQL
@@ -44,6 +44,9 @@ class PharmScanRepo(
     fun getAllLiveDataPSNdc() = daoPSNdc.getAllLiveData()
     fun getAllPSNdc() = daoPSNdc.getAll()
     fun getNdcPSNdc(ndc: String) = daoPSNdc.getNdc(ndc)
+    fun getAllPSNdcOrderByNdc() = daoPSNdc.getAllOrderByNdc()
+    fun getAllPSNdcOrderByPrice() = daoPSNdc.getAllOrderByPrice()
+    fun getAllPSNdcOrderByPackSz() = daoPSNdc.getAllOrderByPackSz()
 
     // Settings db SQL
     suspend fun insertSettings(settings: Settings) = daoSettings.insert(settings)

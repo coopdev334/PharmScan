@@ -50,12 +50,14 @@ class PharmScanViewModel(
         repo.insertCollectedData(collectedData)
     }
 
-    fun deleteCollectedDataRow(collectedData: CollectedData) =
-        CoroutineScope(Dispatchers.IO).launch {
+    fun deleteCollectedDataRow(collectedData: CollectedData) = CoroutineScope(Dispatchers.IO).launch {
             repo.deleteCollectedDataRow(collectedData)
-        }
+    }
 
-    fun deleteAllCollectedData() = repo.deleteAllCollectedData()
+    fun deleteAllCollectedData() = CoroutineScope(Dispatchers.IO).launch {
+            repo.deleteAllCollectedData()
+    }
+
     fun getAllLiveDataCollectedData() = repo.getAllLiveDataCollectedData()
     fun getAllCollectedData() = repo.getAllCollectedData()
     fun getAllCollectedDataOrderByRecCnt() = repo.getAllCollectedDataOrderByRecCnt()
@@ -119,6 +121,9 @@ class PharmScanViewModel(
     fun getAllLiveDataPSNdc() = repo.getAllLiveDataPSNdc()
     fun getAllPSNdc() = repo.getAllPSNdc()
     fun getNdcPSNdc(ndc: String) = repo.getNdcPSNdc(ndc)
+    fun getAllPSNdcOrderByNdc() = repo.getAllPSNdcOrderByNdc()
+    fun getAllPSNdcOrderByPrice() = repo.getAllPSNdcOrderByPrice()
+    fun getAllPSNdcOrderByPackSz() = repo.getAllPSNdcOrderByPackSz()
 
 
     // **********************************************************************
