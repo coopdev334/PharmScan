@@ -32,7 +32,7 @@ ToastDisplay("Uploading Collected Data", Toast.LENGTH_LONG)
         for (row in collectedData){
             out.write(
                 row.dept?.padStart(3, '0')
-                + row.prodcd?.padStart(8, '0')
+                + row.prodcd?.padStart(7, '0')
                 + row.ndc?.padStart(11, '0')
                 + (row.qty?.filterNot { it == "."[0] }?.padStart(6, '0')
                 + row.price?.filterNot { it == "."[0] }?.padStart(8, '0')
@@ -51,7 +51,7 @@ ToastDisplay("Uploading Collected Data", Toast.LENGTH_LONG)
         }
 
         out.close()
-
+// TODO delete all records in collected data table
     }catch (e: FileNotFoundException) {
         Log.d("coop", "FileNotFoundException")
         Log.d("coop", e.message!!)

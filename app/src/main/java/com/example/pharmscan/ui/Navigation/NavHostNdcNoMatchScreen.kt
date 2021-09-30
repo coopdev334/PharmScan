@@ -18,6 +18,9 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.nativeKeyCode
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -55,6 +58,7 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
         var pksz by remember { mutableStateOf(InputWrapper("", null)) }
         var qty by remember { mutableStateOf(InputWrapper("", null)) }
         val ndcFocusRequester = remember { FocusRequester() }
+        val showKyBrdInputDialog = remember { mutableStateOf(false) }
         //val pkszFocusRequester = remember { FocusRequester() }
 
         DisposableEffect(Unit) {
@@ -117,6 +121,12 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
             navController.popBackStack()
         }
 
+        if (showKyBrdInputDialog.value) {
+            showKyBrdInputDialog.value = false
+            if (InputsValid())
+                onOkClick()
+        }
+
         LaunchedEffect(Unit) {
             launch {
                 events.collect { event ->
@@ -159,6 +169,13 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
             }
             TextFieldWithMsg(
                 modifier = Modifier
+                    .onPreviewKeyEvent { KeyEvent ->
+                        if (KeyEvent.key.nativeKeyCode == 66) {
+                            showKyBrdInputDialog.value = true
+                            true
+                        }else
+                            false
+                    }
                     .focusRequester(ndcFocusRequester),
                    // .onFocusChanged {},
                 enabled = true,
@@ -174,6 +191,14 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
             )
             Spacer(Modifier.height(10.dp))
             TextFieldWithMsg(
+                modifier = Modifier
+                    .onPreviewKeyEvent { KeyEvent ->
+                        if (KeyEvent.key.nativeKeyCode == 66) {
+                            showKyBrdInputDialog.value = true
+                            true
+                        }else
+                            false
+                    },
 //                modifier = Modifier
 //                    .focusRequester(ndcFocusRequester)
 //                    .onFocusChanged {},
@@ -191,6 +216,14 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
             )
             Spacer(Modifier.height(10.dp))
             TextFieldWithMsg(
+                modifier = Modifier
+                    .onPreviewKeyEvent { KeyEvent ->
+                        if (KeyEvent.key.nativeKeyCode == 66) {
+                            showKyBrdInputDialog.value = true
+                            true
+                        }else
+                            false
+                    },
 //                modifier = Modifier
 //                    .focusRequester(pkszFocusRequester)
 //                    .onFocusChanged {},
@@ -207,6 +240,14 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
             )
             Spacer(Modifier.height(10.dp))
             TextFieldWithMsg(
+                modifier = Modifier
+                    .onPreviewKeyEvent { KeyEvent ->
+                        if (KeyEvent.key.nativeKeyCode == 66) {
+                            showKyBrdInputDialog.value = true
+                            true
+                        }else
+                            false
+                    },
 //                modifier = Modifier
 //                    .focusRequester(pkszFocusRequester)
 //                    .onFocusChanged {},

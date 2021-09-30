@@ -418,32 +418,33 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 }
                             }
                         }
-                        IconToggleButton(
-                            checked = manPrcOn.value,
-                            onCheckedChange = {
-
-                                if (manPrcOn.value){
-                                    val colVal = mapOf("ManualPrice" to "off")
-                                    ToastDisplay("Manual Price OFF", Toast.LENGTH_SHORT)
-                                    UpdateSettings(pharmScanViewModel, colVal)
-                                }else{
-                                    val colVal = mapOf("ManualPrice" to "on")
-                                    ToastDisplay("Manual Price ON", Toast.LENGTH_SHORT)
-                                    UpdateSettings(pharmScanViewModel, colVal)
-                                }
-                                manPrcOn.value = it
-                            }
-                        ) {
-                            val tint by animateColorAsState(
-                                if (manPrcOn.value) Color.Red
-                                else Color.White
-                            )
-                            Icon(
-                                imageVector = Icons.Filled.AddCircle,
-                                contentDescription = "Localized description",
-                                tint = tint
-                            )
-                        }
+                        // Currently not using manual price icon
+//                        IconToggleButton(
+//                            checked = manPrcOn.value,
+//                            onCheckedChange = {
+//
+//                                if (manPrcOn.value){
+//                                    val colVal = mapOf("ManualPrice" to "off")
+//                                    ToastDisplay("Manual Price OFF", Toast.LENGTH_SHORT)
+//                                    UpdateSettings(pharmScanViewModel, colVal)
+//                                }else{
+//                                    val colVal = mapOf("ManualPrice" to "on")
+//                                    ToastDisplay("Manual Price ON", Toast.LENGTH_SHORT)
+//                                    UpdateSettings(pharmScanViewModel, colVal)
+//                                }
+//                                manPrcOn.value = it
+//                            }
+//                        ) {
+//                            val tint by animateColorAsState(
+//                                if (manPrcOn.value) Color.Red
+//                                else Color.White
+//                            )
+//                            Icon(
+//                                imageVector = Icons.Filled.AddCircle,
+//                                contentDescription = "Localized description",
+//                                tint = tint
+//                            )
+//                        }
                     }
                 )
             },
@@ -469,7 +470,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                     Spacer(modifier = Modifier.height(height = 8.dp))
                     Box(
                         modifier = Modifier
-                            .size(width = 308.dp, height = 242.dp)
+                            .size(width = 308.dp, height = 282.dp)
                             .clip(RoundedCornerShape(30.dp))
                             .background(Color.LightGray)
                     ) {
@@ -498,31 +499,41 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                         }
                                         Text(
                                             text = "Tag: $tag            $tagChangeCount/$fileSendTagChgs",
-                                            style = MaterialTheme.typography.h5,
+                                            style = MaterialTheme.typography.subtitle2,
                                             color = MaterialTheme.colors.onBackground
                                         )
                                     }
+                                    var totQty = "0.0"
+                                    var totAmt = "0.00"
+
+                                    if (!systemInfo.isNullOrEmpty()) {
+                                        totQty = systemInfo[0].TotQty!!
+                                        totAmt = systemInfo[0].TotAmt!!
+                                    }
+                                    Spacer(modifier = Modifier.height(height = 6.dp))
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth(),
                                         horizontalArrangement = Arrangement.SpaceEvenly
                                     ) {
-                                        var totQty = "0.0"
-                                        var totAmt = "0.00"
 
-                                        if (!systemInfo.isNullOrEmpty()) {
-                                            totQty = systemInfo[0].TotQty!!
-                                            totAmt = systemInfo[0].TotAmt!!
-                                        }
 
                                         Text(
                                             text = "Qty: " + totQty,
-                                            style = MaterialTheme.typography.h6,
+                                            style = MaterialTheme.typography.subtitle2,
                                             color = MaterialTheme.colors.onBackground
                                         )
+                                    }
+                                    Spacer(modifier = Modifier.height(height = 6.dp))
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceEvenly
+                                    ) {
+
                                         Text(
                                             text = "Amount: " + totAmt,
-                                            style = MaterialTheme.typography.h6,
+                                            style = MaterialTheme.typography.subtitle2,
                                             color = MaterialTheme.colors.onBackground
                                         )
                                     }
@@ -549,17 +560,6 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.Center
-                                    ) {
-                                        Text(
-                                            text = "File",
-                                            style = MaterialTheme.typography.h5,
-                                            color = MaterialTheme.colors.onBackground
-                                        )
-                                    }
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth(),
                                         horizontalArrangement = Arrangement.SpaceEvenly
                                     ) {
                                         var totRecCnt = "0"
@@ -569,8 +569,8 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                         }
 
                                         Text(
-                                            text = "Rec Count: " + totRecCnt,
-                                            style = MaterialTheme.typography.h5,
+                                            text = "File Rec Count: " + totRecCnt,
+                                            style = MaterialTheme.typography.body1,
                                             color = MaterialTheme.colors.onBackground
                                         )
                                     }
@@ -622,7 +622,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                     ) {
                                         Text(
                                             text = "Last Scan",
-                                            style = MaterialTheme.typography.h5,
+                                            style = MaterialTheme.typography.body1,
                                             color = MaterialTheme.colors.onBackground
                                         )
                                     }
@@ -644,7 +644,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                     ) {
                                         Text(
                                             text = "Price:${collectedData[0].price!!.trimStart { it == '0' }}   PkSz:${collectedData[0].packsz!!.trimStart { it == '0' }}",
-                                            style = MaterialTheme.typography.h6,
+                                            style = MaterialTheme.typography.h5,
                                             color = MaterialTheme.colors.onBackground
                                         )
                                     }

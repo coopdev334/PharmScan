@@ -51,7 +51,7 @@ fun TextFieldWithMsg(
             label = {
                 if (enabled)
                     Text(
-                        fontSize = 35.sp,
+                        fontSize = 25.sp,
                         fontWeight = FontWeight.Bold,
                         text =label
                     )else
