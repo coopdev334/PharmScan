@@ -11,9 +11,12 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
+import com.example.pharmscan.PharmScanApplication
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Screen.*
+import com.example.pharmscan.writeToFile
 import kotlinx.coroutines.runBlocking
+import java.util.*
 
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.addResetDatabaseScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
@@ -24,10 +27,11 @@ fun NavGraphBuilder.addResetDatabaseScreen(navController: NavController, pharmSc
         var checkedStateSettings by remember { mutableStateOf(false) }
         var checkedStateSystemInfo by remember { mutableStateOf(false) }
 
-
         fun onOkClick() {
             if (checkedStateColData) {
                 runBlocking {
+                    val time: Date = Calendar.getInstance().getTime()
+                    writeToFile("Deleted All Collected Data at " + time.toString(), PharmScanApplication.context)
                     val job = pharmScanViewModel.deleteAllCollectedData()
                     job.join()
                 }
@@ -36,6 +40,7 @@ fun NavGraphBuilder.addResetDatabaseScreen(navController: NavController, pharmSc
 
             if (checkedStateHostCompName) {
                 runBlocking {
+                    writeToFile("Deleted All Host Names.", PharmScanApplication.context)
                     val job = pharmScanViewModel.deleteAllHostCompName()
                     job.join()
                 }
@@ -43,6 +48,7 @@ fun NavGraphBuilder.addResetDatabaseScreen(navController: NavController, pharmSc
 
             if (checkedStateNdc) {
                 runBlocking {
+                    writeToFile("Deleted NDC Table.", PharmScanApplication.context)
                     val job = pharmScanViewModel.deleteAllPSNdc()
                     job.join()
                 }
@@ -50,6 +56,7 @@ fun NavGraphBuilder.addResetDatabaseScreen(navController: NavController, pharmSc
 
             if (checkedStateSettings) {
                 runBlocking {
+                    writeToFile("Deleted Settings Table.", PharmScanApplication.context)
                     val job = pharmScanViewModel.deleteAllSettings()
                     job.join()
                 }
@@ -57,6 +64,7 @@ fun NavGraphBuilder.addResetDatabaseScreen(navController: NavController, pharmSc
 
             if (checkedStateSystemInfo) {
                 runBlocking {
+                    writeToFile("Deleted System Info table.", PharmScanApplication.context)
                     val job = pharmScanViewModel.deleteAllSystemInfo()
                     job.join()
                 }
