@@ -41,7 +41,6 @@ fun NavGraphBuilder.addViewNdcScreen(navController: NavController, pharmScanView
         val listState = rememberLazyListState()
         var clearTxt by remember {mutableStateOf(ClearText(false))}
         val coroutineScope = rememberCoroutineScope()
-        var selectedIndex by remember{mutableStateOf(-1)}
         var btnSelectedNdc by remember {mutableStateOf(true)}
         var btnSelectedPrice by remember {mutableStateOf(false)}
         var btnSelectedPkSz by remember {mutableStateOf(false)}

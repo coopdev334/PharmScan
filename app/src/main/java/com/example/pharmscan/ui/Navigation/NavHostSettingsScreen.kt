@@ -275,7 +275,7 @@ fun CostLimit(pharmScanViewModel: PharmScanViewModel) {
     }
 
     BasicTextField(
-        value = value!!,
+        value = value,
         onValueChange = {
             value = ManageLength(it,7)
 
@@ -322,7 +322,7 @@ fun TagChanges(pharmScanViewModel: PharmScanViewModel) {
     }
 
     BasicTextField(
-        value = value!!,
+        value = value,
         onValueChange = {
             value = ManageLength(it,4)
 
