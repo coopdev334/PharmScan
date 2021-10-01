@@ -292,18 +292,18 @@ fun CostLimit(pharmScanViewModel: PharmScanViewModel) {
 
     fun InputsValid (): Boolean {
         when {
-            value?.value.isNullOrEmpty() -> return false
+            value.value.isEmpty() -> return false
         }
 
         return when {
-            value?.errorId != null -> false
+            value.errorId != null -> false
             else -> true
         }
     }
 
     fun onValueEntered(input: String) {
         val errorId = InputValidator.getCostLimitErrorIdOrNull(input)
-        value = value?.copy(value = input, errorId = errorId)
+        value = value.copy(value = input, errorId = errorId)
 
         if (InputsValid()) {
             val columnValue = mapOf("CostLimit" to input)
@@ -323,7 +323,7 @@ fun CostLimit(pharmScanViewModel: PharmScanViewModel) {
         modifier = Modifier.onPreviewKeyEvent {KeyEvent -> KeyEvent.key.nativeKeyCode == 66},
         enabled = true,
         label = "",
-        inputWrapper = value!!,
+        inputWrapper = value,
         onValueChange = ::onValueEntered,
         onImeKeyAction = ::onImeActionClick,
         length = 7
@@ -338,18 +338,18 @@ fun TagChanges(pharmScanViewModel: PharmScanViewModel) {
 
     fun InputsValid (): Boolean {
         when {
-            value?.value.isNullOrEmpty() -> return false
+            value.value.isEmpty() -> return false
         }
 
         return when {
-            value?.errorId != null -> false
+            value.errorId != null -> false
             else -> true
         }
     }
 
     fun onValueEntered(input: String) {
         val errorId = InputValidator.getTagChangesErrorIdOrNull(input)
-        value = value?.copy(value = input, errorId = errorId)
+        value = value.copy(value = input, errorId = errorId)
 
         if (InputsValid()) {
             val columnValue = mapOf("FileSendTagChgs" to input)
@@ -369,7 +369,7 @@ fun TagChanges(pharmScanViewModel: PharmScanViewModel) {
         modifier = Modifier.onPreviewKeyEvent {KeyEvent -> KeyEvent.key.nativeKeyCode == 66},
         enabled = true,
         label = "",
-        inputWrapper = value!!,
+        inputWrapper = value,
         onValueChange = ::onValueEntered,
         onImeKeyAction = ::onImeActionClick,
         length = 4
