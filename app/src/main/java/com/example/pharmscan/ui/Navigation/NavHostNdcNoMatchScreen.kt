@@ -59,6 +59,7 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
         var qty by remember { mutableStateOf(InputWrapper("", null)) }
         val ndcFocusRequester = remember { FocusRequester() }
         val showKyBrdInputDialog = remember { mutableStateOf(false) }
+        var onClickEntered = remember { mutableStateOf(false) }
         //val pkszFocusRequester = remember { FocusRequester() }
 
         DisposableEffect(Unit) {
@@ -117,14 +118,17 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
         }
 
         fun onOkClick() {
+            onClickEntered.value = true
             InsertNdc(pharmScanViewModel, ndc.value, price.value, pksz.value, qty.value, "R")
             navController.popBackStack()
         }
 
         if (showKyBrdInputDialog.value) {
             showKyBrdInputDialog.value = false
-            if (InputsValid())
+            if (InputsValid() && !onClickEntered.value)
                 onOkClick()
+            else
+                onClickEntered.value = false
         }
 
         LaunchedEffect(Unit) {
