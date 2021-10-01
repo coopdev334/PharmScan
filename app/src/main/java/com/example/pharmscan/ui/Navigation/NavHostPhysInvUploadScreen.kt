@@ -263,13 +263,19 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                                     if (!settings.isEmpty()) {
                                         val hostAccountName = settings[0].hostAcct
                                         val hostAccountPassword = settings[0].hostPassword
-                                        val sendingData = tableOfData
                                         val PORT = 2325;
-                                        val query = "testquery"
-                                        val nThread = NetworkThread()
-                                        nThread.handleIncomingData(hostName = hostAccountName, hostPassword = hostAccountPassword,
-                                            port = PORT, data = query)
-                                        Log.d("TESTING NETWORK", "At end of upload button clickable")
+                                        var string_to_send = ""
+                                        val fileName_Collected = "/sdcard/Download/pharmscan_999_2021-09-30_60522_789.new"
+                                        var tempStr = ""
+                                        File(fileName_Collected).forEachLine {
+                                            string_to_send = it
+                                            val nThread = NetworkThread()
+                                            nThread.handleIncomingData(hostName = hostAccountName, hostPassword = hostAccountPassword,
+                                                port = PORT, data = string_to_send)
+                                            string_to_send = ""
+                                        }
+                                        //val query = "testquery"
+                                        Log.d("TESTING NETWORK", "Reached end of clickable button")
                                     }
                                 }
                             )
