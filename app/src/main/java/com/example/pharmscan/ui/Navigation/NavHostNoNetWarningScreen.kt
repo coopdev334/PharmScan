@@ -13,7 +13,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.pharmscan.ui.Screen.Screen
 
-fun NavGraphBuilder.addNoNetWarningScreen(navController: NavController) {
+fun NavGraphBuilder.addNoNetWarningScreen() {
     composable(Screen.NoNetworkWarningScreen.route) {
         Column(
             modifier = Modifier

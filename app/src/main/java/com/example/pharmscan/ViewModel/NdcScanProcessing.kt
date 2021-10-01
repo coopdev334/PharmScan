@@ -2,6 +2,8 @@ package com.example.pharmscan.ViewModel
 
 import android.media.AudioManager
 import android.media.ToneGenerator
+import android.os.Environment
+import android.util.Log
 import androidx.navigation.NavController
 import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.Data.Tables.PSNdc
@@ -9,7 +11,7 @@ import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import kotlinx.coroutines.runBlocking
-import java.io.File
+import java.io.*
 
 fun NdcSearch(navController: NavController, ndc: String, pharmScanViewModel:PharmScanViewModel) {
     // First formula - replace leading digit with a 0 then take remaining digits NOT including trailing check digit
@@ -56,8 +58,7 @@ fun InsertNdc(pharmScanViewModel:PharmScanViewModel, ndc: String, price: String,
     }
 
     // Build Collected Data Table record with values
-    // TODO: Find where itemcost field comes from. Temporary using price
-    val collectedData = CollectedData("000", "12345678", ndc, qty, price, pksz, "123", matchFlg, sysinfo[0].Tag, sysinfo[0].opid, recnt.toString(), "12/12/21", "123456", "P", price)
+    val collectedData = CollectedData("000", "0000ZEB", ndc, qty, price, pksz, "000", matchFlg, sysinfo[0].Tag, sysinfo[0].opid, recnt.toString(), "12/12/21", "123456", "P", "00000000")
     runBlocking {
         val job = pharmScanViewModel.insertCollectedData(collectedData)
         job.join()  // wait for insert to complete
@@ -76,7 +77,6 @@ fun ProcessHoldState(qty: String, pharmScanViewModel:PharmScanViewModel) {
     }
 
     // Build Collected Data Table record with values
-    // TODO: Find where itemcost field comes from. Temporary using price
     val newCollectedData = CollectedData(collectedDataLastRow[0].dept, collectedDataLastRow[0].prodcd, collectedDataLastRow[0].ndc, qty, collectedDataLastRow[0].price, collectedDataLastRow[0].packsz, collectedDataLastRow[0].xstock, collectedDataLastRow[0].matchflg, collectedDataLastRow[0].loc, collectedDataLastRow[0].operid, recnt.toString(), collectedDataLastRow[0].date, collectedDataLastRow[0].seconds, collectedDataLastRow[0].itemtyp, collectedDataLastRow[0].itemcst)
     runBlocking {
         val job = pharmScanViewModel.insertCollectedData(newCollectedData)

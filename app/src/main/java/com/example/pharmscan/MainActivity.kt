@@ -75,6 +75,19 @@ class MainActivity() : ComponentActivity() {
             )
         }
 
+        if (ContextCompat.checkSelfPermission(
+                this@MainActivity,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_DENIED
+        ) {
+            // Requesting the permission
+            ActivityCompat.requestPermissions(
+                this@MainActivity,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                101
+            )
+        }
+
         // Intialize database settings
         val sysInfoMap = mapOf("NdcLoading" to "off")
         UpdateSystemInfo(psViewModel, sysInfoMap)

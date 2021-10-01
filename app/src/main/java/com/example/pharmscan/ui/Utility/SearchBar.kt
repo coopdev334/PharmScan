@@ -64,10 +64,13 @@ fun SearchBar(
             .focusable(),
             value = text,
             onValueChange = {
-                if (hintLabel == "Ndc"){
-                    text = ManageLength(it, 11)
-                }else{
-                    text = ManageLength(it, 4)
+                when (hintLabel) {
+                    "Ndc" -> text = ManageLength(it, 11)
+                    "Tag" -> text = ManageLength(it, 4)
+                    "Rec#" -> text = ManageLength(it, 4)
+                    "Price" -> text = ManageLength(it, 9)
+                    "PkSz" -> text = ManageLength(it, 8)
+                    else -> text = ManageLength(it, 8)
                 }
             },
             label = {

@@ -275,12 +275,12 @@ fun CostLimit(pharmScanViewModel: PharmScanViewModel) {
     }
 
     BasicTextField(
-        value = value!!,
+        value = value,
         onValueChange = {
             value = ManageLength(it,7)
 
-            if (!it.isNullOrEmpty() && is2DecNumber(it)) {
-                val columnValue = mapOf("CostLimit" to it)
+            if (!value.isNullOrEmpty() && is2DecNumber(value)) {
+                val columnValue = mapOf("CostLimit" to value)
                 UpdateSettings(pharmScanViewModel, columnValue)
                 invalid = false
             }else {
@@ -322,12 +322,12 @@ fun TagChanges(pharmScanViewModel: PharmScanViewModel) {
     }
 
     BasicTextField(
-        value = value!!,
+        value = value,
         onValueChange = {
             value = ManageLength(it,4)
 
-            if (!it.isNullOrEmpty() && !isNotWholeNumber(it) && it != "0") {
-                val columnValue = mapOf("FileSendTagChgs" to it)
+            if (!value.isNullOrEmpty() && !isNotWholeNumber(value) && value != "0") {
+                val columnValue = mapOf("FileSendTagChgs" to value)
                 UpdateSettings(pharmScanViewModel, columnValue)
                 invalid = false
             }else {
@@ -351,31 +351,6 @@ fun TagChanges(pharmScanViewModel: PharmScanViewModel) {
 
 @Composable
 fun AutoLoadNdcCheckbox(pharmScanViewModel: PharmScanViewModel) {
-    var checkedState by remember { mutableStateOf(true) }
-    val settings = pharmScanViewModel.getSettingsRow()
-
-    if (!settings.isNullOrEmpty()) {
-        checkedState = pharmScanViewModel.getSettingsRow()[0].AutoLoadNdcFile == "on"
-    }
-
-    Checkbox(
-        modifier = Modifier.size(width = 40.dp, height = 20.dp),
-        checked = checkedState,
-        onCheckedChange = {
-            if (it) {
-                val columnValue = mapOf("AutoLoadNdcFile" to "on")
-                UpdateSettings(pharmScanViewModel, columnValue)
-            }else{
-                val columnValue = mapOf("AutoLoadNdcFile" to "off")
-                UpdateSettings(pharmScanViewModel, columnValue)
-            }
-            checkedState = it
-        }
-    )
-}
-
-@Composable
-fun ResetDatabase(pharmScanViewModel: PharmScanViewModel) {
     var checkedState by remember { mutableStateOf(true) }
     val settings = pharmScanViewModel.getSettingsRow()
 

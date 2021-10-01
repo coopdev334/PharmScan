@@ -124,6 +124,20 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                     Spacer(modifier = Modifier.height(height = 10.dp))
 
                     Text(
+                        text = "View Ndc Table",
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                scaffoldState.drawerState.close()
+                                navController.navigate(Screen.ViewNdcScreen.route)
+                            }
+                        },
+                        style = MaterialTheme.typography.caption,
+                        color = MaterialTheme.colors.onBackground
+                    )
+
+                    Spacer(modifier = Modifier.height(height = 10.dp))
+
+                    Text(
                         text = "About",
                         modifier = Modifier.clickable {
                             coroutineScope.launch {

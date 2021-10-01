@@ -14,6 +14,9 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.nativeKeyCode
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -57,6 +60,7 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
         val settings = pharmScanViewModel.getSettingsRow()
         val prcFocusRequester = remember {FocusRequester()}
         val qtyFocusRequester = remember {FocusRequester()}
+        val showKyBrdInputDialog = remember { mutableStateOf(false) }
         var costLimit = 0.00
 
         if (!settings.isNullOrEmpty()) {
@@ -127,6 +131,12 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
             navController.popBackStack()
         }
 
+        if (showKyBrdInputDialog.value) {
+            showKyBrdInputDialog.value = false
+            if (InputsValid())
+                onOkClick()
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -166,7 +176,7 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
                 inputWrapper = price!!,
                 onValueChange = ::onPriceEntered,
                 onImeKeyAction = ::onImeActionClick,
-                length = 8
+                length = 9
             )
             Spacer(Modifier.height(10.dp))
             pksz?.let { it1 ->
@@ -180,6 +190,13 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
             Spacer(Modifier.height(10.dp))
             TextFieldWithMsg(
                 modifier = Modifier
+                    .onPreviewKeyEvent { KeyEvent ->
+                        if (KeyEvent.key.nativeKeyCode == 66) {
+                            showKyBrdInputDialog.value = true
+                            true
+                        }else
+                            false
+                    }
                     .focusRequester(qtyFocusRequester),
                 enabled = true,
                 label = "Qty",
@@ -190,7 +207,7 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
                 inputWrapper = qty!!,
                 onValueChange = ::onQtyEntered,
                 onImeKeyAction = ::onImeActionClick,
-                length = 6
+                length = 7
             )
             Spacer(Modifier.height(8.dp))
             Row(

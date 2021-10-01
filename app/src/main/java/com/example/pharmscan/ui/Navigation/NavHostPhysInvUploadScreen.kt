@@ -149,6 +149,19 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                         style = MaterialTheme.typography.caption,
                         color = MaterialTheme.colors.onBackground
                     )
+                    Spacer(modifier = Modifier.height(height = 10.dp))
+
+                    Text(
+                        text = "View Ndc Table",
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                scaffoldState.drawerState.close()
+                                navController.navigate(Screen.ViewNdcScreen.route)
+                            }
+                        },
+                        style = MaterialTheme.typography.caption,
+                        color = MaterialTheme.colors.onBackground
+                    )
 
                     Spacer(modifier = Modifier.height(height = 10.dp))
 
@@ -240,12 +253,7 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                         Button(
                             modifier = Modifier.clip(RoundedCornerShape(50.dp)),
                             onClick = {
-                            // upload data using network wifi to host
-//                                val con = PharmScanApplication()
-//                                if (con.getAppContext() != null) {
-//                                    Toast.makeText(con.getAppContext(), "kldsajflkjsdlfk", Toast.LENGTH_SHORT).show()
-//                                }
-                            pharmScanViewModel.uploadCollectedData()
+                                pharmScanViewModel.uploadCollectedData()
                         }) {
                             Text(
                                 text = "Upload Collected Data",
@@ -287,8 +295,8 @@ suspend fun readFileLineByLineUsingForEachLine(pharmScanViewModel: PharmScanView
 
     File(fileName).forEachLine {
         psndc.ndc = it.substring(0..10)
-        psndc.price = it.substring(11..16) + "." + it.substring(17..18)
-        psndc.packsz = it.substring(19..26)
+        psndc.price = it.substring(11..16).trimStart { it == '0' } + "." + it.substring(17..18)
+        psndc.packsz = it.substring(19..26).trimStart { it == '0' }
 
         runBlocking {
             val job = pharmScanViewModel.insertPSNdc(psndc)

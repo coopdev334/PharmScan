@@ -10,7 +10,7 @@ fun is1DecNumber(s: String?): Boolean {
     if (s.isNullOrEmpty()) {
         return false
     } else {
-        return s.matches("""^(\d+\.{1}\d{1})$""".toRegex())
+        return s.matches("""^(\d*\.{1}\d{1})$""".toRegex())
     }
 }
 
