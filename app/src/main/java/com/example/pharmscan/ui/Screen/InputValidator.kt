@@ -50,7 +50,7 @@ object InputValidator {
 
     fun getCostLimitErrorIdOrNull(input: String): Int? {
         return when {
-            !is2DecNumber(input) -> R.string.missing_dec_pt
+            !is2DecNumber(input) -> R.string.requires_2_dec
             //etc..
             else -> null
         }

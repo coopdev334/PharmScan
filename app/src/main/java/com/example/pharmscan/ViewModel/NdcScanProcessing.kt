@@ -58,7 +58,7 @@ fun InsertNdc(pharmScanViewModel:PharmScanViewModel, ndc: String, price: String,
     }
 
     // Build Collected Data Table record with values
-    val collectedData = CollectedData("000", "0000ZEB", ndc, qty, price, pksz, "000", matchFlg, sysinfo[0].Tag, sysinfo[0].opid, recnt.toString(), "12/12/21", "123456", "P", "00000000")
+    val collectedData = CollectedData("000", "0000MOT", ndc, qty, price, pksz, "000", matchFlg, sysinfo[0].Tag, sysinfo[0].opid, recnt.toString(), "12/12/21", "123456", "P", "00000000")
     runBlocking {
         val job = pharmScanViewModel.insertCollectedData(collectedData)
         job.join()  // wait for insert to complete

@@ -7,5 +7,7 @@
     <string name="Requires_min_1_number">Requires min 1 number</string>
     <string name="Numeric_Only">Numeric Only</string>
     <string name="missing_dec_pt">Invalid Dec Number</string>
+    <string name="requires_2_dec">Requires 2 Decimals</string>
+    <string name="settings_pin">789</string>
     <string name="name">Name</string>
 </resources>

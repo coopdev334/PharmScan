@@ -10,6 +10,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.TextStyle
@@ -26,20 +27,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.nativeKeyCode
 import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.example.pharmscan.Data.Tables.Settings
 import com.example.pharmscan.PharmScanApplication
+import com.example.pharmscan.R
 import com.example.pharmscan.ViewModel.InsertNdc
+import com.example.pharmscan.ui.Dialog.GetOpId
+import com.example.pharmscan.ui.Dialog.SettingsPin
 import com.example.pharmscan.ui.Screen.*
 import com.example.pharmscan.ui.Utility.*
 import kotlinx.coroutines.runBlocking
 
+@ExperimentalComposeUiApi
 fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     composable(Screen.SettingsScreen.route) {
 
         val settings: List<Settings> by pharmScanViewModel.settings.observeAsState(pharmScanViewModel.getSettingsRow())
         val settingsNotInitialized = remember { mutableStateOf(true) }
+        val showSettingsPinDialog = remember { mutableStateOf(false) }
         val scrollState = rememberScrollState()
 
         if (settings.isNullOrEmpty() && settingsNotInitialized.value) {
@@ -47,7 +54,22 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
             UpdateSettings(pharmScanViewModel)
         }
 
-        Column(
+        if (showSettingsPinDialog.value) {
+            val settingsPin = stringResource(R.string.settings_pin)
+            SettingsPin(
+                showDialog = showSettingsPinDialog.value,
+                onCancel = {
+                    showSettingsPinDialog.value = false
+                }
+            ) { pin ->
+                showSettingsPinDialog.value = false
+                if (pin.trim() == settingsPin.trim())
+                    navController.navigate(Screen.ResetDatabaseScreen.route)
+            }
+        }
+
+
+                    Column(
                 modifier = Modifier.padding(start = 10.dp, end = 8.dp),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Center
@@ -214,7 +236,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            navController.navigate(Screen.ResetDatabaseScreen.route)
+                            showSettingsPinDialog.value = true
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -262,70 +284,10 @@ fun PriceEntryCheckbox(pharmScanViewModel: PharmScanViewModel) {
     )
 }
 
-//@Composable
-//fun CostLimit(pharmScanViewModel: PharmScanViewModel) {
-//    var value by remember { mutableStateOf("0")}
-//    var invalid: Boolean by remember { mutableStateOf(false)}
-//    val settingsNotInitialized = remember { mutableStateOf(true) }
-//    val settings = pharmScanViewModel.getSettingsRow()
-//
-//    if (!settings.isNullOrEmpty() && settingsNotInitialized.value) {
-//        settingsNotInitialized.value = false
-//        value = settings[0].CostLimit.toString()
-//    }
-//
-//    if (invalid) {
-//        Column() {
-//            Text(fontStyle = FontStyle.Italic, text = "Invalid")
-//            Text(fontStyle = FontStyle.Italic, text = "Decimal")
-//            Text(fontStyle = FontStyle.Italic, text = "Number")
-//        }
-//    }else {
-//        if(value == "0.00") {
-//            Column() {
-//                Text(fontStyle = FontStyle.Italic, text = "CostLimit")
-//                Text(fontStyle = FontStyle.Italic, text = "Disabled")
-//                //Text(fontStyle = FontStyle.Italic, text = "Number")
-//            }
-//        }
-//    }
-//
-//    BasicTextField(
-//        value = value,
-//        onValueChange = {
-//            value = ManageLength(it,7)
-//
-//            if (!value.isNullOrEmpty() && is2DecNumber(value)) {
-//                val columnValue = mapOf("CostLimit" to value)
-//                UpdateSettings(pharmScanViewModel, columnValue)
-//                invalid = false
-//            }else {
-//                invalid = true
-//            }
-//        },
-//        decorationBox = { innerTextField ->
-//            Box(
-//                Modifier
-//                    .border(border = BorderStroke(1.dp, Color.Black))
-//                    .padding(2.dp)
-//                    .size(width = 100.dp, height = 30.dp),
-//                contentAlignment = Alignment.CenterStart
-//            ) {
-//                innerTextField()
-//            }
-//        },
-//        textStyle = TextStyle(fontSize = 25.sp)
-//    )
-//
-//
-//}
-
 @Composable
 fun CostLimit(pharmScanViewModel: PharmScanViewModel) {
     var value by remember {mutableStateOf(InputWrapper("", null))}
     val settingsNotInitialized = remember { mutableStateOf(true) }
-    //var value by remember { mutableStateOf("0") }
-    //var invalid: Boolean by remember { mutableStateOf(false)}
     val settings = pharmScanViewModel.getSettingsRow()
 
     fun InputsValid (): Boolean {
@@ -372,8 +334,6 @@ fun CostLimit(pharmScanViewModel: PharmScanViewModel) {
 fun TagChanges(pharmScanViewModel: PharmScanViewModel) {
     var value by remember {mutableStateOf(InputWrapper("", null))}
     val settingsNotInitialized = remember { mutableStateOf(true) }
-    //var value by remember { mutableStateOf("0") }
-    //var invalid: Boolean by remember { mutableStateOf(false)}
     val settings = pharmScanViewModel.getSettingsRow()
 
     fun InputsValid (): Boolean {
