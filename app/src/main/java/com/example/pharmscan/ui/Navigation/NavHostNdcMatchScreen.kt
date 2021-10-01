@@ -100,12 +100,12 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
                 qty?.value.isNullOrEmpty() -> return false
             }
 
-            when {
-                ndc?.errorId != null -> return false
-                price?.errorId != null -> return false
-                pksz?.errorId != null -> return false
-                qty?.errorId != null -> return false
-                else -> return true
+            return when {
+                ndc?.errorId != null -> false
+                price?.errorId != null -> false
+                pksz?.errorId != null -> false
+                qty?.errorId != null -> false
+                else -> true
             }
         }
 

@@ -4,12 +4,14 @@ import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -19,12 +21,17 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.nativeKeyCode
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import com.example.pharmscan.Data.Tables.Settings
 import com.example.pharmscan.PharmScanApplication
-import com.example.pharmscan.ui.Screen.InputValidator
+import com.example.pharmscan.ViewModel.InsertNdc
+import com.example.pharmscan.ui.Screen.*
 import com.example.pharmscan.ui.Utility.*
 import kotlinx.coroutines.runBlocking
 
@@ -134,6 +141,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                         style = MaterialTheme.typography.h5,
                         color = MaterialTheme.colors.onBackground
                     )
+                    Spacer(modifier = Modifier.width(width = 60.dp))
                     CostLimit(pharmScanViewModel)
                 }
                 Spacer(modifier = Modifier.height(height = 10.dp))
@@ -149,21 +157,29 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = "Tag Changes",
-                        style = MaterialTheme.typography.h5,
-                        color = MaterialTheme.colors.onBackground
-                    )
-                    Text(
-                        text = "(FileSend)",
-                        style = TextStyle(
-                            fontFamily = FontFamily.Default,
-                            fontWeight = FontWeight.Light,
-                            fontStyle = FontStyle.Italic,
-                            fontSize = 15.sp
-                        ),
-                        color = MaterialTheme.colors.onBackground
-                    )
+                    Column() {
+                        Row() {
+                            Text(
+                                text = "(FileSend)",
+                                style = TextStyle(
+                                    fontFamily = FontFamily.Default,
+                                    fontWeight = FontWeight.Light,
+                                    fontStyle = FontStyle.Italic,
+                                    fontSize = 15.sp
+                                ),
+                                color = MaterialTheme.colors.onBackground
+                            )
+                        }
+                        Row() {
+                            Text(
+                                text = "Tag Changes",
+                                style = MaterialTheme.typography.h5,
+                                color = MaterialTheme.colors.onBackground
+                            )
+
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(width = 30.dp))
                     TagChanges(pharmScanViewModel)
                 }
                 Spacer(modifier = Modifier.height(height = 10.dp))
@@ -246,106 +262,157 @@ fun PriceEntryCheckbox(pharmScanViewModel: PharmScanViewModel) {
     )
 }
 
+//@Composable
+//fun CostLimit(pharmScanViewModel: PharmScanViewModel) {
+//    var value by remember { mutableStateOf("0")}
+//    var invalid: Boolean by remember { mutableStateOf(false)}
+//    val settingsNotInitialized = remember { mutableStateOf(true) }
+//    val settings = pharmScanViewModel.getSettingsRow()
+//
+//    if (!settings.isNullOrEmpty() && settingsNotInitialized.value) {
+//        settingsNotInitialized.value = false
+//        value = settings[0].CostLimit.toString()
+//    }
+//
+//    if (invalid) {
+//        Column() {
+//            Text(fontStyle = FontStyle.Italic, text = "Invalid")
+//            Text(fontStyle = FontStyle.Italic, text = "Decimal")
+//            Text(fontStyle = FontStyle.Italic, text = "Number")
+//        }
+//    }else {
+//        if(value == "0.00") {
+//            Column() {
+//                Text(fontStyle = FontStyle.Italic, text = "CostLimit")
+//                Text(fontStyle = FontStyle.Italic, text = "Disabled")
+//                //Text(fontStyle = FontStyle.Italic, text = "Number")
+//            }
+//        }
+//    }
+//
+//    BasicTextField(
+//        value = value,
+//        onValueChange = {
+//            value = ManageLength(it,7)
+//
+//            if (!value.isNullOrEmpty() && is2DecNumber(value)) {
+//                val columnValue = mapOf("CostLimit" to value)
+//                UpdateSettings(pharmScanViewModel, columnValue)
+//                invalid = false
+//            }else {
+//                invalid = true
+//            }
+//        },
+//        decorationBox = { innerTextField ->
+//            Box(
+//                Modifier
+//                    .border(border = BorderStroke(1.dp, Color.Black))
+//                    .padding(2.dp)
+//                    .size(width = 100.dp, height = 30.dp),
+//                contentAlignment = Alignment.CenterStart
+//            ) {
+//                innerTextField()
+//            }
+//        },
+//        textStyle = TextStyle(fontSize = 25.sp)
+//    )
+//
+//
+//}
+
 @Composable
 fun CostLimit(pharmScanViewModel: PharmScanViewModel) {
-    var value by remember { mutableStateOf("0")}
-    var invalid: Boolean by remember { mutableStateOf(false)}
+    var value by remember {mutableStateOf(InputWrapper("", null))}
     val settingsNotInitialized = remember { mutableStateOf(true) }
+    //var value by remember { mutableStateOf("0") }
+    //var invalid: Boolean by remember { mutableStateOf(false)}
     val settings = pharmScanViewModel.getSettingsRow()
+
+    fun InputsValid (): Boolean {
+        when {
+            value?.value.isNullOrEmpty() -> return false
+        }
+
+        return when {
+            value?.errorId != null -> false
+            else -> true
+        }
+    }
+
+    fun onValueEntered(input: String) {
+        val errorId = InputValidator.getCostLimitErrorIdOrNull(input)
+        value = value?.copy(value = input, errorId = errorId)
+
+        if (InputsValid()) {
+            val columnValue = mapOf("CostLimit" to input)
+            UpdateSettings(pharmScanViewModel, columnValue)
+        }
+    }
+
+    fun onImeActionClick() {
+    }
 
     if (!settings.isNullOrEmpty() && settingsNotInitialized.value) {
         settingsNotInitialized.value = false
-        value = settings[0].CostLimit.toString()
+        value = value.copy(value = settings[0].CostLimit.toString(), errorId = null)
     }
 
-    if (invalid) {
-        Column() {
-            Text(fontStyle = FontStyle.Italic, text = "Invalid")
-            Text(fontStyle = FontStyle.Italic, text = "Decimal")
-            Text(fontStyle = FontStyle.Italic, text = "Number")
-        }
-    }else {
-        if(value == "0.00") {
-            Column() {
-                Text(fontStyle = FontStyle.Italic, text = "CostLimit")
-                Text(fontStyle = FontStyle.Italic, text = "Disabled")
-                //Text(fontStyle = FontStyle.Italic, text = "Number")
-            }
-        }
-    }
-
-    BasicTextField(
-        value = value,
-        onValueChange = {
-            value = ManageLength(it,7)
-
-            if (!value.isNullOrEmpty() && is2DecNumber(value)) {
-                val columnValue = mapOf("CostLimit" to value)
-                UpdateSettings(pharmScanViewModel, columnValue)
-                invalid = false
-            }else {
-                invalid = true
-            }
-        },
-        decorationBox = { innerTextField ->
-            Box(
-                Modifier
-                    .border(border = BorderStroke(1.dp, Color.Black))
-                    .padding(2.dp)
-                    .size(width = 100.dp, height = 30.dp),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                innerTextField()
-            }
-        },
-        textStyle = TextStyle(fontSize = 25.sp)
+    OutlinedTextFieldWithMsg(
+        modifier = Modifier.onPreviewKeyEvent {KeyEvent -> KeyEvent.key.nativeKeyCode == 66},
+        enabled = true,
+        label = "",
+        inputWrapper = value!!,
+        onValueChange = ::onValueEntered,
+        onImeKeyAction = ::onImeActionClick,
+        length = 7
     )
-
-
 }
 
 @Composable
 fun TagChanges(pharmScanViewModel: PharmScanViewModel) {
-    var value by remember { mutableStateOf("0") }
-    var invalid: Boolean by remember { mutableStateOf(false)}
+    var value by remember {mutableStateOf(InputWrapper("", null))}
+    val settingsNotInitialized = remember { mutableStateOf(true) }
+    //var value by remember { mutableStateOf("0") }
+    //var invalid: Boolean by remember { mutableStateOf(false)}
     val settings = pharmScanViewModel.getSettingsRow()
 
-    if (!settings.isNullOrEmpty()) {
-        value = pharmScanViewModel.getSettingsRow()[0].FileSendTagChgs.toString()
-    }
+    fun InputsValid (): Boolean {
+        when {
+            value?.value.isNullOrEmpty() -> return false
+        }
 
-    if (invalid) {
-        Column() {
-            Text(fontStyle = FontStyle.Italic, text = "Invalid")
-            Text(fontStyle = FontStyle.Italic, text = "Number")
+        return when {
+            value?.errorId != null -> false
+            else -> true
         }
     }
 
-    BasicTextField(
-        value = value,
-        onValueChange = {
-            value = ManageLength(it,4)
+    fun onValueEntered(input: String) {
+        val errorId = InputValidator.getTagChangesErrorIdOrNull(input)
+        value = value?.copy(value = input, errorId = errorId)
 
-            if (!value.isNullOrEmpty() && !isNotWholeNumber(value) && value != "0") {
-                val columnValue = mapOf("FileSendTagChgs" to value)
-                UpdateSettings(pharmScanViewModel, columnValue)
-                invalid = false
-            }else {
-                invalid = true
-            }
-        },
-        decorationBox = { innerTextField ->
-            Box(
-                Modifier
-                    .border(border = BorderStroke(1.dp, Color.Black))
-                    .padding(2.dp)
-                    .size(width = 60.dp, height = 30.dp),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                innerTextField()
-            }
-        },
-        textStyle = TextStyle(fontSize = 25.sp)
+        if (InputsValid()) {
+            val columnValue = mapOf("FileSendTagChgs" to input)
+            UpdateSettings(pharmScanViewModel, columnValue)
+        }
+    }
+
+    fun onImeActionClick() {
+    }
+
+    if (!settings.isNullOrEmpty() && settingsNotInitialized.value) {
+        settingsNotInitialized.value = false
+        value = value.copy(value = settings[0].FileSendTagChgs.toString(), errorId = null)
+    }
+
+    OutlinedTextFieldWithMsg(
+        modifier = Modifier.onPreviewKeyEvent {KeyEvent -> KeyEvent.key.nativeKeyCode == 66},
+        enabled = true,
+        label = "",
+        inputWrapper = value!!,
+        onValueChange = ::onValueEntered,
+        onImeKeyAction = ::onImeActionClick,
+        length = 4
     )
 }
 
