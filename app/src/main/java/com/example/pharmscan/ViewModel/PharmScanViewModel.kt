@@ -1,7 +1,7 @@
 package com.example.pharmscan.ViewModel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
+import com.example.pharmscan.Data.ScanLiveData
 import com.example.pharmscan.Data.Tables.*
 import com.example.pharmscan.Repository.PharmScanRepo
 import kotlinx.coroutines.CoroutineScope
@@ -24,6 +24,7 @@ class PharmScanViewModel(
     fun insertHostCompName(hostCompName: HostCompName) = CoroutineScope(Dispatchers.IO).launch {
         repo.insertHostCompName(hostCompName)
     }
+
     fun deleteRowHostCompName(hostCompName: HostCompName) = CoroutineScope(Dispatchers.IO).launch {
         repo.deleteRowHostCompName(hostCompName)
     }
@@ -48,17 +49,23 @@ class PharmScanViewModel(
     fun insertCollectedData(collectedData: CollectedData) = CoroutineScope(Dispatchers.IO).launch {
         repo.insertCollectedData(collectedData)
     }
+
     fun deleteCollectedDataRow(collectedData: CollectedData) = CoroutineScope(Dispatchers.IO).launch {
-        repo.deleteCollectedDataRow(collectedData)
+            repo.deleteCollectedDataRow(collectedData)
     }
 
-    fun deleteAllCollectedData() = repo.deleteAllCollectedData()
+    fun deleteAllCollectedData() = CoroutineScope(Dispatchers.IO).launch {
+            repo.deleteAllCollectedData()
+    }
+
     fun getAllLiveDataCollectedData() = repo.getAllLiveDataCollectedData()
     fun getAllCollectedData() = repo.getAllCollectedData()
     fun getAllCollectedDataOrderByRecCnt() = repo.getAllCollectedDataOrderByRecCnt()
     fun getAllCollectedDataOrderByTag() = repo.getAllCollectedDataOrderByTag()
     fun getAllCollectedDataOrderByNdc() = repo.getAllCollectedDataOrderByNdc()
     fun getColDataLastInsertedRow() = repo.getColDataLastInsertedRow()
+    fun getColDataQtyPriceByTag(tag: String) = repo.getColDataQtyPriceByTag(tag)
+
     // TODO: use IO dispatcher when Toast removed
     fun uploadCollectedData() = CoroutineScope(Dispatchers.Main).launch {
         repo.uploadCollectedData()
@@ -77,6 +84,7 @@ class PharmScanViewModel(
     fun insertSystemInfo(systemInfo: SystemInfo) = CoroutineScope(Dispatchers.IO).launch {
         repo.insertSystemInfo(systemInfo)
     }
+
     fun deleteRowSystemInfo(systemInfo: SystemInfo) = CoroutineScope(Dispatchers.IO).launch {
         repo.deleteRowSystemInfo(systemInfo)
     }
@@ -101,6 +109,7 @@ class PharmScanViewModel(
     fun insertPSNdc(psNdc: PSNdc) = CoroutineScope(Dispatchers.IO).launch {
         repo.insertPSNdc(psNdc)
     }
+
     fun deleteRowPSNdc(psNdc: PSNdc) = CoroutineScope(Dispatchers.IO).launch {
         repo.deleteRowPSNdc(psNdc)
     }
@@ -112,6 +121,9 @@ class PharmScanViewModel(
     fun getAllLiveDataPSNdc() = repo.getAllLiveDataPSNdc()
     fun getAllPSNdc() = repo.getAllPSNdc()
     fun getNdcPSNdc(ndc: String) = repo.getNdcPSNdc(ndc)
+    fun getAllPSNdcOrderByNdc() = repo.getAllPSNdcOrderByNdc()
+    fun getAllPSNdcOrderByPrice() = repo.getAllPSNdcOrderByPrice()
+    fun getAllPSNdcOrderByPackSz() = repo.getAllPSNdcOrderByPackSz()
 
 
     // **********************************************************************
@@ -127,6 +139,7 @@ class PharmScanViewModel(
     fun insertSettings(settings: Settings) = CoroutineScope(Dispatchers.IO).launch {
         repo.insertSettings(settings)
     }
+
     fun deleteRowSettings(settings: Settings) = CoroutineScope(Dispatchers.IO).launch {
         repo.deleteRowSettings(settings)
     }
@@ -138,4 +151,10 @@ class PharmScanViewModel(
     fun getLiveDataSettingsRow() = repo.getLiveDataSettingsRow()
     fun getSettingsRow() = repo.getSettingsRow()
 
- }
+    // **********************************************************************
+    // Scan LiveData
+    val scanLiveData: MutableLiveData<ScanLiveData> by lazy {
+        MutableLiveData<ScanLiveData>()
+    }
+
+}

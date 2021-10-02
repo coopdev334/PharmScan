@@ -21,13 +21,16 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
-import com.example.pharmscan.PharmScanApplication
+import androidx.navigation.navArgument
+import com.example.pharmscan.Data.Tables.PSNdc
+import com.example.pharmscan.Data.Tables.Settings
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.GetOpId
 import com.example.pharmscan.ui.Screen.Screen
+import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import java.io.File
 
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
@@ -59,6 +62,21 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                     showEnterOpIdDialog.value = false
                     val columnValue = mapOf("opid" to opid)
                     UpdateSystemInfo(pharmScanViewModel, columnValue)
+                    val settings = pharmScanViewModel.getSettingsRow()
+                    if (!settings.isNullOrEmpty()) {
+                        if (settings[0].AutoLoadNdcFile == "on") {
+                            // Check if already downloading. If currenlty still downloading
+                            // don't start downloading again.
+                            val sysInfo = pharmScanViewModel.getSystemInfoRow()
+                            if (sysInfo[0].NdcLoading == "off") {
+                                ToastDisplay("Downloading Started...", Toast.LENGTH_SHORT)
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    readFileLineByLineUsingForEachLine(pharmScanViewModel,"/sdcard/Download/psndc.dat")
+                                }
+                            }
+                        }
+                    }
+
                     navController.navigate(Screen.ScanScreen.withArgs("*** Scan Tag ***", "yellow"))
                 }
             )
@@ -107,6 +125,19 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                             coroutineScope.launch {
                                 scaffoldState.drawerState.close()
                                 navController.navigate(Screen.ViewColDataFNameScreen.route)
+                            }
+                        },
+                        style = MaterialTheme.typography.caption,
+                        color = MaterialTheme.colors.onBackground
+                    )
+                    Spacer(modifier = Modifier.height(height = 10.dp))
+
+                    Text(
+                        text = "View Ndc Table",
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                scaffoldState.drawerState.close()
+                                navController.navigate(Screen.ViewNdcScreen.route)
                             }
                         },
                         style = MaterialTheme.typography.caption,
@@ -203,12 +234,7 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                         Button(
                             modifier = Modifier.clip(RoundedCornerShape(50.dp)),
                             onClick = {
-                            // upload data using network wifi to host
-//                                val con = PharmScanApplication()
-//                                if (con.getAppContext() != null) {
-//                                    Toast.makeText(con.getAppContext(), "kldsajflkjsdlfk", Toast.LENGTH_SHORT).show()
-//                                }
-                            pharmScanViewModel.uploadCollectedData()
+                                pharmScanViewModel.uploadCollectedData()
                         }) {
                             Text(
                                 text = "Upload Collected Data",
@@ -221,4 +247,32 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
             }
         )
     }
+}
+
+suspend fun readFileLineByLineUsingForEachLine(pharmScanViewModel: PharmScanViewModel, fileName: String){
+    var psndc = PSNdc("","","")
+
+    //checkPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE, 101)
+    var sysInfoMap = mapOf("NdcLoading" to "on")
+    UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
+
+    runBlocking {
+        val job = pharmScanViewModel.deleteAllPSNdc()
+        job.join()
+    }
+
+    File(fileName).forEachLine {
+        psndc.ndc = it.substring(0..10)
+        psndc.price = it.substring(11..16).trimStart { it == '0' } + "." + it.substring(17..18)
+        psndc.packsz = it.substring(19..26).trimStart { it == '0' }
+
+        runBlocking {
+            val job = pharmScanViewModel.insertPSNdc(psndc)
+            job.join()
+        }
+    }
+
+    sysInfoMap = mapOf("NdcLoading" to "off")
+    UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
+
 }

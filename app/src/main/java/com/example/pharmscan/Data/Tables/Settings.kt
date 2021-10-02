@@ -9,10 +9,11 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "Settings")
 data class Settings (
     var	hostAcct: String?,
-        var	hostPassword: String?,
-        var	ManualPrice: String?,
-        var	CostLimit: String?,
-        var	FileSendTagChgs: String?
+    var	hostPassword: String?,
+    var	ManualPrice: String?,
+    var	CostLimit: String?,
+    var	FileSendTagChgs: String?,
+    var	AutoLoadNdcFile: String?
 ) {
     @PrimaryKey(autoGenerate = true)
     var iD: Int? = null

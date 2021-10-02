@@ -38,7 +38,7 @@ fun HoldQtyKyBrdInput(
                 .onPreviewKeyEvent { KeyEvent ->
                     if (KeyEvent.key.nativeKeyCode == 66) {
                         if (text.isNotEmpty()) {
-                            if (isDecNumber(text)) {
+                            if (is1DecNumber(text)) {
                                 keyboardController?.hide()
                                 onAdd(text)
                             } else {
@@ -69,12 +69,12 @@ fun HoldQtyKyBrdInput(
                         value = text,
                         onValueChange = {
                             if (invalidInput || !reformat) {
-                                text = ManageLength(it, 8)
+                                text = ManageLength(it, 7)
                             }else{
-                                if (it.length > 8 || it.isEmpty()) {
+                                if (it.length > 7 || it.isEmpty()) {
                                     reformat = false
                                 }
-                                text = ManageLength(ReformatText(it, 8), 8)
+                                text = ManageLength(ReformatText(it, 8), 7)
                             }
                         },
                         label = {
@@ -125,7 +125,7 @@ fun HoldQtyKyBrdInput(
                         Button(
                             modifier = Modifier.size(width = 90.dp, height = 45.dp),
                             onClick = {
-                                if (!isDecNumber(text)){
+                                if (!is1DecNumber(text)){
                                     invalidInput = true
                                     text = ""
                                 }else {

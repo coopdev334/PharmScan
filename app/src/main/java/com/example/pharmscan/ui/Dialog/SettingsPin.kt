@@ -19,10 +19,10 @@ import com.example.pharmscan.ui.Utility.*
 
 @ExperimentalComposeUiApi
 @Composable
-fun GetOpId(
+fun SettingsPin(
     showDialog: Boolean,
     onCancel: () -> Unit,
-    onToScanScreen: (opid: String) -> Unit
+    onToResetDatabase: (opid: String) -> Unit
 ) {
     var text by remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -41,7 +41,7 @@ fun GetOpId(
                         }else {
                             if (text.isNotEmpty()) {
                                 keyboardController?.hide()
-                                onToScanScreen(text)
+                                onToResetDatabase(text)
                             }
                         }
                         true
@@ -62,14 +62,14 @@ fun GetOpId(
                     OutlinedTextField(
                         value = text,
                         onValueChange = {
-                                text = ManageLength(it, 3)
+                            text = ManageLength(it, 3)
                         },
                         label = {
                             Column(
                                 modifier = Modifier.padding(bottom = 8.dp)
                             ) {
                                 Text(
-                                    text = "Operator Id",
+                                    text = "Enter Pin",
                                     style = MaterialTheme.typography.h5
                                 )
                             }
@@ -118,7 +118,7 @@ fun GetOpId(
                                     text = ""
                                 }else {
                                     if (text.isNotEmpty()) {
-                                        onToScanScreen(text)
+                                        onToResetDatabase(text)
                                     }
                                 }
                             }
@@ -137,4 +137,3 @@ fun GetOpId(
         }
     }
 }
-

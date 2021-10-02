@@ -39,10 +39,10 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
         val showAddHostCompDialog = remember { mutableStateOf(false) }
         val hostCompNameList: List<HostCompName> by pharmScanViewModel.hostCompName.observeAsState(pharmScanViewModel.getAllHostCompName())
 
-        if (hostCompNameList.isNullOrEmpty()) {
-            // set to defaults
-            pharmScanViewModel.insertHostCompName(HostCompName("0"))
-        }
+//        if (hostCompNameList.isNullOrEmpty()) {
+//            // set to defaults
+//            pharmScanViewModel.insertHostCompName(HostCompName("0"))
+//        }
 
         if (showDelHostCompDialog.value) {
             DeleteHostComputerAlert(
@@ -115,6 +115,20 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                             coroutineScope.launch {
                                 scaffoldState.drawerState.close()
                                 navController.navigate(Screen.ViewColDataFNameScreen.route)
+                            }
+                        },
+                        style = MaterialTheme.typography.caption,
+                        color = MaterialTheme.colors.onBackground
+                    )
+
+                    Spacer(modifier = Modifier.height(height = 10.dp))
+
+                    Text(
+                        text = "View Ndc Table",
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                scaffoldState.drawerState.close()
+                                navController.navigate(Screen.ViewNdcScreen.route)
                             }
                         },
                         style = MaterialTheme.typography.caption,

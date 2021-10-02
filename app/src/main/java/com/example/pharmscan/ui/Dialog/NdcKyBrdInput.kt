@@ -43,7 +43,7 @@ fun NdcKyBrdInput(
                                 invalidLength = true
                                 text = ""
                             } else {
-                                if (isWholeNumber(text)) {
+                                if (!isNotWholeNumber(text)) {
                                     keyboardController?.hide()
                                     onAdd(text)
                                 } else {
@@ -147,7 +147,7 @@ fun NdcKyBrdInput(
                                     invalidLength = true
                                     text = ""
                                 }else {
-                                    if (isWholeNumber(text)){
+                                    if (!isNotWholeNumber(text)){
                                         onAdd(text)
                                     }else {
                                         invalidLength = false

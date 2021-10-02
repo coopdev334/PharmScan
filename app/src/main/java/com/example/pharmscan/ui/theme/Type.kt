@@ -12,8 +12,8 @@ import androidx.compose.ui.unit.sp
 val Typography = Typography(
     body1 = TextStyle(
         fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp
+        fontWeight = FontWeight.W500,
+        fontSize = 24.sp
     ),
 
     button = TextStyle(
@@ -32,7 +32,7 @@ val Typography = Typography(
     subtitle2 = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.W500,
-        fontSize = 30.sp,
-        textDecoration = TextDecoration.Underline
+        fontSize = 28.sp,
+        //textDecoration = TextDecoration.Underline
     )
 )

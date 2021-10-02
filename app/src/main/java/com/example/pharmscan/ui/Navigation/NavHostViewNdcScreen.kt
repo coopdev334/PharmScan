@@ -1,6 +1,5 @@
 package com.example.pharmscan.ui.Navigation
 
-
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,6 +23,7 @@ import com.example.pharmscan.ui.Utility.SearchBar
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
 import com.example.pharmscan.Data.Tables.CollectedData
+import com.example.pharmscan.Data.Tables.PSNdc
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.CancelCollDataRecord
 import com.example.pharmscan.ui.Utility.ClearText
@@ -31,40 +31,22 @@ import kotlinx.coroutines.launch
 
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
-fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
+fun NavGraphBuilder.addViewNdcScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
 
-        composable(Screen.ViewCancel.route) {
+    composable(Screen.ViewNdcScreen.route) {
 
-        var collectedData: MutableList<CollectedData> by remember {mutableStateOf(mutableListOf<CollectedData>())}
+        var psNdc: List<PSNdc> by remember {mutableStateOf(listOf())}
         var startIndex: Int by remember {mutableStateOf(0)}
-        var hintLabel by remember {mutableStateOf("Rec#")}
+        var hintLabel by remember {mutableStateOf("Ndc")}
         val listState = rememberLazyListState()
         var clearTxt by remember {mutableStateOf(ClearText(false))}
-        val showCancelCollDataDialog = remember { mutableStateOf(false) }
         val coroutineScope = rememberCoroutineScope()
-        var selectedIndex by remember{mutableStateOf(-1)}
-        var btnSelectedRec by remember {mutableStateOf(true)}
-        var btnSelectedTag by remember {mutableStateOf(false)}
-        var btnSelectedNdc by remember {mutableStateOf(false)}
+        var btnSelectedNdc by remember {mutableStateOf(true)}
+        var btnSelectedPrice by remember {mutableStateOf(false)}
+        var btnSelectedPkSz by remember {mutableStateOf(false)}
         var textStyle = MaterialTheme.typography.subtitle1
         var ontextStyle = MaterialTheme.typography.subtitle2
         var firstEntry = true
-
-        if (showCancelCollDataDialog.value) {
-            CancelCollDataRecord(
-                showDialog = showCancelCollDataDialog.value,
-                onDismiss = {
-                    showCancelCollDataDialog.value = false
-                    selectedIndex = -1
-                },
-                onCancelRecord = {
-                    collectedData[selectedIndex].qty = "000000"
-                    pharmScanViewModel.insertCollectedData(collectedData[selectedIndex])
-                    showCancelCollDataDialog.value = false
-                    selectedIndex = -1
-                }
-            )
-        }
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -85,7 +67,7 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
             )
             Spacer(modifier = Modifier.height(height = 5.dp))
             Text(
-                text = "Collected Data File Search",
+                text = "Ndc Table Search",
                 style = MaterialTheme.typography.subtitle1,
                 color = MaterialTheme.colors.onBackground
             )
@@ -93,51 +75,11 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
             Row(horizontalArrangement = Arrangement.SpaceEvenly) {
                 OutlinedButton(
                     onClick = {
-                        hintLabel = "Rec#"
-                        clearTxt.clear = true
-                        btnSelectedRec = true
-                        btnSelectedTag = false
-                        btnSelectedNdc = false
-                    },
-                    shape = RoundedCornerShape(50),
-                    border = BorderStroke(1.dp, MaterialTheme.colors.onBackground),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colors.onBackground),
-                    contentPadding = PaddingValues(horizontal = 25.dp)
-                ) {
-                    Text(
-                        text = "Rec#",
-                        fontSize = 20.sp,
-                        style = if(btnSelectedRec) ontextStyle else textStyle
-                    )
-                }
-                Spacer(modifier = Modifier.width(width = 10.dp))
-                OutlinedButton(
-                    onClick = {
-                        hintLabel = "Tag"
-                        clearTxt.clear = true
-                        btnSelectedRec = false
-                        btnSelectedTag = true
-                        btnSelectedNdc = false
-                    },
-                    shape = RoundedCornerShape(50),
-                    border = BorderStroke(1.dp, MaterialTheme.colors.onBackground),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colors.onBackground),
-                    contentPadding = PaddingValues(horizontal = 25.dp)
-                ) {
-                    Text(
-                        text = "Tag",
-                        fontSize = 20.sp,
-                        style = if(btnSelectedTag) ontextStyle else textStyle
-                    )
-                }
-                Spacer(modifier = Modifier.width(width = 10.dp))
-                OutlinedButton(
-                    onClick = {
                         hintLabel = "Ndc"
                         clearTxt.clear = true
-                        btnSelectedRec = false
-                        btnSelectedTag = false
                         btnSelectedNdc = true
+                        btnSelectedPrice = false
+                        btnSelectedPkSz = false
                     },
                     shape = RoundedCornerShape(50),
                     border = BorderStroke(1.dp, MaterialTheme.colors.onBackground),
@@ -150,6 +92,46 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                         style = if(btnSelectedNdc) ontextStyle else textStyle
                     )
                 }
+                Spacer(modifier = Modifier.width(width = 10.dp))
+                OutlinedButton(
+                    onClick = {
+                        hintLabel = "Price"
+                        clearTxt.clear = true
+                        btnSelectedNdc = false
+                        btnSelectedPrice = true
+                        btnSelectedPkSz = false
+                    },
+                    shape = RoundedCornerShape(50),
+                    border = BorderStroke(1.dp, MaterialTheme.colors.onBackground),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colors.onBackground),
+                    contentPadding = PaddingValues(horizontal = 25.dp)
+                ) {
+                    Text(
+                        text = "Price",
+                        fontSize = 20.sp,
+                        style = if(btnSelectedPrice) ontextStyle else textStyle
+                    )
+                }
+                Spacer(modifier = Modifier.width(width = 10.dp))
+                OutlinedButton(
+                    onClick = {
+                        hintLabel = "PkSz"
+                        clearTxt.clear = true
+                        btnSelectedNdc = false
+                        btnSelectedPrice = false
+                        btnSelectedPkSz = true
+                    },
+                    shape = RoundedCornerShape(50),
+                    border = BorderStroke(1.dp, MaterialTheme.colors.onBackground),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colors.onBackground),
+                    contentPadding = PaddingValues(horizontal = 25.dp)
+                ) {
+                    Text(
+                        text = "PkSz",
+                        fontSize = 20.sp,
+                        style = if(btnSelectedPkSz) ontextStyle else textStyle
+                    )
+                }
             }
 
             SearchBar(
@@ -160,19 +142,24 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                     .padding(start = 5.dp, top = 5.dp, end = 5.dp)
             ) { searchText ->
                 // This lamda function gets called when searching
-                when (hintLabel) {
-                    "Rec#" -> {
-                        collectedData = pharmScanViewModel.getAllCollectedDataOrderByRecCnt()
-                        startIndex = collectedData.indexOfFirst { it.recount == searchText }
+                if (!searchText.isNullOrEmpty()) {
+                    when (hintLabel) {
+                        "Ndc" -> {
+                            psNdc = pharmScanViewModel.getAllPSNdcOrderByNdc()
+                            startIndex = psNdc.indexOfFirst { it.ndc == searchText }
+                        }
+                        "Price" -> {
+                            psNdc = pharmScanViewModel.getAllPSNdcOrderByPrice()
+                            startIndex = psNdc.indexOfFirst { it.price == searchText }
+                        }
+                        "PkSz" -> {
+                            psNdc = pharmScanViewModel.getAllPSNdcOrderByPackSz()
+                            startIndex = psNdc.indexOfFirst { it.packsz == searchText }
+                        }
                     }
-                    "Tag" -> {
-                        collectedData = pharmScanViewModel.getAllCollectedDataOrderByTag()
-                        startIndex = collectedData.indexOfFirst { it.loc == searchText }
-                    }
-                    "Ndc" -> {
-                        collectedData = pharmScanViewModel.getAllCollectedDataOrderByNdc()
-                        startIndex = collectedData.indexOfFirst { it.ndc == searchText }
-                    }
+                } else {
+                    psNdc = pharmScanViewModel.getAllPSNdc()
+                    startIndex = 0
                 }
             }
 
@@ -192,27 +179,10 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                     horizontalAlignment = Alignment.Start
                 ) {
 
-                    items(collectedData.size) { index ->
+                    items(psNdc.size) { index ->
                         Box(
-                            modifier = Modifier
-                                .selectable(
-                                    selected = index == selectedIndex,
-                                    onClick = {
-                                        if (selectedIndex != index)
-                                            selectedIndex = index else selectedIndex = -1
-                                    }
-                                )
-                                .background(
-                                    if (collectedData[index].qty == "000000")
-                                        Color.Red else Color.LightGray
-                                )
-
+                            modifier = Modifier.background(Color.LightGray)
                         ) {
-                            if (selectedIndex == index) {
-                                startIndex = selectedIndex
-                                showCancelCollDataDialog.value = true
-                            }
-
                             Column {
                                 Row(
                                     modifier = Modifier
@@ -221,13 +191,7 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                                     horizontalArrangement = Arrangement.Start
                                 ) {
                                     Text(
-                                        text = "Tag: " + collectedData[index].loc,
-                                        style = MaterialTheme.typography.h6,
-                                        color = MaterialTheme.colors.onBackground,
-                                        modifier = Modifier.width(156.dp)
-                                    )
-                                    Text(
-                                        text = "Qty: " + collectedData[index].qty,
+                                        text = "Ndc: " + psNdc[index].ndc,
                                         style = MaterialTheme.typography.h6,
                                         color = MaterialTheme.colors.onBackground
                                     )
@@ -240,15 +204,10 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                                     horizontalArrangement = Arrangement.Start
                                 ) {
                                     Text(
-                                        text = "Rec#: " + collectedData[index].recount,
+                                        text = "Price: " + psNdc[index].price,
                                         style = MaterialTheme.typography.h6,
                                         color = MaterialTheme.colors.onBackground,
-                                        modifier = Modifier.width(156.dp)
-                                    )
-                                    Text(
-                                        text = "Match: " + collectedData[index].matchflg,
-                                        style = MaterialTheme.typography.h6,
-                                        color = MaterialTheme.colors.onBackground
+                                        //modifier = Modifier.width(156.dp)
                                     )
                                 }
                                 Spacer(modifier = Modifier.height(2.dp))
@@ -259,33 +218,15 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                                     horizontalArrangement = Arrangement.Start
                                 ) {
                                     Text(
-                                        text = "Price: " + collectedData[index].price,
+                                        text = "PackSz: " + psNdc[index].packsz,
                                         style = MaterialTheme.typography.h6,
                                         color = MaterialTheme.colors.onBackground,
-                                        modifier = Modifier.width(156.dp)
-                                    )
-                                    Text(
-                                        text = "PkSz: " + collectedData[index].packsz,
-                                        style = MaterialTheme.typography.h6,
-                                        color = MaterialTheme.colors.onBackground
+                                        //modifier = Modifier.width(156.dp)
                                     )
                                 }
-                                Spacer(modifier = Modifier.height(2.dp))
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(start = 5.dp),
-                                    horizontalArrangement = Arrangement.Start
-                                ) {
-                                    Text(
-                                        text = "Ndc: " + collectedData[index].ndc,
-                                        style = MaterialTheme.typography.h6,
-                                        color = MaterialTheme.colors.onBackground
-                                    )
-                                }
+
                             }
                         }
-
                         coroutineScope.launch {
                             if (firstEntry) {
                                 listState.scrollToItem(index = startIndex)

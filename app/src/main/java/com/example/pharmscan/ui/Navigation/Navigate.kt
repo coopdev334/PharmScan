@@ -27,6 +27,11 @@ fun Navigate(pharmScanViewModel: PharmScanViewModel) {
         addScanScreen(navController = navController, pharmScanViewModel)
         addSettingsScreen(navController = navController, pharmScanViewModel)
         addNetIdScreen(navController = navController, pharmScanViewModel)
+        addNdcNoMatchScreen(navController = navController, pharmScanViewModel)
+        addNdcMatchScreen(navController = navController, pharmScanViewModel)
+        addNoNetWarningScreen()
+        addResetDatabaseScreen(navController = navController, pharmScanViewModel)
+        addViewNdcScreen(navController = navController, pharmScanViewModel)
 
     }
 }
