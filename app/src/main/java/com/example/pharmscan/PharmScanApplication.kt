@@ -11,7 +11,7 @@ class PharmScanApplication : Application() {
 //    val database by lazy {
 //        PharmScanDb.invoke(this) }
 //    val repository by lazy {
-//        PharmScanRepo(database.getHostCompNameDao()) }
+//        PharmScanRepo(database.getHostIpAddressDao()) }
 
     // This is used for Toast displays throughout application
     // Note if Toast is used in coroutine, ONLY Main dispatcher can be used

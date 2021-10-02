@@ -4,18 +4,18 @@ import com.example.pharmscan.Data.DAO.*
 import com.example.pharmscan.Data.Tables.*
 
 class PharmScanRepo(
-    private val daoHostCompName: HostCompNameDao,
+    private val daoHostIpAddress: HostIpAddressDao,
     private val daoCollectedData: CollectedDataDao,
     private val daoSystemInfo: SystemInfoDao,
     private val daoPSNdc: PSNdcDao,
     private val daoSettings: SettingsDao
 ) {
-    // HostCompName db SQL
-    suspend fun insertHostCompName(hostCompName: HostCompName) = daoHostCompName.insert(hostCompName)
-    suspend fun deleteRowHostCompName(hostCompName: HostCompName) = daoHostCompName.deleteRow(hostCompName)
-    suspend fun deleteAllHostCompName() = daoHostCompName.deleteAll()
-    fun getAllLiveDataHostCompName() = daoHostCompName.getAllLiveData()
-    fun getAllHostCompName() = daoHostCompName.getAll()
+    // HostIpAddress db SQL
+    suspend fun insertHostIpAddress(hostIpAddress: HostIpAddress) = daoHostIpAddress.insert(hostIpAddress)
+    suspend fun deleteRowHostIpAddress(hostIpAddress: HostIpAddress) = daoHostIpAddress.deleteRow(hostIpAddress)
+    suspend fun deleteAllHostIpAddress() = daoHostIpAddress.deleteAll()
+    fun getAllLiveDataHostIpAddress() = daoHostIpAddress.getAllLiveData()
+    fun getAllHostIpAddress() = daoHostIpAddress.getAll()
 
     // CollectedData db SQL
     suspend fun insertCollectedData(collectedData: CollectedData) = daoCollectedData.insert(collectedData)
@@ -27,7 +27,7 @@ class PharmScanRepo(
     fun getAllCollectedDataOrderByTag() = daoCollectedData.getAllOrderByTag()
     fun getAllCollectedDataOrderByNdc() = daoCollectedData.getAllOrderByNdc()
     fun getColDataLastInsertedRow() = daoCollectedData.getLastInsertedRow()
-    suspend fun uploadCollectedData() = repoUploadCollectedData(daoCollectedData)
+    suspend fun uploadCollectedData() = repoUploadCollectedData(daoCollectedData, daoSystemInfo, daoSettings)
     fun getColDataQtyPriceByTag(tag: String) = daoCollectedData.getQtyPriceByTag(tag)
 
     // SystemInfo db SQL

@@ -8,6 +8,7 @@ import androidx.room.PrimaryKey
 // the rows for SQL operations defined in the DAO.
 @Entity(tableName = "SystemInfo")
 data class SystemInfo(
+    var hostIpAddress: String? = null,
     var opid: String? = null,
     var HHDeviceId: String? = null,
     var TotQty: String? = null,

@@ -17,7 +17,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.pharmscan.Data.PharmScanDb
 import com.example.pharmscan.Data.ScanLiveData
-import com.example.pharmscan.Data.Tables.PSNdc
 import com.example.pharmscan.Repository.PharmScanRepo
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ViewModel.PharmScanViewModelFactory
@@ -38,7 +37,7 @@ class MainActivity() : ComponentActivity() {
 
         val database = PharmScanDb.getDatabase(this)
         val repo = PharmScanRepo(
-            database.getHostCompNameDao(),
+            database.getHostIpAddressDao(),
             database.getCollectedDataDao(),
             database.getSystemInfoDao(),
             database.getPSNdcDao(),

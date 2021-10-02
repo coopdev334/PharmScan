@@ -154,7 +154,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                 manPrcOn.value = settings[0].ManualPrice == "on"
 
                 // Check if settings table has ONLY default row meaning user never setup settings table
-                if (settings[0].FileSendTagChgs == "0") {
+                if (settings[0].FileSendTagChgs == "0" || settings[0].hostServerPort == "0") {
                     toastObj.value = ToastDisplay("WARNING: Settings Not FULLY Setup", Toast.LENGTH_SHORT)!!
                 }
             }

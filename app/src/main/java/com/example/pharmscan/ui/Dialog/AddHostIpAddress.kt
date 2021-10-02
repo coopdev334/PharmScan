@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 
 @ExperimentalComposeUiApi
 @Composable
-fun AddHostComputer(
+fun AddHostIpAddress(
     showDialog: Boolean,
     onAdd: (name: String) -> Unit,
     onCancel: () -> Unit

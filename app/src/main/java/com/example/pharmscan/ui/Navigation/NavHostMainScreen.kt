@@ -19,17 +19,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
-import com.example.pharmscan.Data.Tables.HostCompName
+import com.example.pharmscan.Data.Tables.HostIpAddress
 import com.example.pharmscan.ViewModel.PharmScanViewModel
-import com.example.pharmscan.ui.Dialog.AddHostComputer
+import com.example.pharmscan.ui.Dialog.AddHostIpAddress
 import com.example.pharmscan.ui.Dialog.DeleteHostComputerAlert
+import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import kotlinx.coroutines.launch
 
 // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
 @ExperimentalComposeUiApi
 @ExperimentalFoundationApi
 fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
-    var delHostCompName = HostCompName("")
+    var delHostIpAddress = HostIpAddress("")
 
     composable(Screen.MainScreen.route) {
         val scaffoldState = rememberScaffoldState()
@@ -37,20 +38,20 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
         val listState = rememberLazyListState()
         val showDelHostCompDialog = remember { mutableStateOf(false) }
         val showAddHostCompDialog = remember { mutableStateOf(false) }
-        val hostCompNameList: List<HostCompName> by pharmScanViewModel.hostCompName.observeAsState(pharmScanViewModel.getAllHostCompName())
+        val hostIpAddressList: List<HostIpAddress> by pharmScanViewModel.hostIpAddress.observeAsState(pharmScanViewModel.getAllHostIpAddress())
 
-//        if (hostCompNameList.isNullOrEmpty()) {
+//        if (hostIpAddressList.isNullOrEmpty()) {
 //            // set to defaults
-//            pharmScanViewModel.insertHostCompName(HostCompName("0"))
+//            pharmScanViewModel.insertHostIpAddress(HostIpAddress("0"))
 //        }
 
         if (showDelHostCompDialog.value) {
             DeleteHostComputerAlert(
-                hostComp = delHostCompName.name!!,
+                hostComp = delHostIpAddress.name!!,
                 showDialog = showDelHostCompDialog.value,
                 onDel = {
                     showDelHostCompDialog.value = false
-                        pharmScanViewModel.deleteRowHostCompName(delHostCompName)
+                        pharmScanViewModel.deleteRowHostIpAddress(delHostIpAddress)
                 },
                 onCancel = {
                     showDelHostCompDialog.value = false
@@ -59,11 +60,11 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
         }
 
         if (showAddHostCompDialog.value) {
-            AddHostComputer(
+            AddHostIpAddress(
                 showDialog = showAddHostCompDialog.value,
                 onAdd = {
                     showAddHostCompDialog.value = false
-                        pharmScanViewModel.insertHostCompName(HostCompName(it))
+                        pharmScanViewModel.insertHostIpAddress(HostIpAddress(it))
                 },
                 onCancel = {
                     showAddHostCompDialog.value = false
@@ -181,7 +182,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                     horizontalArrangement = Arrangement.Center
                 ){
                     Text(
-                        text = "Select Host Computer",
+                        text = "Select Host Ip Address",
                         style = MaterialTheme.typography.h5,
                         color = MaterialTheme.colors.onBackground
                     )
@@ -192,7 +193,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                     state = listState,
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    items(hostCompNameList.size) { index ->
+                    items(hostIpAddressList.size) { index ->
                         Box(
                             Modifier
                                 .fillMaxWidth()
@@ -207,7 +208,7 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                text = hostCompNameList[index].name!!,
+                                text = hostIpAddressList[index].name!!,
                                 modifier = Modifier
                                     // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
                                     .combinedClickable(
@@ -216,10 +217,12 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                                             // connection to network other wise error.
                                             // Need to add network logic call here
                                             // Note selected row is passed to screen
-                                            navController.navigate(Screen.PhysInvUploadScreen.withArgs(hostCompNameList[index].name!!))
+                                            val columnValue = mapOf("hostIpAddress" to hostIpAddressList[index].name!!)
+                                            UpdateSystemInfo(pharmScanViewModel, columnValue)
+                                            navController.navigate(Screen.PhysInvUploadScreen.withArgs(hostIpAddressList[index].name!!))
                                         },
                                         onLongClick = {
-                                            delHostCompName = hostCompNameList[index]
+                                            delHostIpAddress = hostIpAddressList[index]
                                             showDelHostCompDialog.value = true
                                         }
                                     ),

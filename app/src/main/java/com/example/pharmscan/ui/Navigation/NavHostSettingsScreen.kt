@@ -69,7 +69,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
         }
 
 
-                    Column(
+        Column(
                 modifier = Modifier.padding(start = 10.dp, end = 8.dp),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Center
@@ -86,7 +86,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                 fontSize = 40.sp,
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
-                    .padding(start = 20.dp)
+                    .padding(start = 10.dp)
                     .clickable {
                         navController.popBackStack()
                     },
@@ -98,7 +98,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                 style = MaterialTheme.typography.h3,
                 color = MaterialTheme.colors.onBackground
             )
-            Spacer(modifier = Modifier.height(height = 30.dp))
+            Spacer(modifier = Modifier.height(height = 10.dp))
             Box(
                 Modifier
                     .fillMaxWidth()
@@ -111,28 +111,28 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                     .fillMaxSize()
                     .verticalScroll(scrollState)
                     ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            navController.navigate(Screen.NetIdScreen.route)
-                        },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Network Id",
-                        style = MaterialTheme.typography.h5,
-                        color = MaterialTheme.colors.onBackground
-                    )
-                }
-                Spacer(modifier = Modifier.height(height = 10.dp))
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(MaterialTheme.colors.secondary)
-                )
-                Spacer(modifier = Modifier.height(height = 10.dp))
+//                Row(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .clickable {
+//                            navController.navigate(Screen.NetIdScreen.route)
+//                        },
+//                    verticalAlignment = Alignment.CenterVertically
+//                ) {
+//                    Text(
+//                        text = "Network Id",
+//                        style = MaterialTheme.typography.h5,
+//                        color = MaterialTheme.colors.onBackground
+//                    )
+//                }
+//                Spacer(modifier = Modifier.height(height = 10.dp))
+//                Box(
+//                    Modifier
+//                        .fillMaxWidth()
+//                        .height(1.dp)
+//                        .background(MaterialTheme.colors.secondary)
+//                )
+//                Spacer(modifier = Modifier.height(height = 10.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -203,6 +203,27 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                     }
                     Spacer(modifier = Modifier.width(width = 30.dp))
                     TagChanges(pharmScanViewModel)
+                }
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(MaterialTheme.colors.secondary)
+                )
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Host Server Port",
+                        style = MaterialTheme.typography.h5,
+                        color = MaterialTheme.colors.onBackground
+                    )
+                    Spacer(modifier = Modifier.width(width = 25.dp))
+                    HostServerPort(pharmScanViewModel)
                 }
                 Spacer(modifier = Modifier.height(height = 10.dp))
                 Box(
@@ -375,6 +396,53 @@ fun TagChanges(pharmScanViewModel: PharmScanViewModel) {
         length = 4
     )
 }
+
+@Composable
+fun HostServerPort(pharmScanViewModel: PharmScanViewModel) {
+    var value by remember {mutableStateOf(InputWrapper("", null))}
+    val settingsNotInitialized = remember { mutableStateOf(true) }
+    val settings = pharmScanViewModel.getSettingsRow()
+
+    fun InputsValid (): Boolean {
+        when {
+            value.value.isEmpty() -> return false
+        }
+
+        return when {
+            value.errorId != null -> false
+            else -> true
+        }
+    }
+
+    fun onValueEntered(input: String) {
+        val errorId = InputValidator.getHostServerPortErrorIdOrNull(input)
+        value = value.copy(value = input, errorId = errorId)
+
+        if (InputsValid()) {
+            val columnValue = mapOf("hostServerPort" to input)
+            UpdateSettings(pharmScanViewModel, columnValue)
+        }
+    }
+
+    fun onImeActionClick() {
+    }
+
+    if (!settings.isNullOrEmpty() && settingsNotInitialized.value) {
+        settingsNotInitialized.value = false
+        value = value.copy(value = settings[0].hostServerPort.toString(), errorId = null)
+    }
+
+    OutlinedTextFieldWithMsg(
+        modifier = Modifier.onPreviewKeyEvent {KeyEvent -> KeyEvent.key.nativeKeyCode == 66},
+        enabled = true,
+        label = "",
+        inputWrapper = value,
+        onValueChange = ::onValueEntered,
+        onImeKeyAction = ::onImeActionClick,
+        length = 4
+    )
+}
+
 
 @Composable
 fun AutoLoadNdcCheckbox(pharmScanViewModel: PharmScanViewModel) {

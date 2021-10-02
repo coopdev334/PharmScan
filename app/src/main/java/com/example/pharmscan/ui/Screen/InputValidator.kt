@@ -64,4 +64,13 @@ object InputValidator {
             else -> null
         }
     }
+
+    fun getHostServerPortErrorIdOrNull(input: String): Int? {
+        return when {
+            isNotWholeNumber(input) -> R.string.Numeric_Only
+            input.length < 1 -> R.string.Requires_min_1_number
+            //etc..
+            else -> null
+        }
+    }
 }
