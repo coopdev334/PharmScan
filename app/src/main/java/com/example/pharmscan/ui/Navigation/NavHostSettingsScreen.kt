@@ -38,7 +38,9 @@ import com.example.pharmscan.ui.Dialog.GetOpId
 import com.example.pharmscan.ui.Dialog.SettingsPin
 import com.example.pharmscan.ui.Screen.*
 import com.example.pharmscan.ui.Utility.*
+import com.example.pharmscan.writeToFile
 import kotlinx.coroutines.runBlocking
+import java.util.*
 
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
@@ -88,6 +90,8 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                     .align(alignment = Alignment.Start)
                     .padding(start = 10.dp)
                     .clickable {
+                        val time: Date = Calendar.getInstance().getTime()
+                        writeToFile("Changed the settings table" + time.toString(), PharmScanApplication.context)
                         navController.popBackStack()
                     },
                 style = MaterialTheme.typography.h5,
@@ -294,6 +298,8 @@ fun PriceEntryCheckbox(pharmScanViewModel: PharmScanViewModel) {
         checked = checkedState,
         onCheckedChange = {
             if (it) {
+                val time: Date = Calendar.getInstance().getTime()
+                writeToFile("Manual price entry turned on at " + time.toString(), PharmScanApplication.context)
                 val columnValue = mapOf("ManualPrice" to "on")
                 UpdateSettings(pharmScanViewModel, columnValue)
             }else{
@@ -327,6 +333,8 @@ fun CostLimit(pharmScanViewModel: PharmScanViewModel) {
         value = value.copy(value = input, errorId = errorId)
 
         if (InputsValid()) {
+            val time: Date = Calendar.getInstance().getTime()
+            writeToFile("Cost limit set to " + input + " at " + time.toString(), PharmScanApplication.context)
             val columnValue = mapOf("CostLimit" to input)
             UpdateSettings(pharmScanViewModel, columnValue)
         }
@@ -373,6 +381,8 @@ fun TagChanges(pharmScanViewModel: PharmScanViewModel) {
         value = value.copy(value = input, errorId = errorId)
 
         if (InputsValid()) {
+            val time: Date = Calendar.getInstance().getTime()
+            writeToFile("Changed number of tags to " + input + " at " + time.toString(), PharmScanApplication.context)
             val columnValue = mapOf("FileSendTagChgs" to input)
             UpdateSettings(pharmScanViewModel, columnValue)
         }
@@ -420,6 +430,8 @@ fun HostServerPort(pharmScanViewModel: PharmScanViewModel) {
 
         if (InputsValid()) {
             val columnValue = mapOf("hostServerPort" to input)
+            val time: Date = Calendar.getInstance().getTime()
+            writeToFile("Changed server port to " + input + " at " + time.toString(), PharmScanApplication.context)
             UpdateSettings(pharmScanViewModel, columnValue)
         }
     }
@@ -459,6 +471,8 @@ fun AutoLoadNdcCheckbox(pharmScanViewModel: PharmScanViewModel) {
         onCheckedChange = {
             if (it) {
                 val columnValue = mapOf("AutoLoadNdcFile" to "on")
+                val time: Date = Calendar.getInstance().getTime()
+                writeToFile("Turned on AutoLoadNdcFile at " + time.toString(), PharmScanApplication.context)
                 UpdateSettings(pharmScanViewModel, columnValue)
             }else{
                 val columnValue = mapOf("AutoLoadNdcFile" to "off")

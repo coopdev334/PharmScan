@@ -11,9 +11,12 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
+import com.example.pharmscan.PharmScanApplication
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Screen.*
+import com.example.pharmscan.writeToFile
 import kotlinx.coroutines.runBlocking
+import java.util.*
 
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.addResetDatabaseScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
@@ -38,6 +41,8 @@ fun NavGraphBuilder.addResetDatabaseScreen(navController: NavController, pharmSc
 
             if (checkedStateHostIpAddress) {
                 runBlocking {
+                    val time: Date = Calendar.getInstance().getTime()
+                    writeToFile("Deleted All HostIP's Data at " + time.toString(), PharmScanApplication.context)
                     val job = pharmScanViewModel.deleteAllHostIpAddress()
                     job.join()
                 }
@@ -45,6 +50,8 @@ fun NavGraphBuilder.addResetDatabaseScreen(navController: NavController, pharmSc
 
             if (checkedStateNdc) {
                 runBlocking {
+                    val time: Date = Calendar.getInstance().getTime()
+                    writeToFile("Cleared the PSNDC table at " + time.toString(), PharmScanApplication.context)
                     val job = pharmScanViewModel.deleteAllPSNdc()
                     job.join()
                 }
@@ -52,6 +59,8 @@ fun NavGraphBuilder.addResetDatabaseScreen(navController: NavController, pharmSc
 
             if (checkedStateSettings) {
                 runBlocking {
+                    val time: Date = Calendar.getInstance().getTime()
+                    writeToFile("Cleared the settings table at " + time.toString(), PharmScanApplication.context)
                     val job = pharmScanViewModel.deleteAllSettings()
                     job.join()
                 }
@@ -59,6 +68,8 @@ fun NavGraphBuilder.addResetDatabaseScreen(navController: NavController, pharmSc
 
             if (checkedStateSystemInfo) {
                 runBlocking {
+                    val time: Date = Calendar.getInstance().getTime()
+                    writeToFile("Cleared the SystemInfo table at " + time.toString(), PharmScanApplication.context)
                     val job = pharmScanViewModel.deleteAllSystemInfo()
                     job.join()
                 }
