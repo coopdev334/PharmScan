@@ -15,17 +15,19 @@ import androidx.compose.ui.input.key.nativeKeyCode
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
+import com.example.pharmscan.ui.Utility.*
 
 @ExperimentalComposeUiApi
 @Composable
-fun AddHostComputer(
+fun SettingsPin(
     showDialog: Boolean,
-    onAdd: (name: String) -> Unit,
-    onCancel: () -> Unit
+    onCancel: () -> Unit,
+    onToResetDatabase: (opid: String) -> Unit
 ) {
     var text by remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
     val requester = FocusRequester()
+    var invalidInput = false
 
     if (showDialog) {
         AlertDialog(
@@ -33,8 +35,15 @@ fun AddHostComputer(
                 .size(240.dp, 230.dp)
                 .onPreviewKeyEvent { KeyEvent ->
                     if (KeyEvent.key.nativeKeyCode == 66) {
-                        keyboardController?.hide()
-                        onAdd(text)
+                        if (isNotWholeNumber(text)){
+                            invalidInput = true
+                            text = ""
+                        }else {
+                            if (text.isNotEmpty()) {
+                                keyboardController?.hide()
+                                onToResetDatabase(text)
+                            }
+                        }
                         true
                     } else {
                         false
@@ -53,14 +62,14 @@ fun AddHostComputer(
                     OutlinedTextField(
                         value = text,
                         onValueChange = {
-                            text = it
+                            text = ManageLength(it, 3)
                         },
                         label = {
                             Column(
                                 modifier = Modifier.padding(bottom = 8.dp)
                             ) {
                                 Text(
-                                    text = "Host Computer",
+                                    text = "Enter Pin",
                                     style = MaterialTheme.typography.h5
                                 )
                             }
@@ -71,6 +80,21 @@ fun AddHostComputer(
                             .focusRequester(requester)
                             .focusable()
                     )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        val textColor = if (invalidInput) {
+                            MaterialTheme.colors.error
+                        } else {
+                            MaterialTheme.colors.onBackground
+                        }
+                        Text(
+                            text = if (invalidInput) "Non Numeric Value" else "",
+                            style = MaterialTheme.typography.h6,
+                            color = textColor
+                        )
+                    }
                     Spacer(modifier = Modifier.height(40.dp))
                     Row(
                         modifier = Modifier.fillMaxSize(),
@@ -89,13 +113,18 @@ fun AddHostComputer(
                         Button(
                             modifier = Modifier.size(width = 90.dp, height = 45.dp),
                             onClick = {
-                                if (text.isNotEmpty()) {
-                                    onAdd(text)
+                                if (isNotWholeNumber(text)){
+                                    invalidInput = true
+                                    text = ""
+                                }else {
+                                    if (text.isNotEmpty()) {
+                                        onToResetDatabase(text)
+                                    }
                                 }
                             }
                         ) {
                             Text(
-                                text = " Add ",
+                                text = " OK ",
                                 style = MaterialTheme.typography.h6
                             )
                         }

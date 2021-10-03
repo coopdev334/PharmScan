@@ -7,8 +7,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.FileUtils
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
@@ -19,16 +17,12 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.pharmscan.Data.PharmScanDb
 import com.example.pharmscan.Data.ScanLiveData
-import com.example.pharmscan.Data.Tables.PSNdc
 import com.example.pharmscan.Repository.PharmScanRepo
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ViewModel.PharmScanViewModelFactory
 import com.example.pharmscan.ui.Navigation.Navigate
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import com.example.pharmscan.ui.theme.PharmScanTheme
-import java.io.*
-import java.nio.file.Files
-import java.nio.file.StandardOpenOption
 
 class MainActivity() : ComponentActivity() {
     private lateinit var psViewModel: PharmScanViewModel
@@ -43,7 +37,7 @@ class MainActivity() : ComponentActivity() {
 
         val database = PharmScanDb.getDatabase(this)
         val repo = PharmScanRepo(
-            database.getHostCompNameDao(),
+            database.getHostIpAddressDao(),
             database.getCollectedDataDao(),
             database.getSystemInfoDao(),
             database.getPSNdcDao(),
@@ -66,7 +60,6 @@ class MainActivity() : ComponentActivity() {
         intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "DISABLE_PLUGIN")
         sendBroadcast(intent)
 
-        writeToFile("TESTING", applicationContext)
         //Log.d("TESTING", "Checking the " + Manifest.permission.READ_EXTERNAL_STORAGE + " permissions.")
         if (ContextCompat.checkSelfPermission(
                 this@MainActivity,
@@ -193,31 +186,6 @@ class PharmScanBroadcastReceiver(pharmScanViewModel: PharmScanViewModel) : Broad
     }
 
 }
-
-public fun writeToFile(data: String, context: Context?) {
-    if (context != null) {
-        val path: File? = context!!.getExternalFilesDir(null)
-        Log.d("TESTING", path.toString())
-        val file: File? = File(path, "PharmaScanLogs.txt")
-        var content = data + "\n"
-        if(file != null){
-            if(file.exists()){
-                Files.write(file.toPath(), content.toByteArray(), StandardOpenOption.APPEND)
-                //val fw = FileWriter(file.absoluteFile)
-                //val bw = BufferedWriter(fw)
-                //bw.write(data)
-                //bw.close()
-            }
-        }
-        //val stream = FileOutputStream(file)
-        //try {
-        //    stream.write(data.toByteArray())
-        ////} finally {
-        //    stream.close()
-        //}
-    }
-}
-
 
 
 

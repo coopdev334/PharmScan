@@ -11,44 +11,38 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
-import com.example.pharmscan.PharmScanApplication
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Screen.*
-import com.example.pharmscan.writeToFile
 import kotlinx.coroutines.runBlocking
-import java.util.*
 
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.addResetDatabaseScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     composable(route = Screen.ResetDatabaseScreen.route) {
         var checkedStateColData by remember { mutableStateOf(false) }
-        var checkedStateHostCompName by remember { mutableStateOf(false) }
+        var checkedStateHostIpAddress by remember { mutableStateOf(false) }
         var checkedStateNdc by remember { mutableStateOf(false) }
         var checkedStateSettings by remember { mutableStateOf(false) }
         var checkedStateSystemInfo by remember { mutableStateOf(false) }
 
+
         fun onOkClick() {
             if (checkedStateColData) {
                 runBlocking {
-                    val time: Date = Calendar.getInstance().getTime()
-                    writeToFile("Deleted All Collected Data at " + time.toString(), PharmScanApplication.context)
                     val job = pharmScanViewModel.deleteAllCollectedData()
                     job.join()
                 }
 
             }
 
-            if (checkedStateHostCompName) {
+            if (checkedStateHostIpAddress) {
                 runBlocking {
-                    writeToFile("Deleted All Host Names.", PharmScanApplication.context)
-                    val job = pharmScanViewModel.deleteAllHostCompName()
+                    val job = pharmScanViewModel.deleteAllHostIpAddress()
                     job.join()
                 }
             }
 
             if (checkedStateNdc) {
                 runBlocking {
-                    writeToFile("Deleted NDC Table.", PharmScanApplication.context)
                     val job = pharmScanViewModel.deleteAllPSNdc()
                     job.join()
                 }
@@ -56,7 +50,6 @@ fun NavGraphBuilder.addResetDatabaseScreen(navController: NavController, pharmSc
 
             if (checkedStateSettings) {
                 runBlocking {
-                    writeToFile("Deleted Settings Table.", PharmScanApplication.context)
                     val job = pharmScanViewModel.deleteAllSettings()
                     job.join()
                 }
@@ -64,7 +57,6 @@ fun NavGraphBuilder.addResetDatabaseScreen(navController: NavController, pharmSc
 
             if (checkedStateSystemInfo) {
                 runBlocking {
-                    writeToFile("Deleted System Info table.", PharmScanApplication.context)
                     val job = pharmScanViewModel.deleteAllSystemInfo()
                     job.join()
                 }
@@ -138,8 +130,8 @@ fun NavGraphBuilder.addResetDatabaseScreen(navController: NavController, pharmSc
                 //Spacer(modifier = Modifier.width(width = 10.dp))
                 Checkbox(
                     modifier = Modifier.size(width = 40.dp, height = 20.dp),
-                    checked = checkedStateHostCompName,
-                    onCheckedChange = {checkedStateHostCompName = it}
+                    checked = checkedStateHostIpAddress,
+                    onCheckedChange = {checkedStateHostIpAddress = it}
                 )
             }
             Spacer(modifier = Modifier.height(height = 10.dp))

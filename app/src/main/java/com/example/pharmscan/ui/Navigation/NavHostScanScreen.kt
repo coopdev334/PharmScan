@@ -84,7 +84,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         var keyBrdInput by remember {mutableStateOf(0)}
         val showKyBrdInputDialog = remember { mutableStateOf(false) }
         val chgTagEnabled = rememberSaveable { mutableStateOf(false) }
-        val holdEnabled = rememberSaveable { mutableStateOf(false) }
+        //val holdEnabled = rememberSaveable { mutableStateOf(false) }
         val manPrcOn = remember { mutableStateOf(false) }
         val ndcLoading = remember { mutableStateOf(false) }
         val sysInfoNotInitialized = remember { mutableStateOf(true) }
@@ -103,14 +103,14 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
             disabledBackgroundColor = Color.LightGray,
             disabledContentColor = Color.Black
         )
-        val holdOnButtonColors: ButtonColors = buttonColors(
-            backgroundColor = Color.Cyan,
-            contentColor = Color.Black,
-            disabledBackgroundColor = Color.LightGray,
-            disabledContentColor = Color.Black
-        )
+//        val holdOnButtonColors: ButtonColors = buttonColors(
+//            backgroundColor = Color.Cyan,
+//            contentColor = Color.Black,
+//            disabledBackgroundColor = Color.LightGray,
+//            disabledContentColor = Color.Black
+//        )
         var chgTagButtonColor by remember {mutableStateOf(defaultButtonColors)}
-        var holdButtonColor by remember {mutableStateOf(defaultButtonColors)}
+        //var holdButtonColor by remember {mutableStateOf(defaultButtonColors)}
 
         // Enable scanner on scan screen entry and disable on leaving scan screen
         val con = PharmScanApplication()
@@ -122,11 +122,11 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         DisposableEffect(Unit) {
 
             onDispose {
-                val con = PharmScanApplication()
-                val intent = Intent()
-                intent.setAction("com.symbol.datawedge.api.ACTION")
-                intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "DISABLE_PLUGIN")
-                con.getAppContext()?.sendBroadcast(intent)
+                val psApp = PharmScanApplication()
+                val dwIntent = Intent()
+                dwIntent.action = "com.symbol.datawedge.api.ACTION"
+                dwIntent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "DISABLE_PLUGIN")
+                psApp.getAppContext()?.sendBroadcast(dwIntent)
             }
         }
 
@@ -154,7 +154,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                 manPrcOn.value = settings[0].ManualPrice == "on"
 
                 // Check if settings table has ONLY default row meaning user never setup settings table
-                if (settings[0].FileSendTagChgs == "0") {
+                if (settings[0].FileSendTagChgs == "0" || settings[0].hostServerPort == "0") {
                     toastObj.value = ToastDisplay("WARNING: Settings Not FULLY Setup", Toast.LENGTH_SHORT)!!
                 }
             }
@@ -173,7 +173,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                         onAdd = { tag ->
                             showKyBrdInputDialog.value = false
                             chgTagEnabled.value = true
-                            holdEnabled.value = true
+                            //holdEnabled.value = true
                             val sysInfoMap = mapOf("Tag" to tag)
                             UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
                             statusBarBkGrColor = "green"
@@ -193,6 +193,9 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                     )
                 }
 
+                // Currently Hold option is not used for pharmacy
+                // Hold button is now the quit button. Leave code
+                // here if Hold is ever used for pharmacy scans
                 "*** Hold ***" -> {
                     HoldQtyKyBrdInput(
                         keyBrdInput,
@@ -236,7 +239,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                 "*** Scan Tag ***" -> {
                     if (type == "LABEL-TYPE-CODE128") {
                         chgTagEnabled.value = true
-                        holdEnabled.value = true
+                        //holdEnabled.value = true
                         var sysInfoMap: Map<String, String>
                         if (barcode!!.isNullOrEmpty()){
                             toastObj.value.cancel()
@@ -415,32 +418,33 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 }
                             }
                         }
-                        IconToggleButton(
-                            checked = manPrcOn.value,
-                            onCheckedChange = {
-
-                                if (manPrcOn.value){
-                                    val colVal = mapOf("ManualPrice" to "off")
-                                    ToastDisplay("Manual Price OFF", Toast.LENGTH_SHORT)
-                                    UpdateSettings(pharmScanViewModel, colVal)
-                                }else{
-                                    val colVal = mapOf("ManualPrice" to "on")
-                                    ToastDisplay("Manual Price ON", Toast.LENGTH_SHORT)
-                                    UpdateSettings(pharmScanViewModel, colVal)
-                                }
-                                manPrcOn.value = it
-                            }
-                        ) {
-                            val tint by animateColorAsState(
-                                if (manPrcOn.value) Color.Red
-                                else Color.White
-                            )
-                            Icon(
-                                imageVector = Icons.Filled.AddCircle,
-                                contentDescription = "Localized description",
-                                tint = tint
-                            )
-                        }
+                        // Currently not using manual price icon
+//                        IconToggleButton(
+//                            checked = manPrcOn.value,
+//                            onCheckedChange = {
+//
+//                                if (manPrcOn.value){
+//                                    val colVal = mapOf("ManualPrice" to "off")
+//                                    ToastDisplay("Manual Price OFF", Toast.LENGTH_SHORT)
+//                                    UpdateSettings(pharmScanViewModel, colVal)
+//                                }else{
+//                                    val colVal = mapOf("ManualPrice" to "on")
+//                                    ToastDisplay("Manual Price ON", Toast.LENGTH_SHORT)
+//                                    UpdateSettings(pharmScanViewModel, colVal)
+//                                }
+//                                manPrcOn.value = it
+//                            }
+//                        ) {
+//                            val tint by animateColorAsState(
+//                                if (manPrcOn.value) Color.Red
+//                                else Color.White
+//                            )
+//                            Icon(
+//                                imageVector = Icons.Filled.AddCircle,
+//                                contentDescription = "Localized description",
+//                                tint = tint
+//                            )
+//                        }
                     }
                 )
             },
@@ -466,7 +470,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                     Spacer(modifier = Modifier.height(height = 8.dp))
                     Box(
                         modifier = Modifier
-                            .size(width = 308.dp, height = 242.dp)
+                            .size(width = 308.dp, height = 282.dp)
                             .clip(RoundedCornerShape(30.dp))
                             .background(Color.LightGray)
                     ) {
@@ -495,31 +499,41 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                         }
                                         Text(
                                             text = "Tag: $tag            $tagChangeCount/$fileSendTagChgs",
-                                            style = MaterialTheme.typography.h5,
+                                            style = MaterialTheme.typography.subtitle2,
                                             color = MaterialTheme.colors.onBackground
                                         )
                                     }
+                                    var totQty = "0.0"
+                                    var totAmt = "0.00"
+
+                                    if (!systemInfo.isNullOrEmpty()) {
+                                        totQty = systemInfo[0].TotQty!!
+                                        totAmt = systemInfo[0].TotAmt!!
+                                    }
+                                    Spacer(modifier = Modifier.height(height = 6.dp))
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth(),
                                         horizontalArrangement = Arrangement.SpaceEvenly
                                     ) {
-                                        var totQty = "0.0"
-                                        var totAmt = "0.00"
 
-                                        if (!systemInfo.isNullOrEmpty()) {
-                                            totQty = systemInfo[0].TotQty!!
-                                            totAmt = systemInfo[0].TotAmt!!
-                                        }
 
                                         Text(
                                             text = "Qty: " + totQty,
-                                            style = MaterialTheme.typography.h6,
+                                            style = MaterialTheme.typography.subtitle2,
                                             color = MaterialTheme.colors.onBackground
                                         )
+                                    }
+                                    Spacer(modifier = Modifier.height(height = 6.dp))
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceEvenly
+                                    ) {
+
                                         Text(
                                             text = "Amount: " + totAmt,
-                                            style = MaterialTheme.typography.h6,
+                                            style = MaterialTheme.typography.subtitle2,
                                             color = MaterialTheme.colors.onBackground
                                         )
                                     }
@@ -546,17 +560,6 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.Center
-                                    ) {
-                                        Text(
-                                            text = "File",
-                                            style = MaterialTheme.typography.h5,
-                                            color = MaterialTheme.colors.onBackground
-                                        )
-                                    }
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth(),
                                         horizontalArrangement = Arrangement.SpaceEvenly
                                     ) {
                                         var totRecCnt = "0"
@@ -566,8 +569,8 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                         }
 
                                         Text(
-                                            text = "Rec Count: " + totRecCnt,
-                                            style = MaterialTheme.typography.h5,
+                                            text = "File Rec Count: " + totRecCnt,
+                                            style = MaterialTheme.typography.body1,
                                             color = MaterialTheme.colors.onBackground
                                         )
                                     }
@@ -619,7 +622,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                     ) {
                                         Text(
                                             text = "Last Scan",
-                                            style = MaterialTheme.typography.h5,
+                                            style = MaterialTheme.typography.body1,
                                             color = MaterialTheme.colors.onBackground
                                         )
                                     }
@@ -641,7 +644,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                     ) {
                                         Text(
                                             text = "Price:${collectedData[0].price!!.trimStart { it == '0' }}   PkSz:${collectedData[0].packsz!!.trimStart { it == '0' }}",
-                                            style = MaterialTheme.typography.h6,
+                                            style = MaterialTheme.typography.h5,
                                             color = MaterialTheme.colors.onBackground
                                         )
                                     }
@@ -669,14 +672,14 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                         statusBarText = previousStatusBarText
                                         statusBarBkGrColor = previousBarBkgrColor
                                         chgTagButtonColor = defaultButtonColors
-                                        holdEnabled.value = true
+                                        //holdEnabled.value = true
                                     }else {
                                         previousStatusBarText = statusBarText
                                         previousBarBkgrColor = statusBarBkGrColor
                                         statusBarBkGrColor = "yellow"
                                         statusBarText = "*** Scan Tag ***"
                                         chgTagButtonColor = chgTagOnButtonColors
-                                        holdEnabled.value = false
+                                        //holdEnabled.value = false
                                     }
                                     coroutineScope.launch(Dispatchers.Default) {
                                         // TODO: Implement Changetagscan function
@@ -688,60 +691,69 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 Text(text = "Change Tag")
                             }
                             Button(
-                                enabled = holdEnabled.value,
+                                //enabled = holdEnabled.value,
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(50.dp))
                                     .size(width = 130.dp, height = 50.dp),
                                 onClick = {
-                                    if (statusBarText == "*** Hold ***") {
-                                        statusBarBkGrColor = "green"
-                                        statusBarText = "*** Scan BarCode ***"
-                                        holdButtonColor = defaultButtonColors
-                                        chgTagEnabled.value= true
-                                    } else {
-                                        val colDataRecCnt = pharmScanViewModel.getAllCollectedData()
-                                        if (colDataRecCnt.isNullOrEmpty()) {
-                                            ToastDisplay(
-                                                "Must have Last Scan for Hold",
-                                                Toast.LENGTH_LONG
-                                            )
-                                        } else {
-                                            previousStatusBarText = statusBarText
-                                            previousBarBkgrColor = statusBarBkGrColor
-                                            statusBarBkGrColor = "cyan"
-                                            statusBarText = "*** Hold ***"
-                                            holdButtonColor = holdOnButtonColors
-                                            chgTagEnabled.value = false
-                                        }
-                                    }
-                                },
-                                colors = holdButtonColor
-                            ) {
-                                Text(text = "Hold")
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(height = 8.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ){
+                                    navController.popBackStack()
 
-                            Button(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(50.dp))
-                                    .size(width = 270.dp, height = 35.dp),
-                                colors = buttonColors(backgroundColor = Color.Red),
-                                onClick = {
-                                  navController.popBackStack()
-                            }
+                                    // Hold option is not used for pharmacy. Hold button is
+                                    // changed to Quit button
+//                                    if (statusBarText == "*** Hold ***") {
+//                                        statusBarBkGrColor = "green"
+//                                        statusBarText = "*** Scan BarCode ***"
+//                                        holdButtonColor = defaultButtonColors
+//                                        chgTagEnabled.value= true
+//                                    } else {
+//                                        val colDataRecCnt = pharmScanViewModel.getAllCollectedData()
+//                                        if (colDataRecCnt.isNullOrEmpty()) {
+//                                            ToastDisplay(
+//                                                "Must have Last Scan for Hold",
+//                                                Toast.LENGTH_LONG
+//                                            )
+//                                        } else {
+//                                            previousStatusBarText = statusBarText
+//                                            previousBarBkgrColor = statusBarBkGrColor
+//                                            statusBarBkGrColor = "cyan"
+//                                            statusBarText = "*** Hold ***"
+//                                            holdButtonColor = holdOnButtonColors
+//                                            chgTagEnabled.value = false
+//                                        }
+//                                    }
+                                },
+                                //colors = holdButtonColor
+                                colors = buttonColors(backgroundColor = Color.Red)
                             ) {
+                                //Text(text = "Hold")
                                 Text(
                                     text = "Quit",
                                     color = Color.White
                                 )
-
                             }
                         }
+//                        Spacer(modifier = Modifier.height(height = 8.dp))
+//                        Row(
+//                            modifier = Modifier.fillMaxWidth(),
+//                            horizontalArrangement = Arrangement.SpaceEvenly
+//                        ){
+//
+//                            Button(
+//                                modifier = Modifier
+//                                    .clip(RoundedCornerShape(50.dp))
+//                                    .size(width = 270.dp, height = 35.dp),
+//                                colors = buttonColors(backgroundColor = Color.Red),
+//                                onClick = {
+//                                  navController.popBackStack()
+//                            }
+//                            ) {
+//                                Text(
+//                                    text = "Quit",
+//                                    color = Color.White
+//                                )
+//
+//                            }
+//                        }
                     }
 
                 }

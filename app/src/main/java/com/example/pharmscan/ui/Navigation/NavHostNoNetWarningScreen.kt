@@ -1,6 +1,5 @@
 package com.example.pharmscan.ui.Navigation
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -12,13 +11,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.example.pharmscan.PharmScanApplication
 import com.example.pharmscan.ui.Screen.Screen
-import com.example.pharmscan.writeToFile
 
-fun NavGraphBuilder.addNoNetWarningScreen(navController: NavController) {
+fun NavGraphBuilder.addNoNetWarningScreen() {
     composable(Screen.NoNetworkWarningScreen.route) {
-        writeToFile("Warning Screen has popup'd.", context = PharmScanApplication.context)
         Column(
             modifier = Modifier
                 .fillMaxSize()

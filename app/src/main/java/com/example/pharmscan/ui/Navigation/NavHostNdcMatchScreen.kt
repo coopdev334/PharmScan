@@ -14,6 +14,9 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.nativeKeyCode
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -57,6 +60,9 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
         val settings = pharmScanViewModel.getSettingsRow()
         val prcFocusRequester = remember {FocusRequester()}
         val qtyFocusRequester = remember {FocusRequester()}
+        val showKyBrdInputDialog = remember { mutableStateOf(false) }
+        var manprcFirstEntry = remember { mutableStateOf(true) }
+        var onClickEntered = remember { mutableStateOf(false) }
         var costLimit = 0.00
 
         if (!settings.isNullOrEmpty()) {
@@ -65,6 +71,11 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
         }
 
         if (manPrcOn.value) {
+            if (manprcFirstEntry.value) {
+                manprcFirstEntry.value = false
+                price =  price?.copy(value = "")
+            }
+
             DisposableEffect(Unit) {
                 prcFocusRequester.requestFocus()
                 onDispose { }
@@ -96,12 +107,12 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
                 qty?.value.isNullOrEmpty() -> return false
             }
 
-            when {
-                ndc?.errorId != null -> return false
-                price?.errorId != null -> return false
-                pksz?.errorId != null -> return false
-                qty?.errorId != null -> return false
-                else -> return true
+            return when {
+                ndc?.errorId != null -> false
+                price?.errorId != null -> false
+                pksz?.errorId != null -> false
+                qty?.errorId != null -> false
+                else -> true
             }
         }
 
@@ -116,15 +127,24 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
         }
 
         fun onImeActionClick() {
-            if (qty!!.errorId == null && price!!.errorId == null) {
-                InsertNdc(pharmScanViewModel, ndc!!.value, price!!.value, pksz!!.value, qty!!.value, "P")
-                navController.popBackStack()
-            }
+//            if (qty!!.errorId == null && price!!.errorId == null) {
+//                InsertNdc(pharmScanViewModel, ndc!!.value, price!!.value, pksz!!.value, qty!!.value, "P")
+//                navController.popBackStack()
+//            }
         }
 
         fun onOkClick() {
+            onClickEntered.value = true
             InsertNdc(pharmScanViewModel, ndc!!.value, price!!.value, pksz!!.value, qty!!.value, "P")
             navController.popBackStack()
+        }
+
+        if (showKyBrdInputDialog.value) {
+            showKyBrdInputDialog.value = false
+            if (InputsValid() && !onClickEntered.value)
+                onOkClick()
+            else
+                onClickEntered.value = false
         }
 
         Column(
@@ -155,6 +175,13 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
             Spacer(Modifier.height(10.dp))
             TextFieldWithMsg(
                 modifier = Modifier
+                    .onPreviewKeyEvent { KeyEvent ->
+                        if (KeyEvent.key.nativeKeyCode == 66) {
+                            showKyBrdInputDialog.value = true
+                            true
+                        }else
+                            false
+                    }
                     .focusRequester(prcFocusRequester),
                    // .onFocusChanged {},
                 enabled = manPrcOn.value,
@@ -180,6 +207,13 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
             Spacer(Modifier.height(10.dp))
             TextFieldWithMsg(
                 modifier = Modifier
+                    .onPreviewKeyEvent { KeyEvent ->
+                        if (KeyEvent.key.nativeKeyCode == 66) {
+                            showKyBrdInputDialog.value = true
+                            true
+                        }else
+                            false
+                    }
                     .focusRequester(qtyFocusRequester),
                 enabled = true,
                 label = "Qty",

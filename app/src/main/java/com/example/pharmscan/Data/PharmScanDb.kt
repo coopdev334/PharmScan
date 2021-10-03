@@ -11,18 +11,18 @@ import com.example.pharmscan.Data.Tables.*
 // NOTE: Increament version each time any database changes are made
 @Database(
     entities = [
-        HostCompName::class,
+        HostIpAddress::class,
         CollectedData::class,
         SystemInfo::class,
         PSNdc::class,
         Settings::class
     ],
-    version = 15,
+    version = 16,
     exportSchema = false
 )
 abstract class PharmScanDb: RoomDatabase() {
     // These functions will return the Dao's for each table
-    abstract fun getHostCompNameDao(): HostCompNameDao
+    abstract fun getHostIpAddressDao(): HostIpAddressDao
     abstract fun getCollectedDataDao(): CollectedDataDao
     abstract fun getSystemInfoDao(): SystemInfoDao
     abstract fun getPSNdcDao(): PSNdcDao

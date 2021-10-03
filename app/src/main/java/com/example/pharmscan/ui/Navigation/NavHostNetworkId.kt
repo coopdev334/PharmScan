@@ -13,12 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import com.example.pharmscan.ViewModel.InsertNdc
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Screen.*
 import com.example.pharmscan.ui.Utility.UpdateSettings
@@ -27,7 +23,7 @@ import com.example.pharmscan.ui.Utility.UpdateSettings
 fun NavGraphBuilder.addNetIdScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     composable(route = Screen.NetIdScreen.route) {
         val settings = pharmScanViewModel.getSettingsRow()
-        var hostacct: InputWrapper? by remember { mutableStateOf(InputWrapper(settings[0].hostAcct!!, null)) }
+        var hostacct: InputWrapper? by remember { mutableStateOf(InputWrapper(settings[0].hostServerPort!!, null)) }
         var hostpassword: InputWrapper? by remember { mutableStateOf(InputWrapper(settings[0].hostPassword!!, null)) }
         val acctFocusRequester = remember {FocusRequester()}
 
@@ -61,14 +57,14 @@ fun NavGraphBuilder.addNetIdScreen(navController: NavController, pharmScanViewMo
 
         fun onImeActionClick() {
             if (hostacct!!.errorId == null && hostpassword!!.errorId == null) {
-                val columnValue = mapOf("hostAcct" to hostacct!!.value, "hostPassword" to hostpassword!!.value)
+                val columnValue = mapOf("hostServerPort" to hostacct!!.value, "hostPassword" to hostpassword!!.value)
                 UpdateSettings(pharmScanViewModel, columnValue)
                 navController.popBackStack()
             }
         }
 
         fun onOkClick() {
-            val columnValue = mapOf("hostAcct" to hostacct!!.value, "hostPassword" to hostpassword!!.value)
+            val columnValue = mapOf("hostServerPort" to hostacct!!.value, "hostPassword" to hostpassword!!.value)
             UpdateSettings(pharmScanViewModel, columnValue)
             navController.popBackStack()
         }

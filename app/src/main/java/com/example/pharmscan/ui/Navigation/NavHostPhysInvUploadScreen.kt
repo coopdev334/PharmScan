@@ -23,7 +23,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.pharmscan.Data.Tables.PSNdc
-import com.example.pharmscan.Data.Tables.Settings
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.GetOpId
 import com.example.pharmscan.ui.Screen.Screen
@@ -35,11 +34,11 @@ import java.io.File
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     composable(
-        route = Screen.PhysInvUploadScreen.route + "/{hostCompName}",
+        route = Screen.PhysInvUploadScreen.route + "/{hostIpAddress}",
         // Define argument list to pass to this composable in composable constructor
         // arguments parameter which is a list of navArguments.
         arguments = listOf(
-            navArgument("hostCompName") {
+            navArgument("hostIpAddress") {
                 type = NavType.StringType
                 nullable = false
             }
@@ -47,7 +46,7 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
     ) {
         // Get the arguments passed to this composable by key name
         // arg must be present
-        val argTextHostComputer = it.arguments!!.getString("hostCompName")
+        val argTextHostIpAddress = it.arguments!!.getString("hostIpAddress")
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
         val showEnterOpIdDialog = remember { mutableStateOf(false) }
@@ -192,7 +191,7 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                         color = MaterialTheme.colors.onBackground
                     )
                     Text(
-                        text = argTextHostComputer!!,
+                        text = argTextHostIpAddress!!,
                         fontSize = 40.sp,
                         modifier = Modifier
                             .align(alignment = Alignment.CenterHorizontally)

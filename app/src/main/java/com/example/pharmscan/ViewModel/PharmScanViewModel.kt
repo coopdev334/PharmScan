@@ -13,28 +13,28 @@ class PharmScanViewModel(
 ): ViewModel() {
 
     // **********************************************************************
-    // HostCompName
+    // HostIpAddress
     // LiveData holds state which is observed by the UI
     // (state flows down from ViewModel)
-    var hostCompName: LiveData<List<HostCompName>> = getAllLiveDataHostCompName()
+    var hostIpAddress: LiveData<List<HostIpAddress>> = getAllLiveDataHostIpAddress()
 
     // Settings viewModel db interface
     // These functions will be called by the composable views to get and set database information
     // Suspend function modifier is not used here but in repo and dao
-    fun insertHostCompName(hostCompName: HostCompName) = CoroutineScope(Dispatchers.IO).launch {
-        repo.insertHostCompName(hostCompName)
+    fun insertHostIpAddress(hostIpAddress: HostIpAddress) = CoroutineScope(Dispatchers.IO).launch {
+        repo.insertHostIpAddress(hostIpAddress)
     }
 
-    fun deleteRowHostCompName(hostCompName: HostCompName) = CoroutineScope(Dispatchers.IO).launch {
-        repo.deleteRowHostCompName(hostCompName)
+    fun deleteRowHostIpAddress(hostIpAddress: HostIpAddress) = CoroutineScope(Dispatchers.IO).launch {
+        repo.deleteRowHostIpAddress(hostIpAddress)
     }
 
-    fun deleteAllHostCompName() = CoroutineScope(Dispatchers.IO).launch {
-        repo.deleteAllHostCompName()
+    fun deleteAllHostIpAddress() = CoroutineScope(Dispatchers.IO).launch {
+        repo.deleteAllHostIpAddress()
     }
 
-    fun getAllLiveDataHostCompName() = repo.getAllLiveDataHostCompName()
-    fun getAllHostCompName() = repo.getAllHostCompName()
+    fun getAllLiveDataHostIpAddress() = repo.getAllLiveDataHostIpAddress()
+    fun getAllHostIpAddress() = repo.getAllHostIpAddress()
 
 
     // **********************************************************************
@@ -66,8 +66,7 @@ class PharmScanViewModel(
     fun getColDataLastInsertedRow() = repo.getColDataLastInsertedRow()
     fun getColDataQtyPriceByTag(tag: String) = repo.getColDataQtyPriceByTag(tag)
 
-    // TODO: use IO dispatcher when Toast removed
-    fun uploadCollectedData() = CoroutineScope(Dispatchers.Main).launch {
+    fun uploadCollectedData() = CoroutineScope(Dispatchers.IO).launch {
         repo.uploadCollectedData()
     }
 
