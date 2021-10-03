@@ -23,15 +23,6 @@ fun is2DecNumber(s: String?): Boolean {
     }
 }
 
-// Determine is string value is valid decimal numeric with 2 decimal places
-fun is2DecNumber(s: String?): Boolean {
-    if (s.isNullOrEmpty()) {
-        return false
-    } else {
-        return s.matches("""^(\d+\.{1}\d{2})$""".toRegex())
-    }
-}
-
 // Determine is string value is valid whole number no decimals
 fun isNotWholeNumber(s: String?): Boolean {
     if (s.isNullOrEmpty()) {
