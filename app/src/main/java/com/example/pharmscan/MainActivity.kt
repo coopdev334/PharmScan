@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
@@ -23,6 +24,9 @@ import com.example.pharmscan.ViewModel.PharmScanViewModelFactory
 import com.example.pharmscan.ui.Navigation.Navigate
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import com.example.pharmscan.ui.theme.PharmScanTheme
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.StandardOpenOption
 
 class MainActivity() : ComponentActivity() {
     private lateinit var psViewModel: PharmScanViewModel
@@ -184,7 +188,19 @@ class PharmScanBroadcastReceiver(pharmScanViewModel: PharmScanViewModel) : Broad
 
         }
     }
-
+}
+public fun writeToFile(data: String, context: Context?) {
+    if (context != null) {
+        val path: File? = context!!.getExternalFilesDir(null)
+        Log.d("TESTING", path.toString())
+        val file: File? = File(path, "PharmaScanLogs.txt")
+        var content = data + "\n"
+        if (file != null) {
+            if (file.exists()) {
+                Files.write(file.toPath(), content.toByteArray(), StandardOpenOption.APPEND)
+            }
+        }
+    }
 }
 
 

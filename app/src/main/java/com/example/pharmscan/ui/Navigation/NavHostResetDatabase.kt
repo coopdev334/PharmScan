@@ -28,6 +28,8 @@ fun NavGraphBuilder.addResetDatabaseScreen(navController: NavController, pharmSc
         fun onOkClick() {
             if (checkedStateColData) {
                 runBlocking {
+                    val time: Date = Calendar.getInstance().getTime()
+                    writeToFile("Deleted All Collected Data at " + time.toString(), PharmScanApplication.context)
                     val job = pharmScanViewModel.deleteAllCollectedData()
                     job.join()
                 }
