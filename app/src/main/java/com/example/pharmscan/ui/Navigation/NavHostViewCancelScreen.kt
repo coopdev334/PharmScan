@@ -24,10 +24,13 @@ import com.example.pharmscan.ui.Utility.SearchBar
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
 import com.example.pharmscan.Data.Tables.CollectedData
+import com.example.pharmscan.PharmScanApplication
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.CancelCollDataRecord
 import com.example.pharmscan.ui.Utility.ClearText
+import com.example.pharmscan.ui.Utility.writeToFile
 import kotlinx.coroutines.launch
+import java.util.*
 
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
@@ -58,6 +61,8 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                     selectedIndex = -1
                 },
                 onCancelRecord = {
+                    val time: Date = Calendar.getInstance().getTime()
+                    writeToFile("Canceled this record " + collectedData[selectedIndex].toString() + " at " + time.toString(), PharmScanApplication.context)
                     collectedData[selectedIndex].qty = "000000"
                     pharmScanViewModel.insertCollectedData(collectedData[selectedIndex])
                     showCancelCollDataDialog.value = false
