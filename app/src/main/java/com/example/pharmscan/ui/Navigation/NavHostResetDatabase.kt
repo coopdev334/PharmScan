@@ -14,7 +14,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import com.example.pharmscan.PharmScanApplication
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Screen.*
-import com.example.pharmscan.writeToFile
+import com.example.pharmscan.ui.Utility.writeToFile
 import kotlinx.coroutines.runBlocking
 import java.util.*
 

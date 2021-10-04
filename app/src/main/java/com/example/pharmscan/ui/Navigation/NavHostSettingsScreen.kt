@@ -38,7 +38,7 @@ import com.example.pharmscan.ui.Dialog.GetOpId
 import com.example.pharmscan.ui.Dialog.SettingsPin
 import com.example.pharmscan.ui.Screen.*
 import com.example.pharmscan.ui.Utility.*
-import com.example.pharmscan.writeToFile
+import com.example.pharmscan.ui.Utility.writeToFile
 import kotlinx.coroutines.runBlocking
 import java.util.*
 
