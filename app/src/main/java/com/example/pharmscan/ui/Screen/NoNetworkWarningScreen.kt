@@ -14,15 +14,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.pharmscan.ui.Utility.BackHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 @Composable
 fun NoNetworkWarningScreen() {
+    var elapsedMinutes = remember { mutableStateOf(0) }
+    val timelinePoint = LocalDateTime.now()
+    var now = LocalDateTime.now()
+    LaunchedEffect(Unit) {
+        CoroutineScope(Dispatchers.Default).launch {
+            while (true) {
+                Thread.sleep(5000)
+                now = LocalDateTime.now()
+                elapsedMinutes.value = java.time.Duration.between(timelinePoint, now).toMinutes().toInt()
+            }
+        }
+    }
 
     // Handle backstack and do nothing for warning screen consuming the
     // backstack button so warning screen stays in foreground
     BackHandler(){
         Log.d("coop", "backstack")
     }
+
 
     Column(
         modifier = Modifier
@@ -62,8 +82,9 @@ fun NoNetworkWarningScreen() {
             style = MaterialTheme.typography.h5,
             color = MaterialTheme.colors.onBackground
         )
+        val mins = elapsedMinutes.value.toString()
         Text(
-            text = "32 minutes",
+            text = "$mins minutes",
             style = MaterialTheme.typography.h4,
             color = MaterialTheme.colors.onBackground
         )
