@@ -1,13 +1,17 @@
 package com.example.pharmscan.Repository
 
 import android.util.Log
-import com.example.pharmscan.Data.Tables.HostIpAddress
-import kotlinx.coroutines.runBlocking
-import java.io.*
+import androidx.navigation.NavController
+import com.example.pharmscan.PharmScanApplication
+import com.example.pharmscan.R
+import com.example.pharmscan.ui.Screen.Screen
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.io.PrintWriter
 import java.net.Socket
-import java.nio.file.Files.delete
 
-fun SendCollectedDataFileToHost(hostIpAddress: String, hostServerPort: String) {
+suspend fun repoSendCollectedDataFileToHost(hostIpAddress: String, hostServerPort: String) {
     val requiredSuffixes = listOf("new")
     var fileList = listOf<String>()
 
@@ -15,7 +19,8 @@ fun SendCollectedDataFileToHost(hostIpAddress: String, hostServerPort: String) {
         return requiredSuffixes.contains(file.extension)
     }
 
-    File("/sdcard/Download/").walkTopDown().filter { file ->
+    val filePath = PharmScanApplication.context?.getString(R.string.collected_data_file_path)
+    File(filePath!!).walkTopDown().filter { file ->
         file.isFile && hasRequiredSuffix(file)
     }.forEach {
         fileList = fileList + it.absolutePath
@@ -25,13 +30,15 @@ fun SendCollectedDataFileToHost(hostIpAddress: String, hostServerPort: String) {
     Log.d("coop", fileList.size.toString())
 
     for (fileName in fileList) {
-        Log.d("coop", "sending")
+        Log.d("coop", "sending $fileName")
         try {
             Socket(hostIpAddress, hostServerPort.toInt()).use { soc ->
                 PrintWriter(soc.getOutputStream(), true).use { writer ->
+                    writer.println(fileName.substringAfterLast("/"))
                     File(fileName).forEachLine { line ->
                         writer.println(line)
                     }
+                    writer.println("END OF FILE")
                 }
             }
 

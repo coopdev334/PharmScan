@@ -1,6 +1,7 @@
 package com.example.pharmscan.ui.Navigation
 
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
@@ -179,13 +180,23 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                             statusBarBkGrColor = "green"
                             statusBarText = "*** Scan BarCode ***"
                             chgTagButtonColor = defaultButtonColors
+                            val sysInfo = pharmScanViewModel.getSystemInfoRow()
 
-                            // TODO: temp for testing. Do warning check in network send code not here
-//                            val tagchgsLimit = pharmScanViewModel.getSettingsRow()[0].FileSendTagChgs!!.toInt()
-//                            val tagchgs = pharmScanViewModel.getSystemInfoRow()[0].TagChangeCount!!.toInt()
-//                             if (tagchgs >= tagchgsLimit) {
-//                                 navController.navigate(Screen.NoNetworkWarningScreen.route)
-//                             }
+                            if (sysInfo[0].TotRecCount!!.toInt() > 0) {
+                                val tagchgsLimit = pharmScanViewModel.getSettingsRow()[0].FileSendTagChgs!!.toInt()
+                                val tagchgs = sysInfo[0].TagChangeCount!!.toInt()
+                                if (tagchgs >= tagchgsLimit) {
+                                    val sysInfoMap = mapOf("TotRecCount" to "0", "TagChangeCount" to "0")
+                                    UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
+                                    Log.d("coop", "Tag change exceeded. Reset")
+                                    pharmScanViewModel.uploadCollectedData()
+                                    //navController.navigate(Screen.NoNetworkWarningScreen.route)
+                                }
+                            }else {
+                                val sysInfoMap = mapOf("TotRecCount" to "0", "TagChangeCount" to "0")
+                                UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
+                                ToastDisplay("Collected Data Table Empty", Toast.LENGTH_SHORT)
+                            }
                         },
                         onCancel = {
                             showKyBrdInputDialog.value = false
@@ -251,6 +262,23 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 statusBarBkGrColor = "green"
                                 statusBarText = "*** Scan BarCode ***"
                                 chgTagButtonColor = defaultButtonColors
+                                val sysInfo = pharmScanViewModel.getSystemInfoRow()
+
+                                if (sysInfo[0].TotRecCount!!.toInt() > 0) {
+                                    val tagchgsLimit = pharmScanViewModel.getSettingsRow()[0].FileSendTagChgs!!.toInt()
+                                    val tagchgs = sysInfo[0].TagChangeCount!!.toInt()
+                                    if (tagchgs >= tagchgsLimit) {
+                                        val sysInfoMap = mapOf("TotRecCount" to "0", "TagChangeCount" to "0")
+                                        UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
+                                        Log.d("coop", "Tag change exceeded. Reset")
+                                        pharmScanViewModel.uploadCollectedData()
+                                        //navController.navigate(Screen.NoNetworkWarningScreen.route)
+                                    }
+                                }else {
+                                    val sysInfoMap = mapOf("TotRecCount" to "0", "TagChangeCount" to "0")
+                                    UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
+                                    ToastDisplay("Collected Data Table Empty", Toast.LENGTH_SHORT)
+                                }
                             }else {
                                 toastObj.value.cancel()
                                 ToastDisplay("Code128 Tag barcode invalid length}", Toast.LENGTH_LONG)

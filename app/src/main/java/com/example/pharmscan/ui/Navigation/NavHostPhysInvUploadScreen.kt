@@ -23,6 +23,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.pharmscan.Data.Tables.PSNdc
+import com.example.pharmscan.PharmScanApplication
+import com.example.pharmscan.R
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.GetOpId
 import com.example.pharmscan.ui.Screen.Screen
@@ -70,7 +72,8 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                             if (sysInfo[0].NdcLoading == "off") {
                                 ToastDisplay("Downloading Started...", Toast.LENGTH_SHORT)
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    readFileLineByLineUsingForEachLine(pharmScanViewModel,"/sdcard/Download/psndc.dat")
+                                    val filePath = PharmScanApplication.context?.getString(R.string.collected_data_file_path)
+                                    readFileLineByLineUsingForEachLine(pharmScanViewModel,"${filePath}psndc.dat")
                                 }
                             }
                         }

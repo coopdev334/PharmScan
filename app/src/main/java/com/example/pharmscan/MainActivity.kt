@@ -91,7 +91,6 @@ class MainActivity() : ComponentActivity() {
         val sysInfoMap = mapOf("NdcLoading" to "off")
         UpdateSystemInfo(psViewModel, sysInfoMap)
 
-
         setContent {
             PharmScanTheme {
                 // A surface container using the 'background' color from the theme
@@ -186,6 +185,5 @@ class PharmScanBroadcastReceiver(pharmScanViewModel: PharmScanViewModel) : Broad
     }
 
 }
-
 
 

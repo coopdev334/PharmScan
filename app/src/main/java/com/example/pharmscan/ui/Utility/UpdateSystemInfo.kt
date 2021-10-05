@@ -43,6 +43,7 @@ fun UpdateSystemInfo(pharmScanViewModel: PharmScanViewModel, columnValue: Map<St
                     systemInfo[0].Tag = item.value
 
                 }
+                "TagChangeCount" -> systemInfo[0].TagChangeCount = item.value
                 "NdcLoading" -> systemInfo[0].NdcLoading = item.value
             }
         }

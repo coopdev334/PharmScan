@@ -1,10 +1,7 @@
 package com.example.pharmscan.ui.Navigation
 
-import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -12,7 +9,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -23,22 +19,15 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.pharmscan.ViewModel.PharmScanViewModel
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.nativeKeyCode
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import com.example.pharmscan.Data.Tables.Settings
-import com.example.pharmscan.PharmScanApplication
 import com.example.pharmscan.R
-import com.example.pharmscan.ViewModel.InsertNdc
-import com.example.pharmscan.ui.Dialog.GetOpId
 import com.example.pharmscan.ui.Dialog.SettingsPin
 import com.example.pharmscan.ui.Screen.*
 import com.example.pharmscan.ui.Utility.*
-import kotlinx.coroutines.runBlocking
 
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
