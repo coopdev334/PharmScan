@@ -1,10 +1,12 @@
 package com.example.pharmscan.Repository
 
+import android.content.Intent
 import android.util.Log
 import androidx.navigation.NavController
 import com.example.pharmscan.PharmScanApplication
 import com.example.pharmscan.R
 import com.example.pharmscan.ui.Screen.Screen
+import com.example.pharmscan.ui.Utility.SystemMsg
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -51,6 +53,7 @@ suspend fun repoSendCollectedDataFileToHost(hostIpAddress: String, hostServerPor
         } catch (e: IOException) {
             Log.d("coop", "IOException")
             Log.d("coop", e.message!!)
+            SystemMsg("NONETWORK", e.message!!)
         }
     }
 }

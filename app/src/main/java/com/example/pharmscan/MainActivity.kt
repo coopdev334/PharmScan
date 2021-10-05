@@ -27,6 +27,7 @@ import com.example.pharmscan.ui.theme.PharmScanTheme
 class MainActivity() : ComponentActivity() {
     private lateinit var psViewModel: PharmScanViewModel
     private lateinit var receiver: PharmScanBroadcastReceiver
+    private lateinit var receiverNoNet: SystemMsgBroadcastReceiver
 
     // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
     @ExperimentalAnimationGraphicsApi
@@ -53,6 +54,13 @@ class MainActivity() : ComponentActivity() {
         intentFilter.addAction("com.example.pharmscan.ACTION")
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT)
         PharmScanApplication.context?.registerReceiver(receiver, intentFilter)
+
+        //Create broadcast receiver for no network warning screen
+        receiverNoNet = SystemMsgBroadcastReceiver(this)
+        val intentFilter1 = IntentFilter()
+        intentFilter1.addAction("com.example.pharmscan.SYSTEM_MSG")
+        intentFilter1.addCategory(Intent.CATEGORY_DEFAULT)
+        PharmScanApplication.context?.registerReceiver(receiverNoNet, intentFilter1)
 
         // Disable scanner when app starts
         val intent = Intent()
@@ -187,3 +195,15 @@ class PharmScanBroadcastReceiver(pharmScanViewModel: PharmScanViewModel) : Broad
 }
 
 
+class SystemMsgBroadcastReceiver(context: Context?) : BroadcastReceiver()  {
+    val mainActivityContext = context
+
+    override fun onReceive(context: Context?, intent: Intent?) {
+        val action = intent?.getStringExtra("com.example.pharmscan.SYSTEM_MSG_TYPE")
+        val content = intent?.getStringExtra("com.example.pharmscan.SYSTEM_MSG_CONTENT")
+        val i = Intent(mainActivityContext, SystemMsgActivity::class.java)
+        i.action = action
+        i.putExtra("com.example.pharmscan.SYSTEM_MSG_CONTENT", content)
+        mainActivityContext?.startActivity(i)
+    }
+}
