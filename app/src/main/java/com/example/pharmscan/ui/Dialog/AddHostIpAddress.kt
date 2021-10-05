@@ -60,7 +60,7 @@ fun AddHostIpAddress(
                                 modifier = Modifier.padding(bottom = 8.dp)
                             ) {
                                 Text(
-                                    text = "Host Computer",
+                                    text = "Host Ip Address",
                                     style = MaterialTheme.typography.h5
                                 )
                             }

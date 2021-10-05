@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
@@ -24,13 +23,11 @@ import com.example.pharmscan.ViewModel.PharmScanViewModelFactory
 import com.example.pharmscan.ui.Navigation.Navigate
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import com.example.pharmscan.ui.theme.PharmScanTheme
-import java.io.File
-import java.nio.file.Files
-import java.nio.file.StandardOpenOption
 
 class MainActivity() : ComponentActivity() {
     private lateinit var psViewModel: PharmScanViewModel
     private lateinit var receiver: PharmScanBroadcastReceiver
+    private lateinit var receiverNoNet: SystemMsgBroadcastReceiver
 
     // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
     @ExperimentalAnimationGraphicsApi
@@ -57,6 +54,13 @@ class MainActivity() : ComponentActivity() {
         intentFilter.addAction("com.example.pharmscan.ACTION")
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT)
         PharmScanApplication.context?.registerReceiver(receiver, intentFilter)
+
+        //Create broadcast receiver for no network warning screen
+        receiverNoNet = SystemMsgBroadcastReceiver(this)
+        val intentFilter1 = IntentFilter()
+        intentFilter1.addAction("com.example.pharmscan.SYSTEM_MSG")
+        intentFilter1.addCategory(Intent.CATEGORY_DEFAULT)
+        PharmScanApplication.context?.registerReceiver(receiverNoNet, intentFilter1)
 
         // Disable scanner when app starts
         val intent = Intent()
@@ -94,7 +98,6 @@ class MainActivity() : ComponentActivity() {
         // Intialize database settings
         val sysInfoMap = mapOf("NdcLoading" to "off")
         UpdateSystemInfo(psViewModel, sysInfoMap)
-
 
         setContent {
             PharmScanTheme {
@@ -187,5 +190,20 @@ class PharmScanBroadcastReceiver(pharmScanViewModel: PharmScanViewModel) : Broad
             psViewModel.scanLiveData.value = ScanLiveData(decodedData, decodedLabelType)
 
         }
+    }
+
+}
+
+
+class SystemMsgBroadcastReceiver(context: Context?) : BroadcastReceiver()  {
+    val mainActivityContext = context
+
+    override fun onReceive(context: Context?, intent: Intent?) {
+        val action = intent?.getStringExtra("com.example.pharmscan.SYSTEM_MSG_TYPE")
+        val content = intent?.getStringExtra("com.example.pharmscan.SYSTEM_MSG_CONTENT")
+        val i = Intent(mainActivityContext, SystemMsgActivity::class.java)
+        i.action = action
+        i.putExtra("com.example.pharmscan.SYSTEM_MSG_CONTENT", content)
+        mainActivityContext?.startActivity(i)
     }
 }
