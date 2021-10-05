@@ -13,6 +13,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.example.pharmscan.ui.Screen.FileIoExceptionScreen
+import com.example.pharmscan.ui.Screen.NoFileFoundScreen
 import com.example.pharmscan.ui.Screen.NoNetworkWarningScreen
 import com.example.pharmscan.ui.theme.PharmScanTheme
 
@@ -29,6 +31,24 @@ class SystemMsgActivity : AppCompatActivity() {
                     Log.d("coop", "NONETWORK: $content")
                     PharmScanTheme {
                        NoNetworkWarningScreen()
+                    }
+                }
+                "NOFILEFOUND" -> {
+                    Log.d("coop", "NOFILEFOUND: $content")
+                    PharmScanTheme {
+                        NoFileFoundScreen(content!!)
+                    }
+                }
+                "COLLDATAEMPTY" -> {
+                    Log.d("coop", "COLLDATAEMPTY: $content")
+                    PharmScanTheme {
+                        NoFileFoundScreen(content!!)
+                    }
+                }
+                "FILEIOEXCEPTION" -> {
+                    Log.d("coop", "FILEIOEXCEPTION: $content")
+                    PharmScanTheme {
+                        FileIoExceptionScreen(content!!)
                     }
                 }
             }

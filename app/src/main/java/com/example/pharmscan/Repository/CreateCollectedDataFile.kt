@@ -6,6 +6,7 @@ import com.example.pharmscan.Data.DAO.CollectedDataDao
 import com.example.pharmscan.PharmScanApplication
 import com.example.pharmscan.R
 import com.example.pharmscan.ui.Screen.Screen
+import com.example.pharmscan.ui.Utility.SystemMsg
 import java.io.BufferedWriter
 import java.io.FileNotFoundException
 import java.io.FileWriter
@@ -58,12 +59,15 @@ suspend fun repoCreateCollectedDataFile(daoCollectedData: CollectedDataDao): Boo
         } catch (e: FileNotFoundException) {
             Log.d("coop", "FileNotFoundException")
             Log.d("coop", e.message!!)
+            SystemMsg("NOFILEFOUND", e.message!!)
         } catch (e: IOException) {
             Log.d("coop", "IOException")
             Log.d("coop", e.message!!)
+            SystemMsg("FILEIOEXCEPTION", e.message!!)
         }
     }else {
         Log.d("coop", "Collected Data Table is empty. No data to send")
+        SystemMsg("COLLDATAEMPTY","No Data")
     }
 
     return success

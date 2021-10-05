@@ -50,6 +50,7 @@ suspend fun repoSendCollectedDataFileToHost(hostIpAddress: String, hostServerPor
         } catch (e: FileNotFoundException) {
             Log.d("coop", "FileNotFoundException")
             Log.d("coop", e.message!!)
+            SystemMsg("NOFILEFOUND", e.message!!)
         } catch (e: IOException) {
             Log.d("coop", "IOException")
             Log.d("coop", e.message!!)
