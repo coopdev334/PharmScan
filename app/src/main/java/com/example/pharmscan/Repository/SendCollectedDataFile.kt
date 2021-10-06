@@ -1,11 +1,8 @@
 package com.example.pharmscan.Repository
 
-import android.content.Intent
 import android.util.Log
-import androidx.navigation.NavController
 import com.example.pharmscan.PharmScanApplication
 import com.example.pharmscan.R
-import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ui.Utility.SystemMsg
 import java.io.File
 import java.io.FileNotFoundException
@@ -13,9 +10,10 @@ import java.io.IOException
 import java.io.PrintWriter
 import java.net.Socket
 
-suspend fun repoSendCollectedDataFileToHost(hostIpAddress: String, hostServerPort: String) {
-    val requiredSuffixes = listOf("new")
+suspend fun repoSendCollectedDataFileToHost(hostIpAddress: String, hostServerPort: String, sendSysMsg: Boolean): Boolean {
+    val requiredSuffixes = listOf("new", "NEW")
     var fileList = listOf<String>()
+    var success = false
 
     fun hasRequiredSuffix(file: File): Boolean {
         return requiredSuffixes.contains(file.extension)
@@ -41,6 +39,7 @@ suspend fun repoSendCollectedDataFileToHost(hostIpAddress: String, hostServerPor
                         writer.println(line)
                     }
                     writer.println("END OF FILE")
+                    success = true
                 }
             }
 
@@ -48,13 +47,19 @@ suspend fun repoSendCollectedDataFileToHost(hostIpAddress: String, hostServerPor
             Log.d("coop", "successfull sending. Delete file")
 
         } catch (e: FileNotFoundException) {
+            success = false
             Log.d("coop", "FileNotFoundException")
             Log.d("coop", e.message!!)
-            SystemMsg("NOFILEFOUND", e.message!!)
+            if (sendSysMsg)
+                SystemMsg("NOFILEFOUND", e.message!!)
         } catch (e: IOException) {
+            success = false
             Log.d("coop", "IOException")
             Log.d("coop", e.message!!)
-            SystemMsg("NONETWORK", e.message!!)
+            if (sendSysMsg)
+                SystemMsg("NONETWORK", e.message!!)
         }
     }
+
+    return success
 }

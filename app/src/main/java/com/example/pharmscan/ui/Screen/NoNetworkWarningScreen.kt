@@ -13,23 +13,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
-import com.example.pharmscan.SystemMsgActivity
+import com.example.pharmscan.Repository.repoSendCollectedDataFileToHost
 import com.example.pharmscan.ui.Utility.BackHandler
 import com.example.pharmscan.ui.Utility.SystemMsg
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
-import java.util.*
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
 @Composable
-fun NoNetworkWarningScreen() {
+fun NoNetworkWarningScreen(hostIp: String, hostPort: String) {
 //fun NavGraphBuilder.NoNetworkWarningScreen(navController: NavController) {
 
     //composable(Screen.NoNetScreen.route) {
@@ -48,13 +43,12 @@ fun NoNetworkWarningScreen() {
                 }
             }
 
-            CoroutineScope(Dispatchers.Default).launch {
-                closeNoNetScreen.value = Timer()
+            CoroutineScope(Dispatchers.IO).launch {
+                closeNoNetScreen.value = ResendCollectedDataFile(hostIp, hostPort)
             }
         }
 
         if (closeNoNetScreen.value) {
-            //navController.popBackStack()
             SystemMsg("CLOSESYSACTIVITY", "close activity")
             Log.d("coop", "calling CLOSESYSACTIVITY")
 
@@ -114,7 +108,12 @@ fun NoNetworkWarningScreen() {
    // }
 }
 
-suspend fun Timer(): Boolean {
-    Thread.sleep(20000)
+suspend fun ResendCollectedDataFile(hostIp: String, hostPort: String): Boolean {
+
+    while (!repoSendCollectedDataFileToHost(hostIp, hostPort, sendSysMsg = false)) {
+        Thread.sleep(20000)
+        Log.d("coop", "NoNetScreen trying send file again...")
+    }
+
     return true
 }

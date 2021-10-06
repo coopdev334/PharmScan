@@ -4,11 +4,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
+import com.example.pharmscan.ui.Screen.*
+import com.example.pharmscan.ui.Screen.NoFileFoundScreen
 import com.example.pharmscan.ui.theme.PharmScanTheme
 import kotlin.time.ExperimentalTime
-import com.example.pharmscan.ui.Screen.FileIoExceptionScreen
-import com.example.pharmscan.ui.Screen.NoFileFoundScreen
-import com.example.pharmscan.ui.Screen.NoNetworkWarningScreen
 
 class SystemMsgActivity : AppCompatActivity() {
     @ExperimentalTime
@@ -23,8 +22,10 @@ class SystemMsgActivity : AppCompatActivity() {
             when (action) {
                 "NONETWORK" -> {
                     Log.d("coop", "NONETWORK: $content")
+                    val hostIp = intent?.getStringExtra("com.example.pharmscan.SYSTEM_MSG_HOSTIP")
+                    val hostPort = intent?.getStringExtra("com.example.pharmscan.SYSTEM_MSG_HOSTPORT")
                     PharmScanTheme {
-                        NoNetworkWarningScreen()
+                        NoNetworkWarningScreen(hostIp!!, hostPort!!)
                     }
                 }
                 "NOFILEFOUND" -> {
@@ -36,13 +37,19 @@ class SystemMsgActivity : AppCompatActivity() {
                 "COLLDATAEMPTY" -> {
                     Log.d("coop", "COLLDATAEMPTY: $content")
                     PharmScanTheme {
-                        NoFileFoundScreen(content!!)
+                        CollDataTableEmptyScreen(content!!)
                     }
                 }
                 "FILEIOEXCEPTION" -> {
                     Log.d("coop", "FILEIOEXCEPTION: $content")
                     PharmScanTheme {
                         FileIoExceptionScreen(content!!)
+                    }
+                }
+                "STARTEDFILEUPLOAD" -> {
+                    Log.d("coop", "FILEIOEXCEPTION: $content")
+                    PharmScanTheme {
+                        StartedFileUploadScreen(content!!)
                     }
                 }
                 "CLOSESYSACTIVITY" -> {

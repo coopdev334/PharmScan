@@ -48,16 +48,15 @@ class MainActivity() : ComponentActivity() {
         val factory = PharmScanViewModelFactory(repo)
         psViewModel = ViewModelProvider(this, factory).get(PharmScanViewModel::class.java)
 
-        receiver = PharmScanBroadcastReceiver(psViewModel)
-
         //Create broadcast receiver for scanner
+        receiver = PharmScanBroadcastReceiver(psViewModel)
         val intentFilter = IntentFilter()
         intentFilter.addAction("com.example.pharmscan.ACTION")
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT)
         PharmScanApplication.context?.registerReceiver(receiver, intentFilter)
 
         //Create broadcast receiver for no network warning screen
-        receiverNoNet = SystemMsgBroadcastReceiver(this)
+        receiverNoNet = SystemMsgBroadcastReceiver(this, psViewModel)
         val intentFilter1 = IntentFilter()
         intentFilter1.addAction("com.example.pharmscan.SYSTEM_MSG")
         intentFilter1.addCategory(Intent.CATEGORY_DEFAULT)
@@ -196,7 +195,8 @@ class PharmScanBroadcastReceiver(pharmScanViewModel: PharmScanViewModel) : Broad
 }
 
 
-class SystemMsgBroadcastReceiver(context: Context?) : BroadcastReceiver()  {
+class SystemMsgBroadcastReceiver(context: Context?, pharmScanViewModel: PharmScanViewModel) : BroadcastReceiver()  {
+    val psViewModel = pharmScanViewModel
     val mainActivityContext = context
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -204,6 +204,14 @@ class SystemMsgBroadcastReceiver(context: Context?) : BroadcastReceiver()  {
         val content = intent?.getStringExtra("com.example.pharmscan.SYSTEM_MSG_CONTENT")
         val i = Intent(mainActivityContext, SystemMsgActivity::class.java)
         i.action = action
+
+        if (action == "NONETWORK") {
+            val sysInfo = psViewModel.getSystemInfoRow()
+            val setting = psViewModel.getSettingsRow()
+            i.putExtra("com.example.pharmscan.SYSTEM_MSG_HOSTIP", sysInfo[0].hostIpAddress)
+            i.putExtra("com.example.pharmscan.SYSTEM_MSG_HOSTPORT", setting[0].hostServerPort)
+        }
+
         i.putExtra("com.example.pharmscan.SYSTEM_MSG_CONTENT", content)
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         Log.d("coop", "calling startActivity")

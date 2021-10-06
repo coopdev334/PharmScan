@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.pharmscan.Data.DAO.CollectedDataDao
 import com.example.pharmscan.Data.DAO.SettingsDao
 import com.example.pharmscan.Data.DAO.SystemInfoDao
+import com.example.pharmscan.ui.Utility.SystemMsg
 
 suspend fun repoUploadCollectedData(daoCollectedData: CollectedDataDao, daoSystemInfo: SystemInfoDao, daoSettings: SettingsDao) {
 
@@ -20,7 +21,9 @@ suspend fun repoUploadCollectedData(daoCollectedData: CollectedDataDao, daoSyste
         daoCollectedData.deleteAll()
         // Update record count
         if (sysInfo.isNotEmpty() && setting.isNotEmpty()) {
-            repoSendCollectedDataFileToHost(sysInfo[0].hostIpAddress!!, setting[0].hostServerPort!!)
+            if (repoSendCollectedDataFileToHost(sysInfo[0].hostIpAddress!!, setting[0].hostServerPort!!, sendSysMsg = true)) {
+                SystemMsg("CLOSESYSACTIVITY", "close activity")
+            }
         }else {
             Log.d("coop", "sysInfo/setting empty")
         }
