@@ -4,24 +4,17 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import com.example.pharmscan.ui.Screen.FileIoExceptionScreen
+import com.example.pharmscan.ui.Screen.*
 import com.example.pharmscan.ui.Screen.NoFileFoundScreen
-import com.example.pharmscan.ui.Screen.NoNetworkWarningScreen
 import com.example.pharmscan.ui.theme.PharmScanTheme
+import kotlin.time.ExperimentalTime
 
 class SystemMsgActivity : AppCompatActivity() {
+    @ExperimentalTime
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        Log.d("coop", "enter sysmsg")
         val action = intent?.getAction()
         val content = intent?.getStringExtra("com.example.pharmscan.SYSTEM_MSG_CONTENT")
 
@@ -29,8 +22,10 @@ class SystemMsgActivity : AppCompatActivity() {
             when (action) {
                 "NONETWORK" -> {
                     Log.d("coop", "NONETWORK: $content")
+                    val hostIp = intent?.getStringExtra("com.example.pharmscan.SYSTEM_MSG_HOSTIP")
+                    val hostPort = intent?.getStringExtra("com.example.pharmscan.SYSTEM_MSG_HOSTPORT")
                     PharmScanTheme {
-                       NoNetworkWarningScreen()
+                        NoNetworkWarningScreen(hostIp!!, hostPort!!)
                     }
                 }
                 "NOFILEFOUND" -> {
@@ -42,7 +37,7 @@ class SystemMsgActivity : AppCompatActivity() {
                 "COLLDATAEMPTY" -> {
                     Log.d("coop", "COLLDATAEMPTY: $content")
                     PharmScanTheme {
-                        NoFileFoundScreen(content!!)
+                        CollDataTableEmptyScreen(content!!)
                     }
                 }
                 "FILEIOEXCEPTION" -> {
@@ -50,6 +45,16 @@ class SystemMsgActivity : AppCompatActivity() {
                     PharmScanTheme {
                         FileIoExceptionScreen(content!!)
                     }
+                }
+                "STARTEDFILEUPLOAD" -> {
+                    Log.d("coop", "FILEIOEXCEPTION: $content")
+                    PharmScanTheme {
+                        StartedFileUploadScreen(content!!)
+                    }
+                }
+                "CLOSESYSACTIVITY" -> {
+                    Log.d("coop", "CLOSESYSACTIVITY: $content")
+                    finish()
                 }
             }
         }

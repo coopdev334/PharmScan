@@ -7,10 +7,7 @@ import com.example.pharmscan.PharmScanApplication
 import com.example.pharmscan.R
 import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ui.Utility.SystemMsg
-import java.io.BufferedWriter
-import java.io.FileNotFoundException
-import java.io.FileWriter
-import java.io.IOException
+import java.io.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -66,8 +63,27 @@ suspend fun repoCreateCollectedDataFile(daoCollectedData: CollectedDataDao): Boo
             SystemMsg("FILEIOEXCEPTION", e.message!!)
         }
     }else {
-        Log.d("coop", "Collected Data Table is empty. No data to send")
-        SystemMsg("COLLDATAEMPTY","No Data")
+        // Check for any already existing collected data files in download folder
+        // If found return true to send those even though collected data table is empty
+        val requiredSuffixes = listOf("new", "NEW")
+
+        fun hasRequiredSuffix(file: File): Boolean {
+            return requiredSuffixes.contains(file.extension)
+        }
+
+        val filePath = PharmScanApplication.context?.getString(R.string.collected_data_file_path)
+        val cnt = File(filePath!!).walkTopDown().count { file ->
+            file.isFile && hasRequiredSuffix(file)
+        }
+
+        // Found collected data files, return true to upload
+        if (cnt > 0) {
+            success = true
+        } else {
+            success = false
+            Log.d("coop", "Collected Data Table is empty. No data to send")
+            SystemMsg("COLLDATAEMPTY","No Data")
+        }
     }
 
     return success
