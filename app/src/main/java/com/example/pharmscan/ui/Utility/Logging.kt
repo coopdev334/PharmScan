@@ -16,8 +16,13 @@ public fun writeToFile(data: String, context: Context?) {
             if (file.exists()) {
                 Files.write(file.toPath(), content.toByteArray(), StandardOpenOption.APPEND)
             }
+            else {
+                file.createNewFile()
+                Files.write(file.toPath(), content.toByteArray(), StandardOpenOption.APPEND)
+            }
         }
     }
 }
 
 
+// /sdcard/Download/psndc.dat

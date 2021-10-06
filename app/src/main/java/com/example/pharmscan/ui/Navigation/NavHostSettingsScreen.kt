@@ -90,8 +90,6 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                     .align(alignment = Alignment.Start)
                     .padding(start = 10.dp)
                     .clickable {
-                        val time: Date = Calendar.getInstance().getTime()
-                        writeToFile("Changed the settings table" + time.toString(), PharmScanApplication.context)
                         navController.popBackStack()
                     },
                 style = MaterialTheme.typography.h5,

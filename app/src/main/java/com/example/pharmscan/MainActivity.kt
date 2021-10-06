@@ -23,7 +23,9 @@ import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ViewModel.PharmScanViewModelFactory
 import com.example.pharmscan.ui.Navigation.Navigate
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
+import com.example.pharmscan.ui.Utility.writeToFile
 import com.example.pharmscan.ui.theme.PharmScanTheme
+import java.util.*
 
 class MainActivity() : ComponentActivity() {
     private lateinit var psViewModel: PharmScanViewModel
@@ -107,6 +109,8 @@ class MainActivity() : ComponentActivity() {
                 //}
             }
         }
+        val time: Date = Calendar.getInstance().getTime()
+        writeToFile("Started the application on " + time.toString(), PharmScanApplication.context)
     }
 
     override fun onResume() {

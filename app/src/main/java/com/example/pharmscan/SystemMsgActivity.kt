@@ -6,7 +6,9 @@ import android.util.Log
 import androidx.activity.compose.setContent
 import com.example.pharmscan.ui.Screen.*
 import com.example.pharmscan.ui.Screen.NoFileFoundScreen
+import com.example.pharmscan.ui.Utility.writeToFile
 import com.example.pharmscan.ui.theme.PharmScanTheme
+import java.util.*
 import kotlin.time.ExperimentalTime
 
 class SystemMsgActivity : AppCompatActivity() {
@@ -22,6 +24,8 @@ class SystemMsgActivity : AppCompatActivity() {
             when (action) {
                 "NONETWORK" -> {
                     Log.d("coop", "NONETWORK: $content")
+                    val time: Date = Calendar.getInstance().getTime()
+                    writeToFile("Network Warning screen up at " + time.toString(), PharmScanApplication.context)
                     val hostIp = intent?.getStringExtra("com.example.pharmscan.SYSTEM_MSG_HOSTIP")
                     val hostPort = intent?.getStringExtra("com.example.pharmscan.SYSTEM_MSG_HOSTPORT")
                     PharmScanTheme {
