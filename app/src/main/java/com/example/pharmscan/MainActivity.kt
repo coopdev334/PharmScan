@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
@@ -204,6 +205,8 @@ class SystemMsgBroadcastReceiver(context: Context?) : BroadcastReceiver()  {
         val i = Intent(mainActivityContext, SystemMsgActivity::class.java)
         i.action = action
         i.putExtra("com.example.pharmscan.SYSTEM_MSG_CONTENT", content)
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        Log.d("coop", "calling startActivity")
         mainActivityContext?.startActivity(i)
     }
 }
