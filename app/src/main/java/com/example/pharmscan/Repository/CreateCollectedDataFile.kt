@@ -10,6 +10,7 @@ import com.example.pharmscan.ui.Utility.SystemMsg
 import java.io.*
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 suspend fun repoCreateCollectedDataFile(daoCollectedData: CollectedDataDao): Boolean {
     var success = false
@@ -20,12 +21,14 @@ suspend fun repoCreateCollectedDataFile(daoCollectedData: CollectedDataDao): Boo
     var out : BufferedWriter
     val secs = (LocalDateTime.now().second + (LocalDateTime.now().minute*60) + (LocalDateTime.now().hour*3600))
     val date = LocalDate.now()
+    val formatter = DateTimeFormatter.ofPattern("dd-MM-yy")
+    val dateFormated = date.format(formatter)
 
     if (collectedData.isNotEmpty()) {
         try {
             val filePath = PharmScanApplication.context?.getString(R.string.collected_data_file_path)
             var fileWriter =
-                FileWriter("${filePath}pharmscan_999_${date}_${secs.toString()}_789.new")
+                FileWriter("${filePath}pharmscan_999_${dateFormated}_${secs.toString()}_789.new")
 
             out = BufferedWriter(fileWriter);
 
@@ -43,7 +46,7 @@ suspend fun repoCreateCollectedDataFile(daoCollectedData: CollectedDataDao): Boo
                             + row.operid?.padStart(3, '0')
                             + row.recount?.padStart(4, '0')
                             + row.date?.padStart(8, '0')
-                            + row.seconds?.padStart(6, '0')
+                            + row.seconds?.padStart(5, '0')
                             + row.itemtyp?.padStart(1, '0')
                             + row.itemcst?.padStart(8, '0'))
                 )

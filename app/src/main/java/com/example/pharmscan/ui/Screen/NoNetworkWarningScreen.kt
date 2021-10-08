@@ -25,11 +25,6 @@ import kotlin.time.ExperimentalTime
 @ExperimentalTime
 @Composable
 fun NoNetworkWarningScreen(hostIp: String, hostPort: String) {
-//fun NavGraphBuilder.NoNetworkWarningScreen(navController: NavController) {
-
-    //composable(Screen.NoNetScreen.route) {
-
-
         var elapsedMinutes = remember { mutableStateOf(0) }
         var closeNoNetScreen = remember { mutableStateOf(false) }
         val timelinePoint = LocalDateTime.now()
@@ -105,7 +100,6 @@ fun NoNetworkWarningScreen(hostIp: String, hostPort: String) {
                 color = MaterialTheme.colors.onBackground
             )
         }
-   // }
 }
 
 suspend fun ResendCollectedDataFile(hostIp: String, hostPort: String): Boolean {

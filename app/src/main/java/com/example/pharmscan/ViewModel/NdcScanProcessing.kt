@@ -12,6 +12,9 @@ import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import kotlinx.coroutines.runBlocking
 import java.io.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 fun NdcSearch(navController: NavController, ndc: String, pharmScanViewModel:PharmScanViewModel) {
     // First formula - replace leading digit with a 0 then take remaining digits NOT including trailing check digit
@@ -57,8 +60,13 @@ fun InsertNdc(pharmScanViewModel:PharmScanViewModel, ndc: String, price: String,
         recnt = collectedDataLastRow[0].recount?.toInt()?.plus(1)         // add 1 to record count
     }
 
+    val secs = (LocalDateTime.now().second + (LocalDateTime.now().minute*60) + (LocalDateTime.now().hour*3600))
+    val date = LocalDate.now()
+    val formatter = DateTimeFormatter.ofPattern("dd-MM-yy")
+    val dateFormated = date.format(formatter)
+
     // Build Collected Data Table record with values
-    val collectedData = CollectedData("000", "0000MOT", ndc, qty, price, pksz, "000", matchFlg, sysinfo[0].Tag, sysinfo[0].opid, recnt.toString(), "12/12/21", "123456", "P", "00000000")
+    val collectedData = CollectedData("000", "0000MOT", ndc, qty, price, pksz, "000", matchFlg, sysinfo[0].Tag, sysinfo[0].opid, recnt.toString(), dateFormated, secs.toString(), "P", "00000000")
     runBlocking {
         val job = pharmScanViewModel.insertCollectedData(collectedData)
         job.join()  // wait for insert to complete
