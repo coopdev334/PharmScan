@@ -109,8 +109,6 @@ class MainActivity() : ComponentActivity() {
                 //}
             }
         }
-        val time: Date = Calendar.getInstance().getTime()
-        writeToFile("Started the application on " + time.toString(), PharmScanApplication.context)
     }
 
     override fun onResume() {

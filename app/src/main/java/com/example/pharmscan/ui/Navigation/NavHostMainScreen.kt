@@ -20,17 +20,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import com.example.pharmscan.Data.Tables.HostIpAddress
+import com.example.pharmscan.PharmScanApplication
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.AddHostIpAddress
 import com.example.pharmscan.ui.Dialog.DeleteHostComputerAlert
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
+import com.example.pharmscan.ui.Utility.writeToFile
 import kotlinx.coroutines.launch
+import java.util.*
 
 // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
 @ExperimentalComposeUiApi
 @ExperimentalFoundationApi
 fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     var delHostIpAddress = HostIpAddress("")
+
+    //val time: Date = Calendar.getInstance().getTime()
+   // writeToFile("Started the application on " + time.toString(), PharmScanApplication.context)
 
     composable(Screen.MainScreen.route) {
         val scaffoldState = rememberScaffoldState()
