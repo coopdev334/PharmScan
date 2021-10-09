@@ -1,13 +1,18 @@
 package com.example.pharmscan
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
+import android.view.View
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
@@ -24,11 +29,17 @@ import com.example.pharmscan.ViewModel.PharmScanViewModelFactory
 import com.example.pharmscan.ui.Navigation.Navigate
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import com.example.pharmscan.ui.theme.PharmScanTheme
+import com.google.android.material.snackbar.Snackbar
 
-class MainActivity() : ComponentActivity() {
+import androidx.annotation.NonNull
+import com.example.pharmscan.ui.Utility.ToastDisplay
+
+
+class MainActivity() : ComponentActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
     private lateinit var psViewModel: PharmScanViewModel
     private lateinit var receiver: PharmScanBroadcastReceiver
     private lateinit var receiverNoNet: SystemMsgBroadcastReceiver
+    val REQUEST_READ_WRITE_PERMISSIONS = 101
 
     // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
     @ExperimentalAnimationGraphicsApi
@@ -69,28 +80,14 @@ class MainActivity() : ComponentActivity() {
         sendBroadcast(intent)
 
         //Log.d("TESTING", "Checking the " + Manifest.permission.READ_EXTERNAL_STORAGE + " permissions.")
-        if (ContextCompat.checkSelfPermission(
-                this@MainActivity,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_DENIED
+        if (
+            ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED ||
+            ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED
         ) {
             // Requesting the permission
             ActivityCompat.requestPermissions(
                 this@MainActivity,
-                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                101
-            )
-        }
-
-        if (ContextCompat.checkSelfPermission(
-                this@MainActivity,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_DENIED
-        ) {
-            // Requesting the permission
-            ActivityCompat.requestPermissions(
-                this@MainActivity,
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE),
                 101
             )
         }
@@ -108,6 +105,38 @@ class MainActivity() : ComponentActivity() {
             }
         }
     }
+
+    @SuppressLint("MissingSuperCall")
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String?>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == REQUEST_READ_WRITE_PERMISSIONS) {
+            if (grantResults.isNotEmpty()){
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //Do the stuff that requires permission...
+                    ToastDisplay("Permission granted", Toast.LENGTH_SHORT)
+                }else if (grantResults[0] == PackageManager.PERMISSION_DENIED){
+                    // Should we show an explanation?
+                    ToastDisplay("Permission denied", Toast.LENGTH_SHORT)
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        //Show permission explanation dialog...
+                        ToastDisplay("App requires read/write permissions. Must select <Allow>", Toast.LENGTH_LONG)
+                    }else{
+                        // User has denied permission and checked never show permission dialog again so you can redirect to Application settings page
+                        ToastDisplay("Permission denied. Use settings permissions", Toast.LENGTH_SHORT)
+                        val intent = Intent()
+                        intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                        val uri: Uri = Uri.fromParts("package", this@MainActivity.packageName, null)
+                        intent.data = uri
+                        startActivity(intent)
+                    }
+                }
+            }
+        }
+    }
+
 
     override fun onResume() {
         // Disable scanner when app starts
