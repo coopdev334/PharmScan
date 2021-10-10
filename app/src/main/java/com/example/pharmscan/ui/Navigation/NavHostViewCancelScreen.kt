@@ -23,6 +23,10 @@ import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ui.Utility.SearchBar
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.PharmScanApplication
 import com.example.pharmscan.ViewModel.PharmScanViewModel
@@ -42,15 +46,15 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
         var startIndex: Int by remember {mutableStateOf(0)}
         var hintLabel by remember {mutableStateOf("Rec#")}
         val listState = rememberLazyListState()
-        var clearTxt by remember {mutableStateOf(ClearText(false))}
+        val clearTxt by remember {mutableStateOf(ClearText(false))}
         val showCancelCollDataDialog = remember { mutableStateOf(false) }
         val coroutineScope = rememberCoroutineScope()
         var selectedIndex by remember{mutableStateOf(-1)}
         var btnSelectedRec by remember {mutableStateOf(true)}
         var btnSelectedTag by remember {mutableStateOf(false)}
         var btnSelectedNdc by remember {mutableStateOf(false)}
-        var textStyle = MaterialTheme.typography.subtitle1
-        var ontextStyle = MaterialTheme.typography.subtitle2
+        val textStyle = MaterialTheme.typography.subtitle1
+        val ontextStyle = MaterialTheme.typography.subtitle2
         var firstEntry = true
 
         if (showCancelCollDataDialog.value) {
@@ -280,12 +284,30 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(start = 5.dp),
-                                    horizontalArrangement = Arrangement.Start
+                                    horizontalArrangement = Arrangement.Start,
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
                                         text = "Ndc: " + collectedData[index].ndc,
                                         style = MaterialTheme.typography.h6,
                                         color = MaterialTheme.colors.onBackground
+                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Text(
+                                        text = "InputType:  ",
+                                        style = TextStyle(
+                                                    fontFamily = FontFamily.Default,
+                                                    fontWeight = FontWeight.W300,
+                                                    fontStyle = FontStyle.Italic,
+                                                    fontSize = 16.sp
+                                                ),
+                                        color = MaterialTheme.colors.onBackground
+                                    )
+                                    Text(
+                                        text = collectedData[index].prodcd!!.first().toString(),
+                                        style = MaterialTheme.typography.h5,
+                                        color = MaterialTheme.colors.onBackground,
+                                        fontStyle = FontStyle.Italic
                                     )
                                 }
                             }

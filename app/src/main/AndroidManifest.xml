@@ -19,13 +19,15 @@
         android:windowSoftInputMode="adjustResize">
         <activity
             android:name=".SystemMsgActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait" />
         <!--    android:launchMode = "singleInstance"/> -->
         <!--android:noHistory="true"-->
         <!--android:launchMode="singleTop" />-->
     <activity
         android:name=".MainActivity"
         android:exported="true"
+        android:screenOrientation="portrait"
         android:label="@string/app_name"
         android:launchMode="singleTop"
         android:theme="@style/Theme.PharmScan.NoActionBar">

@@ -18,6 +18,7 @@ import com.example.pharmscan.ui.Utility.BackHandler
 import com.example.pharmscan.ui.Utility.SystemMsg
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import kotlin.time.ExperimentalTime
@@ -25,23 +26,25 @@ import kotlin.time.ExperimentalTime
 @ExperimentalTime
 @Composable
 fun NoNetworkWarningScreen(hostIp: String, hostPort: String) {
-        var elapsedMinutes = remember { mutableStateOf(0) }
-        var closeNoNetScreen = remember { mutableStateOf(false) }
-        val timelinePoint = LocalDateTime.now()
-        var now = LocalDateTime.now()
-        LaunchedEffect(Unit) {
-            CoroutineScope(Dispatchers.Default).launch {
-                while (true) {
-                    Thread.sleep(5000)
-                    now = LocalDateTime.now()
-                    elapsedMinutes.value = java.time.Duration.between(timelinePoint, now).toMinutes().toInt()
-                }
-            }
+    val elapsedMinutes = remember { mutableStateOf(0) }
+    val closeNoNetScreen = remember { mutableStateOf(false) }
+    val timelinePoint = LocalDateTime.now()
 
-            CoroutineScope(Dispatchers.IO).launch {
-                closeNoNetScreen.value = ResendCollectedDataFile(hostIp, hostPort)
+    LaunchedEffect(Unit) {
+        CoroutineScope(Dispatchers.Default).launch {
+            Log.d("coop", "launch timer")
+            while (true) {
+                delay(5000)
+                val now = LocalDateTime.now()
+                elapsedMinutes.value = java.time.Duration.between(timelinePoint, now).toMinutes().toInt()
             }
         }
+
+        CoroutineScope(Dispatchers.IO).launch {
+        Log.d("coop", "launch resend")
+            closeNoNetScreen.value = ResendCollectedDataFile(hostIp, hostPort)
+        }
+    }
 
         if (closeNoNetScreen.value) {
             SystemMsg("CLOSESYSACTIVITY", "close activity")
@@ -105,7 +108,7 @@ fun NoNetworkWarningScreen(hostIp: String, hostPort: String) {
 suspend fun ResendCollectedDataFile(hostIp: String, hostPort: String): Boolean {
 
     while (!repoSendCollectedDataFileToHost(hostIp, hostPort, sendSysMsg = false)) {
-        Thread.sleep(20000)
+        delay(20000)
         Log.d("coop", "NoNetScreen trying send file again...")
     }
 

@@ -76,7 +76,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
         var statusBarBkGrColor by rememberSaveable { mutableStateOf(it.arguments!!.getString("bkgrColor")) }
-        var statusBarBkGrColorObj: Color
+        val statusBarBkGrColorObj: Color
         val systemInfo: List<SystemInfo> by pharmScanViewModel.systemInfo.observeAsState(pharmScanViewModel.getSystemInfoRow())
         val settings: List<Settings> by pharmScanViewModel.settings.observeAsState(pharmScanViewModel.getSettingsRow())
         val scanData: ScanLiveData by pharmScanViewModel.scanLiveData.observeAsState(ScanLiveData("", ""))
@@ -186,15 +186,15 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 val tagchgsLimit = pharmScanViewModel.getSettingsRow()[0].FileSendTagChgs!!.toInt()
                                 val tagchgs = sysInfo[0].TagChangeCount!!.toInt()
                                 if (tagchgs >= tagchgsLimit) {
-                                    val sysInfoMap = mapOf("TotRecCount" to "0", "TagChangeCount" to "0")
-                                    UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
+                                    val sysinfoMap = mapOf("TotRecCount" to "0", "TagChangeCount" to "0")
+                                    UpdateSystemInfo(pharmScanViewModel, sysinfoMap)
                                     Log.d("coop", "Tag change exceeded. Reset")
                                     pharmScanViewModel.uploadCollectedData()
                                     //navController.navigate(Screen.NoNetworkWarningScreen.route)
                                 }
                             }else {
-                                val sysInfoMap = mapOf("TotRecCount" to "0", "TagChangeCount" to "0")
-                                UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
+                                val sysinfoMap = mapOf("TotRecCount" to "0", "TagChangeCount" to "0")
+                                UpdateSystemInfo(pharmScanViewModel, sysinfoMap)
                                 ToastDisplay("Collected Data Table Empty", Toast.LENGTH_SHORT)
                             }
                         },
@@ -227,7 +227,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                         showDialog = showKyBrdInputDialog.value,
                         onAdd = {ndc ->
                             showKyBrdInputDialog.value = false
-                            NdcSearch(navController, ndc, pharmScanViewModel)
+                            NdcSearch(navController, ndc, pharmScanViewModel, "K")
                         },
                         onCancel = {
                             showKyBrdInputDialog.value = false
@@ -251,8 +251,8 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                     if (type == "LABEL-TYPE-CODE128") {
                         chgTagEnabled.value = true
                         //holdEnabled.value = true
-                        var sysInfoMap: Map<String, String>
-                        if (barcode!!.isNullOrEmpty()){
+                        val sysInfoMap: Map<String, String>
+                        if (barcode.isNullOrEmpty()){
                             toastObj.value.cancel()
                             ToastDisplay("Error! Empty/Null barcode data returned}", Toast.LENGTH_LONG)
                         }else {
@@ -268,15 +268,15 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                     val tagchgsLimit = pharmScanViewModel.getSettingsRow()[0].FileSendTagChgs!!.toInt()
                                     val tagchgs = sysInfo[0].TagChangeCount!!.toInt()
                                     if (tagchgs >= tagchgsLimit) {
-                                        val sysInfoMap = mapOf("TotRecCount" to "0", "TagChangeCount" to "0")
-                                        UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
+                                        val sysinfoMap = mapOf("TotRecCount" to "0", "TagChangeCount" to "0")
+                                        UpdateSystemInfo(pharmScanViewModel, sysinfoMap)
                                         Log.d("coop", "Tag change exceeded. Reset")
                                         pharmScanViewModel.uploadCollectedData()
                                         //navController.navigate(Screen.NoNetworkWarningScreen.route)
                                     }
                                 }else {
-                                    val sysInfoMap = mapOf("TotRecCount" to "0", "TagChangeCount" to "0")
-                                    UpdateSystemInfo(pharmScanViewModel, sysInfoMap)
+                                    val sysinfoMap = mapOf("TotRecCount" to "0", "TagChangeCount" to "0")
+                                    UpdateSystemInfo(pharmScanViewModel, sysinfoMap)
                                     ToastDisplay("Collected Data Table Empty", Toast.LENGTH_SHORT)
                                 }
                             }else {
@@ -292,12 +292,12 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
 
                 "*** Scan BarCode ***" -> {
                     if (type == "LABEL-TYPE-UPCA") {
-                        if (barcode!!.isNullOrEmpty()){
+                        if (barcode.isNullOrEmpty()){
                             toastObj.value.cancel()
                             ToastDisplay("Error! Empty/Null barcode data returned}", Toast.LENGTH_LONG)
                         }else {
                             if (barcode.length == 12) {
-                                NdcSearch(navController, barcode.substring(0..10), pharmScanViewModel)
+                                NdcSearch(navController, barcode.substring(0..10), pharmScanViewModel, "S")
                             } else {
                                 toastObj.value.cancel()
                                 ToastDisplay("Invalid barcode length for Ndc: ${barcode.length}", Toast.LENGTH_LONG)
