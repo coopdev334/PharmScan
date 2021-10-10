@@ -7,10 +7,11 @@ import android.util.Log
 import androidx.navigation.NavController
 import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.Data.Tables.PSNdc
+import com.example.pharmscan.Repository.repoSendCollectedDataFileToHost
 import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import java.io.*
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -30,8 +31,9 @@ fun NdcSearch(navController: NavController, ndc: String, pharmScanViewModel:Phar
             val ndcThird = ndc.substring(0..10)
             result = pharmScanViewModel.getNdcPSNdc(ndcThird)
             if (result.isNullOrEmpty()) {
-                val toneG = ToneGenerator(AudioManager.STREAM_ALARM, 100)
-                toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 1000)
+                CoroutineScope(Dispatchers.Default).launch {
+                    ErrorBeeper(3)
+                }
                 navController.navigate(Screen.NdcNoMatchScreen.withArgs(ndcInputType))
             }else {
                 val toneGG = ToneGenerator(AudioManager.STREAM_ALARM, 100)
@@ -95,6 +97,15 @@ fun ProcessHoldState(qty: String, pharmScanViewModel:PharmScanViewModel) {
 
     val columnMap = mapOf("TotRecCount" to recnt.toString())
     UpdateSystemInfo(pharmScanViewModel, columnMap)
+}
+
+suspend fun ErrorBeeper(repeat: Int) {
+
+    for (i in 0 until repeat) {
+        val toneG = ToneGenerator(AudioManager.ERROR, 700)
+        toneG.startTone(ToneGenerator.TONE_PROP_BEEP, 1000)
+        delay(125)
+    }
 }
 
 
