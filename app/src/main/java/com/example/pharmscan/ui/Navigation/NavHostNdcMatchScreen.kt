@@ -32,7 +32,7 @@ import com.example.pharmscan.ui.Utility.is2DecNumber
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     composable(
-        route = Screen.NdcMatchScreen.route + "/{ndc}/{price}/{pksz}",
+        route = Screen.NdcMatchScreen.route + "/{ndc}/{price}/{pksz}/{ndcinputtype}",
         // Define argument list to pass to this composable in composable constructor
         // arguments parameter which is a list of navArguments.
         arguments = listOf(
@@ -47,22 +47,27 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
             navArgument("pksz") {
                 type = NavType.StringType
                 nullable = false
+            },
+            navArgument("ndcinputtype") {
+                type = NavType.StringType
+                nullable = false
             }
         )
     ) {
 
         val manPrcOn = remember { mutableStateOf(false) }
-        var ndc by remember { mutableStateOf(it.arguments?.getString("ndc")?.let { it1 -> InputWrapper(it1, null)}) }
+        val ndc by remember { mutableStateOf(it.arguments?.getString("ndc")?.let { it1 -> InputWrapper(it1, null)}) }
         var price by remember { mutableStateOf(if (manPrcOn.value)InputWrapper("", null) else it.arguments?.getString("price")?.let { it1 -> InputWrapper(it1.trimStart{it == '0'}, null)}) }
-        var pksz by remember { mutableStateOf(it.arguments?.getString("pksz")?.let { it1 -> InputWrapper(it1.trimStart{it == '0'}, null)}) }
+        val pksz by remember { mutableStateOf(it.arguments?.getString("pksz")?.let { it1 -> InputWrapper(it1.trimStart{it == '0'}, null)}) }
         var qty: InputWrapper? by remember { mutableStateOf(InputWrapper("", null)) }
-        var costLimitExceed = remember { mutableStateOf(false) }
+        val ndcInputType = it.arguments?.getString("ndcinputtype")
+        val costLimitExceed = remember { mutableStateOf(false) }
         val settings = pharmScanViewModel.getSettingsRow()
         val prcFocusRequester = remember {FocusRequester()}
         val qtyFocusRequester = remember {FocusRequester()}
         val showKyBrdInputDialog = remember { mutableStateOf(false) }
-        var manprcFirstEntry = remember { mutableStateOf(true) }
-        var onClickEntered = remember { mutableStateOf(false) }
+        val manprcFirstEntry = remember { mutableStateOf(true) }
+        val onClickEntered = remember { mutableStateOf(false) }
         var costLimit = 0.00
 
         if (!settings.isNullOrEmpty()) {
@@ -135,7 +140,7 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
 
         fun onOkClick() {
             onClickEntered.value = true
-            InsertNdc(pharmScanViewModel, ndc!!.value, price!!.value, pksz!!.value, qty!!.value, "P")
+            InsertNdc(pharmScanViewModel, ndc!!.value, price!!.value, pksz!!.value, qty!!.value, "P", ndcInputType!!)
             navController.popBackStack()
         }
 

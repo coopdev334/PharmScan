@@ -40,14 +40,6 @@ object InputValidator {
         }
     }
 
-    fun getHostAcctErrorIdOrNull(input: String): Int? {
-        return null
-    }
-
-    fun getHostPasswordErrorIdOrNull(input: String): Int? {
-        return null
-    }
-
     fun getCostLimitErrorIdOrNull(input: String): Int? {
         return when {
             !is2DecNumber(input) -> R.string.requires_2_dec
