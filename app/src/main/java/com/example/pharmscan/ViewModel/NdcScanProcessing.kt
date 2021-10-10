@@ -62,7 +62,7 @@ fun InsertNdc(pharmScanViewModel:PharmScanViewModel, ndc: String, price: String,
 
     val secs = (LocalDateTime.now().second + (LocalDateTime.now().minute*60) + (LocalDateTime.now().hour*3600))
     val date = LocalDate.now()
-    val formatter = DateTimeFormatter.ofPattern("dd-MM-yy")
+    val formatter = DateTimeFormatter.ofPattern("MM-dd-yy")
     val dateFormated = date.format(formatter)
 
     // Build Collected Data Table record with values

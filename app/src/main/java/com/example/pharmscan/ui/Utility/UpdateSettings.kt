@@ -15,7 +15,7 @@ fun UpdateSettings(pharmScanViewModel: PharmScanViewModel, columnValue: Map<Stri
         //if (settingsRow.isNullOrEmpty() || columnValue.isNullOrEmpty()) {
         if (settingsRow.isNullOrEmpty()) {
             // set to defaults then update columns
-            settingsRow = listOf(Settings("0", "None", "off", "0.00", "0", "on"))
+            settingsRow = listOf(Settings("2325", "None", "off", "0.00", "1", "on"))
         } else {
             val job = pharmScanViewModel.deleteAllSettings()
             job.join() // wait for deleteRow to complete
