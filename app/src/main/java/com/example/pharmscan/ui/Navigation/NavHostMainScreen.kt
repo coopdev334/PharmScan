@@ -108,19 +108,19 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                         color = MaterialTheme.colors.onBackground
                     )
 
-                    Spacer(modifier = Modifier.height(height = 10.dp))
-
-                    Text(
-                        text = "View File Name",
-                        modifier = Modifier.clickable {
-                            coroutineScope.launch {
-                                scaffoldState.drawerState.close()
-                                navController.navigate(Screen.ViewColDataFNameScreen.route)
-                            }
-                        },
-                        style = MaterialTheme.typography.caption,
-                        color = MaterialTheme.colors.onBackground
-                    )
+//                    Spacer(modifier = Modifier.height(height = 10.dp))
+//
+//                    Text(
+//                        text = "View File Name",
+//                        modifier = Modifier.clickable {
+//                            coroutineScope.launch {
+//                                scaffoldState.drawerState.close()
+//                                navController.navigate(Screen.ViewColDataFNameScreen.route)
+//                            }
+//                        },
+//                        style = MaterialTheme.typography.caption,
+//                        color = MaterialTheme.colors.onBackground
+//                    )
 
                     Spacer(modifier = Modifier.height(height = 10.dp))
 

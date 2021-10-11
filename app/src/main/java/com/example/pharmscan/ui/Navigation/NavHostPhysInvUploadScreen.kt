@@ -55,7 +55,6 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
         val showEnterOpIdDialog = remember { mutableStateOf(false) }
-        val showCircularPrgBar = remember { mutableStateOf(false) }
         val circularPrgBarLoading = pharmScanViewModel.circularPrgBarLoading.value
 
         if (showEnterOpIdDialog.value) {
@@ -124,19 +123,19 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                         color = MaterialTheme.colors.onBackground
                     )
 
-                    Spacer(modifier = Modifier.height(height = 10.dp))
-
-                    Text(
-                        text = "View File Name",
-                        modifier = Modifier.clickable {
-                            coroutineScope.launch {
-                                scaffoldState.drawerState.close()
-                                navController.navigate(Screen.ViewColDataFNameScreen.route)
-                            }
-                        },
-                        style = MaterialTheme.typography.caption,
-                        color = MaterialTheme.colors.onBackground
-                    )
+//                    Spacer(modifier = Modifier.height(height = 10.dp))
+//
+//                    Text(
+//                        text = "View File Name",
+//                        modifier = Modifier.clickable {
+//                            coroutineScope.launch {
+//                                scaffoldState.drawerState.close()
+//                                navController.navigate(Screen.ViewColDataFNameScreen.route)
+//                            }
+//                        },
+//                        style = MaterialTheme.typography.caption,
+//                        color = MaterialTheme.colors.onBackground
+//                    )
                     Spacer(modifier = Modifier.height(height = 10.dp))
 
                     Text(

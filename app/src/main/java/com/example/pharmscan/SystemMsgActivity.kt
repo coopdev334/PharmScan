@@ -3,9 +3,11 @@ package com.example.pharmscan
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import com.example.pharmscan.ui.Screen.*
 import com.example.pharmscan.ui.Screen.NoFileFoundScreen
+import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.theme.PharmScanTheme
 import kotlin.time.ExperimentalTime
 
@@ -46,15 +48,13 @@ class SystemMsgActivity : AppCompatActivity() {
                         FileIoExceptionScreen(content!!)
                     }
                 }
-                "STARTEDFILEUPLOAD" -> {
-                    Log.d("coop", "FILEIOEXCEPTION: $content")
-                    PharmScanTheme {
-                        StartedFileUploadScreen(content!!)
-                    }
-                }
                 "CLOSESYSACTIVITY" -> {
                     Log.d("coop", "CLOSESYSACTIVITY: $content")
                     finish()
+                }
+                else -> {
+                    Log.d("coop", "Unkown sysmsg type")
+                    ToastDisplay("Unkown SystemMsg Type", Toast.LENGTH_LONG)
                 }
             }
         }
