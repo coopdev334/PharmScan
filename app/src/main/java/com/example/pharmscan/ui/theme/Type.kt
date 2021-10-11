@@ -29,6 +29,13 @@ val Typography = Typography(
         fontSize = 30.sp
     ),
 
+    h2 = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Bold,
+        fontStyle = FontStyle.Italic,
+        fontSize = 24.sp
+    ),
+
     subtitle2 = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.W500,

@@ -113,14 +113,15 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         var chgTagButtonColor by remember {mutableStateOf(defaultButtonColors)}
         //var holdButtonColor by remember {mutableStateOf(defaultButtonColors)}
 
-        // Enable scanner on scan screen entry and disable on leaving scan screen
-        val con = PharmScanApplication()
-        val intent = Intent()
-        intent.setAction("com.symbol.datawedge.api.ACTION")
-        intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "ENABLE_PLUGIN")
-        con.getAppContext()?.sendBroadcast(intent)
+
 
         DisposableEffect(Unit) {
+            // Enable scanner on scan screen entry and disable on leaving scan screen
+            val con = PharmScanApplication()
+            val intent = Intent()
+            intent.setAction("com.symbol.datawedge.api.ACTION")
+            intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "ENABLE_PLUGIN")
+            con.getAppContext()?.sendBroadcast(intent)
 
             onDispose {
                 val psApp = PharmScanApplication()
@@ -244,7 +245,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
             // after getting data clear out scan data object
             val barcode = scanData.barcodeData
             val type = scanData.barcodeType
-            pharmScanViewModel.scanLiveData.value = ScanLiveData("", "")
+            pharmScanViewModel.scanLiveData.value = ScanLiveData(null, null)
 
             when (statusBarText) {
                 "*** Scan Tag ***" -> {
