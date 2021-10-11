@@ -1,5 +1,6 @@
 package com.example.pharmscan.ViewModel
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
 import androidx.navigation.NavController
 import com.example.pharmscan.Data.ScanLiveData
@@ -7,11 +8,15 @@ import com.example.pharmscan.Data.Tables.*
 import com.example.pharmscan.Repository.PharmScanRepo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PharmScanViewModel(
     private val repo: PharmScanRepo
 ): ViewModel() {
+
+    // Circular Progress Bar control variable
+    val circularPrgBarLoading = mutableStateOf(false)
 
     // **********************************************************************
     // HostIpAddress
@@ -68,7 +73,10 @@ class PharmScanViewModel(
     fun getColDataQtyPriceByTag(tag: String) = repo.getColDataQtyPriceByTag(tag)
 
     fun uploadCollectedData() = CoroutineScope(Dispatchers.IO).launch {
+        circularPrgBarLoading.value = true
         repo.uploadCollectedData()
+        delay(2000)
+        circularPrgBarLoading.value = false
     }
 
 

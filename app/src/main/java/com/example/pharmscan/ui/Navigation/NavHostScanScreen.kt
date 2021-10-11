@@ -43,6 +43,7 @@ import com.example.pharmscan.ViewModel.ProcessHoldState
 import com.example.pharmscan.ui.Dialog.HoldQtyKyBrdInput
 import com.example.pharmscan.ui.Dialog.NdcKyBrdInput
 import com.example.pharmscan.ui.Dialog.TagKyBrdInput
+import com.example.pharmscan.ui.Utility.CircularProgressBar
 import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.Utility.UpdateSettings
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
@@ -91,6 +92,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         val sysInfoNotInitialized = remember { mutableStateOf(true) }
         val settingsNotInitialized = remember { mutableStateOf(true) }
         val toastObj = remember { mutableStateOf(Toast(PharmScanApplication.context)) }
+        val circularPrgBarLoading = pharmScanViewModel.circularPrgBarLoading.value
 
         val defaultButtonColors: ButtonColors = buttonColors(
             backgroundColor = Color.Blue,
@@ -680,6 +682,11 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 }
                             }
                         }
+                        Spacer(modifier = Modifier.height(50.dp))
+                        CircularProgressBar(
+                            modifier = Modifier.size(width = 70.dp, height = 70.dp),
+                            isDisplayed = circularPrgBarLoading,
+                            color = Color.Blue, strokeWidth = 8.dp)
                     }
                     Column(
                         modifier = Modifier
@@ -784,7 +791,6 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
 //                            }
 //                        }
                     }
-
                 }
             }
         )
