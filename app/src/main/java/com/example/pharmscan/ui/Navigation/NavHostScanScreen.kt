@@ -244,7 +244,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
             // after getting data clear out scan data object
             val barcode = scanData.barcodeData
             val type = scanData.barcodeType
-            pharmScanViewModel.scanLiveData.value = ScanLiveData("", "")
+            pharmScanViewModel.scanLiveData.value = ScanLiveData("", "") // MAYBE THIS IS THE PROBLEM FOR DOUBLE SCANNING
 
             when (statusBarText) {
                 "*** Scan Tag ***" -> {
