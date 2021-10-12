@@ -3,12 +3,16 @@ package com.example.pharmscan
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import com.example.pharmscan.ui.Screen.*
 import com.example.pharmscan.ui.Screen.NoFileFoundScreen
+import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.Utility.writeToFile
 import com.example.pharmscan.ui.theme.PharmScanTheme
 import java.util.*
+import com.example.pharmscan.ui.Utility.ToastDisplay
+
 import kotlin.time.ExperimentalTime
 
 class SystemMsgActivity : AppCompatActivity() {
@@ -59,6 +63,10 @@ class SystemMsgActivity : AppCompatActivity() {
                 "CLOSESYSACTIVITY" -> {
                     Log.d("coop", "CLOSESYSACTIVITY: $content")
                     finish()
+                }
+                else -> {
+                    Log.d("coop", "Unkown sysmsg type")
+                    ToastDisplay("Unkown SystemMsg Type", Toast.LENGTH_LONG)
                 }
             }
         }

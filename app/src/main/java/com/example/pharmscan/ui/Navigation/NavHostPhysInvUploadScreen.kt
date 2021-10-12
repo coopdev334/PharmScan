@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -28,6 +29,7 @@ import com.example.pharmscan.R
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.GetOpId
 import com.example.pharmscan.ui.Screen.Screen
+import com.example.pharmscan.ui.Utility.CircularProgressBar
 import com.example.pharmscan.ui.Utility.SystemMsg
 import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
@@ -53,6 +55,7 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
         val showEnterOpIdDialog = remember { mutableStateOf(false) }
+        val circularPrgBarLoading = pharmScanViewModel.circularPrgBarLoading.value
 
         if (showEnterOpIdDialog.value) {
             GetOpId(
@@ -120,19 +123,19 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                         color = MaterialTheme.colors.onBackground
                     )
 
-                    Spacer(modifier = Modifier.height(height = 10.dp))
-
-                    Text(
-                        text = "View File Name",
-                        modifier = Modifier.clickable {
-                            coroutineScope.launch {
-                                scaffoldState.drawerState.close()
-                                navController.navigate(Screen.ViewColDataFNameScreen.route)
-                            }
-                        },
-                        style = MaterialTheme.typography.caption,
-                        color = MaterialTheme.colors.onBackground
-                    )
+//                    Spacer(modifier = Modifier.height(height = 10.dp))
+//
+//                    Text(
+//                        text = "View File Name",
+//                        modifier = Modifier.clickable {
+//                            coroutineScope.launch {
+//                                scaffoldState.drawerState.close()
+//                                navController.navigate(Screen.ViewColDataFNameScreen.route)
+//                            }
+//                        },
+//                        style = MaterialTheme.typography.caption,
+//                        color = MaterialTheme.colors.onBackground
+//                    )
                     Spacer(modifier = Modifier.height(height = 10.dp))
 
                     Text(
@@ -218,6 +221,7 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                     ) {
                         Button(
                             modifier = Modifier.clip(RoundedCornerShape(50.dp)),
+                            enabled = !circularPrgBarLoading,
                             onClick = {
                             showEnterOpIdDialog.value = true
                         }) {
@@ -236,8 +240,8 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                     ) {
                         Button(
                             modifier = Modifier.clip(RoundedCornerShape(50.dp)),
+                            enabled = !circularPrgBarLoading,
                             onClick = {
-                                SystemMsg("STARTEDFILEUPLOAD", "Sending Collected Data...")
                                 pharmScanViewModel.uploadCollectedData()
                         }) {
                             Text(
@@ -247,6 +251,11 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                             )
                         }
                     }
+                    Spacer(modifier = Modifier.height(18.dp))
+                    CircularProgressBar(
+                        modifier = Modifier.size(width = 60.dp, height = 60.dp),
+                        isDisplayed = circularPrgBarLoading,
+                        color = Color.Blue, strokeWidth = 8.dp)
                 }
             }
         )

@@ -139,10 +139,10 @@ class MainActivity() : ComponentActivity(), ActivityCompat.OnRequestPermissionsR
 
 
     override fun onResume() {
-        // Disable scanner when app starts
+        // Enable scanner when app resumes
         val intent = Intent()
         intent.setAction("com.symbol.datawedge.api.ACTION")
-        intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "DISABLE_PLUGIN")
+        intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "ENABLE_PLUGIN")
         sendBroadcast(intent)
         super.onResume()
     }

@@ -43,6 +43,7 @@ import com.example.pharmscan.ViewModel.ProcessHoldState
 import com.example.pharmscan.ui.Dialog.HoldQtyKyBrdInput
 import com.example.pharmscan.ui.Dialog.NdcKyBrdInput
 import com.example.pharmscan.ui.Dialog.TagKyBrdInput
+import com.example.pharmscan.ui.Utility.CircularProgressBar
 import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.Utility.UpdateSettings
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
@@ -91,6 +92,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         val sysInfoNotInitialized = remember { mutableStateOf(true) }
         val settingsNotInitialized = remember { mutableStateOf(true) }
         val toastObj = remember { mutableStateOf(Toast(PharmScanApplication.context)) }
+        val circularPrgBarLoading = pharmScanViewModel.circularPrgBarLoading.value
 
         val defaultButtonColors: ButtonColors = buttonColors(
             backgroundColor = Color.Blue,
@@ -113,14 +115,15 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
         var chgTagButtonColor by remember {mutableStateOf(defaultButtonColors)}
         //var holdButtonColor by remember {mutableStateOf(defaultButtonColors)}
 
-        // Enable scanner on scan screen entry and disable on leaving scan screen
-        val con = PharmScanApplication()
-        val intent = Intent()
-        intent.setAction("com.symbol.datawedge.api.ACTION")
-        intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "ENABLE_PLUGIN")
-        con.getAppContext()?.sendBroadcast(intent)
+
 
         DisposableEffect(Unit) {
+            // Enable scanner on scan screen entry and disable on leaving scan screen
+            val con = PharmScanApplication()
+            val intent = Intent()
+            intent.setAction("com.symbol.datawedge.api.ACTION")
+            intent.putExtra("com.symbol.datawedge.api.SCANNER_INPUT_PLUGIN", "ENABLE_PLUGIN")
+            con.getAppContext()?.sendBroadcast(intent)
 
             onDispose {
                 val psApp = PharmScanApplication()
@@ -244,7 +247,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
             // after getting data clear out scan data object
             val barcode = scanData.barcodeData
             val type = scanData.barcodeType
-            pharmScanViewModel.scanLiveData.value = ScanLiveData("", "") // MAYBE THIS IS THE PROBLEM FOR DOUBLE SCANNING
+            pharmScanViewModel.scanLiveData.value = ScanLiveData(null, null)
 
             when (statusBarText) {
                 "*** Scan Tag ***" -> {
@@ -361,19 +364,19 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                         color = MaterialTheme.colors.onBackground
                     )
 
-                    Spacer(modifier = Modifier.height(height = 10.dp))
-
-                    Text(
-                        text = "View File Name",
-                        modifier = Modifier.clickable {
-                            coroutineScope.launch {
-                                scaffoldState.drawerState.close()
-                                navController.navigate(Screen.ViewColDataFNameScreen.route)
-                            }
-                        },
-                        style = MaterialTheme.typography.caption,
-                        color = MaterialTheme.colors.onBackground
-                    )
+//                    Spacer(modifier = Modifier.height(height = 10.dp))
+//
+//                    Text(
+//                        text = "View File Name",
+//                        modifier = Modifier.clickable {
+//                            coroutineScope.launch {
+//                                scaffoldState.drawerState.close()
+//                                navController.navigate(Screen.ViewColDataFNameScreen.route)
+//                            }
+//                        },
+//                        style = MaterialTheme.typography.caption,
+//                        color = MaterialTheme.colors.onBackground
+//                    )
                     Spacer(modifier = Modifier.height(height = 10.dp))
 
                     Text(
@@ -679,6 +682,11 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 }
                             }
                         }
+                        Spacer(modifier = Modifier.height(50.dp))
+                        CircularProgressBar(
+                            modifier = Modifier.size(width = 70.dp, height = 70.dp),
+                            isDisplayed = circularPrgBarLoading,
+                            color = Color.Blue, strokeWidth = 8.dp)
                     }
                     Column(
                         modifier = Modifier
@@ -783,7 +791,6 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
 //                            }
 //                        }
                     }
-
                 }
             }
         )

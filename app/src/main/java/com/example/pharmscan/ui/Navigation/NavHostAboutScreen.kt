@@ -50,12 +50,12 @@ fun NavGraphBuilder.addAboutScreen(navController: NavController) {
                 style = MaterialTheme.typography.body1,
                 color = MaterialTheme.colors.onBackground
             )
-            Spacer(modifier = Modifier.height(height = 10.dp))
-            Text(
-                text = "Unit Id: 0E89H67",
-                style = MaterialTheme.typography.body1,
-                color = MaterialTheme.colors.onBackground
-            )
+//            Spacer(modifier = Modifier.height(height = 10.dp))
+//            Text(
+//                text = "Unit Id: 0E89H67",
+//                style = MaterialTheme.typography.body1,
+//                color = MaterialTheme.colors.onBackground
+//            )
             Spacer(modifier = Modifier.height(height = 100.dp))
             Text(
                 text = "By: coopdev334",
