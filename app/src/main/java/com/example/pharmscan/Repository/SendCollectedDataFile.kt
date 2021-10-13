@@ -10,7 +10,7 @@ import java.io.IOException
 import java.io.PrintWriter
 import java.net.Socket
 
-suspend fun repoSendCollectedDataFileToHost(hostIpAddress: String, hostServerPort: String, sendSysMsg: Boolean): Boolean {
+fun repoSendCollectedDataFileToHost(hostIpAddress: String, hostServerPort: String, sendSysMsg: Boolean): Boolean {
     val requiredSuffixes = listOf("new", "NEW")
     var fileList = listOf<String>()
     var success = false

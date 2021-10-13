@@ -1,11 +1,9 @@
 package com.example.pharmscan.Repository
 
 import android.util.Log
-import androidx.navigation.NavController
 import com.example.pharmscan.Data.DAO.CollectedDataDao
 import com.example.pharmscan.PharmScanApplication
 import com.example.pharmscan.R
-import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ui.Utility.SystemMsg
 import java.io.*
 import java.time.LocalDate
@@ -28,7 +26,7 @@ fun repoCreateCollectedDataFile(daoCollectedData: CollectedDataDao): Boolean {
         try {
             val filePath = PharmScanApplication.context?.getString(R.string.collected_data_file_path)
             val fileWriter =
-                FileWriter("${filePath}pharmscan_999_${dateFormated}_${secs.toString()}.new")
+                FileWriter("${filePath}pharmscan_999_${dateFormated}_$secs.new")
 
             out = BufferedWriter(fileWriter)
 
