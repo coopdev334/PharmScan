@@ -12,13 +12,13 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-suspend fun repoCreateCollectedDataFile(daoCollectedData: CollectedDataDao): Boolean {
+fun repoCreateCollectedDataFile(daoCollectedData: CollectedDataDao): Boolean {
     var success = false
 
     // Get all collected data from table and write to ascii text file
     val collectedData = daoCollectedData.getAll()
 
-    var out : BufferedWriter
+    val out : BufferedWriter
     val secs = (LocalDateTime.now().second + (LocalDateTime.now().minute*60) + (LocalDateTime.now().hour*3600))
     val date = LocalDate.now()
     val formatter = DateTimeFormatter.ofPattern("MM-dd-yy")
@@ -27,10 +27,10 @@ suspend fun repoCreateCollectedDataFile(daoCollectedData: CollectedDataDao): Boo
     if (collectedData.isNotEmpty()) {
         try {
             val filePath = PharmScanApplication.context?.getString(R.string.collected_data_file_path)
-            var fileWriter =
-                FileWriter("${filePath}pharmscan_999_${dateFormated}_${secs.toString()}_789.new")
+            val fileWriter =
+                FileWriter("${filePath}pharmscan_999_${dateFormated}_${secs.toString()}.new")
 
-            out = BufferedWriter(fileWriter);
+            out = BufferedWriter(fileWriter)
 
             for (row in collectedData) {
                 out.write(
