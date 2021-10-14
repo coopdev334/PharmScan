@@ -11,7 +11,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,9 +28,6 @@ import com.example.pharmscan.ViewModel.PharmScanViewModelFactory
 import com.example.pharmscan.ui.Navigation.Navigate
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import com.example.pharmscan.ui.theme.PharmScanTheme
-import com.google.android.material.snackbar.Snackbar
-
-import androidx.annotation.NonNull
 import com.example.pharmscan.ui.Utility.ToastDisplay
 
 

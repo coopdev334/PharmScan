@@ -18,6 +18,10 @@ class PharmScanViewModel(
     // Circular Progress Bar control variable
     val circularPrgBarLoading = mutableStateOf(false)
 
+    // Screen fade amount. Used to fade composable that uses modifier.alpha() to fade
+    // the screen. 1.0f is no fade, 0.0f is blank screen
+    val screenFadeAmount = mutableStateOf(1.0f)
+
     // **********************************************************************
     // HostIpAddress
     // LiveData holds state which is observed by the UI
@@ -73,10 +77,12 @@ class PharmScanViewModel(
     fun getColDataQtyPriceByTag(tag: String) = repo.getColDataQtyPriceByTag(tag)
 
     fun uploadCollectedData() = CoroutineScope(Dispatchers.IO).launch {
+        screenFadeAmount.value = 0.2f
         circularPrgBarLoading.value = true
         repo.uploadCollectedData()
         delay(2000)
         circularPrgBarLoading.value = false
+        screenFadeAmount.value = 1.0f
     }
 
 
