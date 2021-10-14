@@ -168,8 +168,8 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Column() {
-                        Row() {
+                    Column {
+                        Row {
                             Text(
                                 text = "(FileSend)",
                                 style = TextStyle(
@@ -181,7 +181,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                                 color = MaterialTheme.colors.onBackground
                             )
                         }
-                        Row() {
+                        Row {
                             Text(
                                 text = "Tag Changes",
                                 style = MaterialTheme.typography.h5,

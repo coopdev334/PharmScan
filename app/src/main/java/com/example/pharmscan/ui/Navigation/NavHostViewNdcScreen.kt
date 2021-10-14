@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.mutableStateOf
@@ -22,10 +21,8 @@ import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ui.Utility.SearchBar
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
-import com.example.pharmscan.Data.Tables.CollectedData
 import com.example.pharmscan.Data.Tables.PSNdc
 import com.example.pharmscan.ViewModel.PharmScanViewModel
-import com.example.pharmscan.ui.Dialog.CancelCollDataRecord
 import com.example.pharmscan.ui.Utility.ClearText
 import kotlinx.coroutines.launch
 
@@ -142,7 +139,7 @@ fun NavGraphBuilder.addViewNdcScreen(navController: NavController, pharmScanView
                     .padding(start = 5.dp, top = 5.dp, end = 5.dp)
             ) { searchText ->
                 // This lamda function gets called when searching
-                if (!searchText.isNullOrEmpty()) {
+                if (!searchText.isEmpty()) {
                     when (hintLabel) {
                         "Ndc" -> {
                             psNdc = pharmScanViewModel.getAllPSNdcOrderByNdc()

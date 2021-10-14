@@ -39,7 +39,7 @@ fun NavGraphBuilder.addViewCancelScreen(navController: NavController, pharmScanV
 
         composable(Screen.ViewCancel.route) {
 
-        var collectedData: MutableList<CollectedData> by remember {mutableStateOf(mutableListOf<CollectedData>())}
+        var collectedData: MutableList<CollectedData> by remember {mutableStateOf(mutableListOf())}
         var startIndex: Int by remember {mutableStateOf(0)}
         var hintLabel by remember {mutableStateOf("Rec#")}
         val listState = rememberLazyListState()

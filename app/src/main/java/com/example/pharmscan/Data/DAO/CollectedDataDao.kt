@@ -3,7 +3,6 @@ package com.example.pharmscan.Data.DAO
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.pharmscan.Data.Tables.CollectedData
-import com.example.pharmscan.Data.Tables.PSNdc
 
 // This object contains all the SQL needed to access the
 // database tables.

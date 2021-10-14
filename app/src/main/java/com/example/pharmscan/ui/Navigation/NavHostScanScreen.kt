@@ -3,7 +3,6 @@ package com.example.pharmscan.ui.Navigation
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -50,7 +49,6 @@ import com.example.pharmscan.ui.Utility.UpdateSettings
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 // TODO: @ExperimentalFoundationApi just for Text(.combinedClickable) may go away
 @ExperimentalComposeUiApi
@@ -520,12 +518,12 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 .clip(RoundedCornerShape(30.dp))
                                 .background(Color.LightGray)
                         ) {
-                            Column() {
+                            Column {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                 ) {
-                                    Column() {
+                                    Column {
                                         Row(
                                             modifier = Modifier
                                                 .fillMaxWidth(),
@@ -602,7 +600,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                     modifier = Modifier
                                         .fillMaxWidth()
                                 ) {
-                                    Column() {
+                                    Column {
                                         Row(
                                             modifier = Modifier
                                                 .fillMaxWidth(),
@@ -637,7 +635,7 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                     modifier = Modifier
                                         .fillMaxWidth()
                                 ) {
-                                    Column() {
+                                    Column {
                                         // Get last scanned row for display. If no rows default list
                                         var collectedData =
                                             pharmScanViewModel.getColDataLastInsertedRow()

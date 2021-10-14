@@ -30,7 +30,6 @@ import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.GetOpId
 import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ui.Utility.CircularProgressBar
-import com.example.pharmscan.ui.Utility.SystemMsg
 import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import kotlinx.coroutines.*

@@ -30,8 +30,7 @@ import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import com.example.pharmscan.ui.theme.PharmScanTheme
 import com.example.pharmscan.ui.Utility.ToastDisplay
 
-
-class MainActivity() : ComponentActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
+class MainActivity : ComponentActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
     private lateinit var psViewModel: PharmScanViewModel
     private lateinit var receiver: PharmScanBroadcastReceiver
     private lateinit var receiverNoNet: SystemMsgBroadcastReceiver

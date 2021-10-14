@@ -2,8 +2,6 @@ package com.example.pharmscan
 
 import android.app.Application
 import android.content.Context
-import com.example.pharmscan.Data.PharmScanDb
-import com.example.pharmscan.Repository.PharmScanRepo
 
 class PharmScanApplication : Application() {
     // Using by lazy so the database and the repository are only created when they're needed

@@ -2,7 +2,6 @@ package com.example.pharmscan.ViewModel
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
-import androidx.navigation.NavController
 import com.example.pharmscan.Data.ScanLiveData
 import com.example.pharmscan.Data.Tables.*
 import com.example.pharmscan.Repository.PharmScanRepo

@@ -2,17 +2,11 @@ package com.example.pharmscan.ViewModel
 
 import android.media.AudioManager
 import android.media.ToneGenerator
-import android.os.Environment
-import android.util.Log
 import androidx.navigation.NavController
 import com.example.pharmscan.Data.Tables.CollectedData
-import com.example.pharmscan.Data.Tables.PSNdc
-import com.example.pharmscan.Repository.repoSendCollectedDataFileToHost
 import com.example.pharmscan.ui.Screen.Screen
-import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import kotlinx.coroutines.*
-import java.io.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

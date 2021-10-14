@@ -1,6 +1,5 @@
 package com.example.pharmscan.ui.Screen
 
-import android.util.Log
 import com.example.pharmscan.R
 import com.example.pharmscan.ui.Utility.is1DecNumber
 import com.example.pharmscan.ui.Utility.is2DecNumber

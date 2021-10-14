@@ -1,7 +1,5 @@
 package com.example.pharmscan.ui.Utility
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
 import android.widget.Toast
 import com.example.pharmscan.PharmScanApplication
 
