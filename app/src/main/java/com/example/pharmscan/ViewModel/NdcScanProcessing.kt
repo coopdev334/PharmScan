@@ -2,18 +2,16 @@ package com.example.pharmscan.ViewModel
 
 import android.media.AudioManager
 import android.media.ToneGenerator
-import android.os.Environment
-import android.util.Log
 import androidx.navigation.NavController
 import com.example.pharmscan.Data.Tables.CollectedData
-import com.example.pharmscan.Data.Tables.PSNdc
 import com.example.pharmscan.ui.Screen.Screen
-import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
-import kotlinx.coroutines.runBlocking
-import java.io.*
+import kotlinx.coroutines.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
-fun NdcSearch(navController: NavController, ndc: String, pharmScanViewModel:PharmScanViewModel) {
+fun NdcSearch(navController: NavController, ndc: String, pharmScanViewModel:PharmScanViewModel, ndcInputType: String) {
     // First formula - replace leading digit with a 0 then take remaining digits NOT including trailing check digit
     val ndcFirst = "0" + ndc.substring(1..10)
     var result = pharmScanViewModel.getNdcPSNdc(ndcFirst)
@@ -27,29 +25,30 @@ fun NdcSearch(navController: NavController, ndc: String, pharmScanViewModel:Phar
             val ndcThird = ndc.substring(0..10)
             result = pharmScanViewModel.getNdcPSNdc(ndcThird)
             if (result.isNullOrEmpty()) {
-                val toneG = ToneGenerator(AudioManager.STREAM_ALARM, 100)
-                toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 1000)
-                navController.navigate(Screen.NdcNoMatchScreen.route)
+                CoroutineScope(Dispatchers.Default).launch {
+                    ErrorBeeper(3)
+                }
+                navController.navigate(Screen.NdcNoMatchScreen.withArgs(ndcInputType))
             }else {
                 val toneGG = ToneGenerator(AudioManager.STREAM_ALARM, 100)
                 toneGG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200)
-                navController.navigate(Screen.NdcMatchScreen.withArgs(result[0].ndc!!, result[0].price!!, result[0].packsz!!))
+                navController.navigate(Screen.NdcMatchScreen.withArgs(result[0].ndc!!, result[0].price!!, result[0].packsz!!, ndcInputType))
             }
         }else{
             val toneGG = ToneGenerator(AudioManager.STREAM_ALARM, 100)
             toneGG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200)
-            navController.navigate(Screen.NdcMatchScreen.withArgs(result[0].ndc!!, result[0].price!!, result[0].packsz!!))
+            navController.navigate(Screen.NdcMatchScreen.withArgs(result[0].ndc!!, result[0].price!!, result[0].packsz!!, ndcInputType))
         }
     }else{
         val toneGG = ToneGenerator(AudioManager.STREAM_ALARM, 100)
         toneGG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200)
-        navController.navigate(Screen.NdcMatchScreen.withArgs(result[0].ndc!!, result[0].price!!, result[0].packsz!!))
+        navController.navigate(Screen.NdcMatchScreen.withArgs(result[0].ndc!!, result[0].price!!, result[0].packsz!!, ndcInputType))
     }
 }
 
 
 // Insert new record into collected data table
-fun InsertNdc(pharmScanViewModel:PharmScanViewModel, ndc: String, price: String, pksz: String, qty: String, matchFlg: String) {
+fun InsertNdc(pharmScanViewModel:PharmScanViewModel, ndc: String, price: String, pksz: String, qty: String, matchFlg: String, ndcInputType: String) {
     val sysinfo = pharmScanViewModel.getSystemInfoRow()
     var recnt: Int? = 1
     val collectedDataLastRow = pharmScanViewModel.getColDataLastInsertedRow()  // get last collected data row
@@ -57,8 +56,15 @@ fun InsertNdc(pharmScanViewModel:PharmScanViewModel, ndc: String, price: String,
         recnt = collectedDataLastRow[0].recount?.toInt()?.plus(1)         // add 1 to record count
     }
 
+    val secs = (LocalDateTime.now().second + (LocalDateTime.now().minute*60) + (LocalDateTime.now().hour*3600))
+    val date = LocalDate.now()
+    val formatter = DateTimeFormatter.ofPattern("MM/dd/yy")
+    val dateFormated = date.format(formatter)
+
+    val prodCd = if (ndcInputType == "K") "K000MOT" else "S000MOT"
+
     // Build Collected Data Table record with values
-    val collectedData = CollectedData("000", "0000MOT", ndc, qty, price, pksz, "000", matchFlg, sysinfo[0].Tag, sysinfo[0].opid, recnt.toString(), "12/12/21", "123456", "P", "00000000")
+    val collectedData = CollectedData("000", prodCd, ndc, qty, price, pksz, "000", matchFlg, sysinfo[0].Tag, sysinfo[0].opid, recnt.toString(), dateFormated, secs.toString(), "P", "00000000")
     runBlocking {
         val job = pharmScanViewModel.insertCollectedData(collectedData)
         job.join()  // wait for insert to complete
@@ -85,6 +91,15 @@ fun ProcessHoldState(qty: String, pharmScanViewModel:PharmScanViewModel) {
 
     val columnMap = mapOf("TotRecCount" to recnt.toString())
     UpdateSystemInfo(pharmScanViewModel, columnMap)
+}
+
+suspend fun ErrorBeeper(repeat: Int) {
+
+    for (i in 0 until repeat) {
+        val toneG = ToneGenerator(AudioManager.ERROR, 700)
+        toneG.startTone(ToneGenerator.TONE_PROP_BEEP, 1000)
+        delay(125)
+    }
 }
 
 

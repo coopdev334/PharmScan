@@ -17,13 +17,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.nativeKeyCode
 import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-//import androidx.navigation.compose.navArgument
+import com.example.pharmscan.Data.ScanLiveData
 import com.example.pharmscan.ViewModel.InsertNdc
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Screen.*
@@ -32,7 +30,7 @@ import com.example.pharmscan.ui.Utility.is2DecNumber
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     composable(
-        route = Screen.NdcMatchScreen.route + "/{ndc}/{price}/{pksz}",
+        route = Screen.NdcMatchScreen.route + "/{ndc}/{price}/{pksz}/{ndcinputtype}",
         // Define argument list to pass to this composable in composable constructor
         // arguments parameter which is a list of navArguments.
         arguments = listOf(
@@ -47,22 +45,27 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
             navArgument("pksz") {
                 type = NavType.StringType
                 nullable = false
+            },
+            navArgument("ndcinputtype") {
+                type = NavType.StringType
+                nullable = false
             }
         )
     ) {
 
         val manPrcOn = remember { mutableStateOf(false) }
-        var ndc by remember { mutableStateOf(it.arguments?.getString("ndc")?.let { it1 -> InputWrapper(it1, null)}) }
+        val ndc by remember { mutableStateOf(it.arguments?.getString("ndc")?.let { it1 -> InputWrapper(it1, null)}) }
         var price by remember { mutableStateOf(if (manPrcOn.value)InputWrapper("", null) else it.arguments?.getString("price")?.let { it1 -> InputWrapper(it1.trimStart{it == '0'}, null)}) }
-        var pksz by remember { mutableStateOf(it.arguments?.getString("pksz")?.let { it1 -> InputWrapper(it1.trimStart{it == '0'}, null)}) }
+        val pksz by remember { mutableStateOf(it.arguments?.getString("pksz")?.let { it1 -> InputWrapper(it1.trimStart{it == '0'}, null)}) }
         var qty: InputWrapper? by remember { mutableStateOf(InputWrapper("", null)) }
-        var costLimitExceed = remember { mutableStateOf(false) }
+        val ndcInputType = it.arguments?.getString("ndcinputtype")
+        val costLimitExceed = remember { mutableStateOf(false) }
         val settings = pharmScanViewModel.getSettingsRow()
         val prcFocusRequester = remember {FocusRequester()}
         val qtyFocusRequester = remember {FocusRequester()}
         val showKyBrdInputDialog = remember { mutableStateOf(false) }
-        var manprcFirstEntry = remember { mutableStateOf(true) }
-        var onClickEntered = remember { mutableStateOf(false) }
+        val manprcFirstEntry = remember { mutableStateOf(true) }
+        val onClickEntered = remember { mutableStateOf(false) }
         var costLimit = 0.00
 
         if (!settings.isNullOrEmpty()) {
@@ -135,7 +138,8 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
 
         fun onOkClick() {
             onClickEntered.value = true
-            InsertNdc(pharmScanViewModel, ndc!!.value, price!!.value, pksz!!.value, qty!!.value, "P")
+            InsertNdc(pharmScanViewModel, ndc!!.value, price!!.value, pksz!!.value, qty!!.value, "P", ndcInputType!!)
+            pharmScanViewModel.scanLiveData.value = ScanLiveData(null, null)
             navController.popBackStack()
         }
 
@@ -173,19 +177,27 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
                 )
             }
             Spacer(Modifier.height(10.dp))
+            var labelDisplayPrice = "Price"
+            var colorDisplayPrice = TextFieldDefaults.textFieldColors(textColor = Color.Blue, focusedLabelColor = Color.Blue, unfocusedLabelColor = Color.Blue)
+            var textStyleDisplayPrice = MaterialTheme.typography.h5
+            if (manPrcOn.value) {
+                labelDisplayPrice = "Manual Price Entry"
+                colorDisplayPrice = TextFieldDefaults.textFieldColors(textColor = Color.Red, focusedLabelColor = Color.Red, unfocusedLabelColor = Color.Red)
+                textStyleDisplayPrice = MaterialTheme.typography.h2
+            }
             TextFieldWithMsg(
                 modifier = Modifier
                     .onPreviewKeyEvent { KeyEvent ->
                         if (KeyEvent.key.nativeKeyCode == 66) {
                             showKyBrdInputDialog.value = true
                             true
-                        }else
+                        } else
                             false
                     }
                     .focusRequester(prcFocusRequester),
                    // .onFocusChanged {},
                 enabled = manPrcOn.value,
-                label = "Price",
+                label = labelDisplayPrice,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next
@@ -193,7 +205,9 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
                 inputWrapper = price!!,
                 onValueChange = ::onPriceEntered,
                 onImeKeyAction = ::onImeActionClick,
-                length = 9
+                length = 9,
+                colors = colorDisplayPrice,
+                textStyle = textStyleDisplayPrice
             )
             Spacer(Modifier.height(10.dp))
             pksz?.let { it1 ->
@@ -205,18 +219,26 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
                 )
             }
             Spacer(Modifier.height(10.dp))
+            var labelDisplayQty = "Qty"
+            var colorDisplayQty = TextFieldDefaults.textFieldColors(textColor = Color.Blue, focusedLabelColor = Color.Blue, unfocusedLabelColor = Color.Blue)
+            var textStyleDisplayQty = MaterialTheme.typography.h5
+            if (costLimitExceed.value) {
+                labelDisplayQty = "Cost Limit Exceeded. Enter Exact Tenths"
+                colorDisplayQty = TextFieldDefaults.textFieldColors(textColor = Color.Red, focusedLabelColor = Color.Red, unfocusedLabelColor = Color.Red)
+                textStyleDisplayQty = MaterialTheme.typography.h2
+            }
             TextFieldWithMsg(
                 modifier = Modifier
                     .onPreviewKeyEvent { KeyEvent ->
                         if (KeyEvent.key.nativeKeyCode == 66) {
                             showKyBrdInputDialog.value = true
                             true
-                        }else
+                        } else
                             false
                     }
                     .focusRequester(qtyFocusRequester),
                 enabled = true,
-                label = "Qty",
+                label = labelDisplayQty,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
@@ -224,32 +246,11 @@ fun NavGraphBuilder.addNdcMatchScreen(navController: NavController, pharmScanVie
                 inputWrapper = qty!!,
                 onValueChange = ::onQtyEntered,
                 onImeKeyAction = ::onImeActionClick,
-                length = 7
+                length = 7,
+                colors = colorDisplayQty,
+                textStyle = textStyleDisplayQty
             )
             Spacer(Modifier.height(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    if (costLimitExceed.value) {
-                        Text(
-                            color = Color.Red,
-                            fontStyle = FontStyle.Italic,
-                            fontWeight = FontWeight.Bold,
-                            text = "Cost Limit Exceeded")
-                        Text(
-                            color = Color.Red,
-                            fontStyle = FontStyle.Italic,
-                            fontWeight = FontWeight.Bold,
-                            text = "Enter Exact Tenths For Qty")
-                    }else {
-                        if (manPrcOn.value)Text("Manual Price ON")
-                    }
-                }
-            }
             Row(
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.End,

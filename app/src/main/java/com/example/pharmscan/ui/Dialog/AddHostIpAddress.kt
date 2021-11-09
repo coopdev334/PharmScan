@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 
 @ExperimentalComposeUiApi
 @Composable
-fun AddHostComputer(
+fun AddHostIpAddress(
     showDialog: Boolean,
     onAdd: (name: String) -> Unit,
     onCancel: () -> Unit
@@ -60,7 +60,7 @@ fun AddHostComputer(
                                 modifier = Modifier.padding(bottom = 8.dp)
                             ) {
                                 Text(
-                                    text = "Host Computer",
+                                    text = "Host Ip Address",
                                     style = MaterialTheme.typography.h5
                                 )
                             }

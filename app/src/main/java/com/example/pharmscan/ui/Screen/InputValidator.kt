@@ -1,6 +1,5 @@
 package com.example.pharmscan.ui.Screen
 
-import android.util.Log
 import com.example.pharmscan.R
 import com.example.pharmscan.ui.Utility.is1DecNumber
 import com.example.pharmscan.ui.Utility.is2DecNumber
@@ -40,14 +39,6 @@ object InputValidator {
         }
     }
 
-    fun getHostAcctErrorIdOrNull(input: String): Int? {
-        return null
-    }
-
-    fun getHostPasswordErrorIdOrNull(input: String): Int? {
-        return null
-    }
-
     fun getCostLimitErrorIdOrNull(input: String): Int? {
         return when {
             !is2DecNumber(input) -> R.string.requires_2_dec
@@ -57,6 +48,15 @@ object InputValidator {
     }
 
     fun getTagChangesErrorIdOrNull(input: String): Int? {
+        return when {
+            isNotWholeNumber(input) -> R.string.Numeric_Only
+            input.length < 1 -> R.string.Requires_min_1_number
+            //etc..
+            else -> null
+        }
+    }
+
+    fun getHostServerPortErrorIdOrNull(input: String): Int? {
         return when {
             isNotWholeNumber(input) -> R.string.Numeric_Only
             input.length < 1 -> R.string.Requires_min_1_number

@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 // the rows for SQL operations defined in the DAO.
 @Entity(tableName = "Settings")
 data class Settings (
-    var	hostAcct: String?,
+    var	hostServerPort: String?,
     var	hostPassword: String?,
     var	ManualPrice: String?,
     var	CostLimit: String?,

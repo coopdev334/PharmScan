@@ -1,7 +1,5 @@
 package com.example.pharmscan.ViewModel
 
-import androidx.lifecycle.AbstractSavedStateViewModelFactory
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.pharmscan.Repository.PharmScanRepo

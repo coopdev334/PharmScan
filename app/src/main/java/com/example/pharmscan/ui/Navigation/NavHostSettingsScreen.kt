@@ -1,10 +1,7 @@
 package com.example.pharmscan.ui.Navigation
 
-import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -12,7 +9,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -23,22 +19,15 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.pharmscan.ViewModel.PharmScanViewModel
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.nativeKeyCode
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import com.example.pharmscan.Data.Tables.Settings
-import com.example.pharmscan.PharmScanApplication
 import com.example.pharmscan.R
-import com.example.pharmscan.ViewModel.InsertNdc
-import com.example.pharmscan.ui.Dialog.GetOpId
 import com.example.pharmscan.ui.Dialog.SettingsPin
 import com.example.pharmscan.ui.Screen.*
 import com.example.pharmscan.ui.Utility.*
-import kotlinx.coroutines.runBlocking
 
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
@@ -69,7 +58,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
         }
 
 
-                    Column(
+        Column(
                 modifier = Modifier.padding(start = 10.dp, end = 8.dp),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Center
@@ -86,7 +75,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                 fontSize = 40.sp,
                 modifier = Modifier
                     .align(alignment = Alignment.Start)
-                    .padding(start = 20.dp)
+                    .padding(start = 10.dp)
                     .clickable {
                         navController.popBackStack()
                     },
@@ -98,7 +87,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                 style = MaterialTheme.typography.h3,
                 color = MaterialTheme.colors.onBackground
             )
-            Spacer(modifier = Modifier.height(height = 30.dp))
+            Spacer(modifier = Modifier.height(height = 10.dp))
             Box(
                 Modifier
                     .fillMaxWidth()
@@ -111,28 +100,28 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                     .fillMaxSize()
                     .verticalScroll(scrollState)
                     ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            navController.navigate(Screen.NetIdScreen.route)
-                        },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Network Id",
-                        style = MaterialTheme.typography.h5,
-                        color = MaterialTheme.colors.onBackground
-                    )
-                }
-                Spacer(modifier = Modifier.height(height = 10.dp))
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(MaterialTheme.colors.secondary)
-                )
-                Spacer(modifier = Modifier.height(height = 10.dp))
+//                Row(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .clickable {
+//                            navController.navigate(Screen.NetIdScreen.route)
+//                        },
+//                    verticalAlignment = Alignment.CenterVertically
+//                ) {
+//                    Text(
+//                        text = "Network Id",
+//                        style = MaterialTheme.typography.h5,
+//                        color = MaterialTheme.colors.onBackground
+//                    )
+//                }
+//                Spacer(modifier = Modifier.height(height = 10.dp))
+//                Box(
+//                    Modifier
+//                        .fillMaxWidth()
+//                        .height(1.dp)
+//                        .background(MaterialTheme.colors.secondary)
+//                )
+//                Spacer(modifier = Modifier.height(height = 10.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -179,8 +168,8 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Column() {
-                        Row() {
+                    Column {
+                        Row {
                             Text(
                                 text = "(FileSend)",
                                 style = TextStyle(
@@ -192,7 +181,7 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                                 color = MaterialTheme.colors.onBackground
                             )
                         }
-                        Row() {
+                        Row {
                             Text(
                                 text = "Tag Changes",
                                 style = MaterialTheme.typography.h5,
@@ -203,6 +192,27 @@ fun NavGraphBuilder.addSettingsScreen(navController: NavController, pharmScanVie
                     }
                     Spacer(modifier = Modifier.width(width = 30.dp))
                     TagChanges(pharmScanViewModel)
+                }
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(MaterialTheme.colors.secondary)
+                )
+                Spacer(modifier = Modifier.height(height = 10.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Host Server Port",
+                        style = MaterialTheme.typography.h5,
+                        color = MaterialTheme.colors.onBackground
+                    )
+                    Spacer(modifier = Modifier.width(width = 25.dp))
+                    HostServerPort(pharmScanViewModel)
                 }
                 Spacer(modifier = Modifier.height(height = 10.dp))
                 Box(
@@ -375,6 +385,53 @@ fun TagChanges(pharmScanViewModel: PharmScanViewModel) {
         length = 4
     )
 }
+
+@Composable
+fun HostServerPort(pharmScanViewModel: PharmScanViewModel) {
+    var value by remember {mutableStateOf(InputWrapper("", null))}
+    val settingsNotInitialized = remember { mutableStateOf(true) }
+    val settings = pharmScanViewModel.getSettingsRow()
+
+    fun InputsValid (): Boolean {
+        when {
+            value.value.isEmpty() -> return false
+        }
+
+        return when {
+            value.errorId != null -> false
+            else -> true
+        }
+    }
+
+    fun onValueEntered(input: String) {
+        val errorId = InputValidator.getHostServerPortErrorIdOrNull(input)
+        value = value.copy(value = input, errorId = errorId)
+
+        if (InputsValid()) {
+            val columnValue = mapOf("hostServerPort" to input)
+            UpdateSettings(pharmScanViewModel, columnValue)
+        }
+    }
+
+    fun onImeActionClick() {
+    }
+
+    if (!settings.isNullOrEmpty() && settingsNotInitialized.value) {
+        settingsNotInitialized.value = false
+        value = value.copy(value = settings[0].hostServerPort.toString(), errorId = null)
+    }
+
+    OutlinedTextFieldWithMsg(
+        modifier = Modifier.onPreviewKeyEvent {KeyEvent -> KeyEvent.key.nativeKeyCode == 66},
+        enabled = true,
+        label = "",
+        inputWrapper = value,
+        onValueChange = ::onValueEntered,
+        onImeKeyAction = ::onImeActionClick,
+        length = 4
+    )
+}
+
 
 @Composable
 fun AutoLoadNdcCheckbox(pharmScanViewModel: PharmScanViewModel) {

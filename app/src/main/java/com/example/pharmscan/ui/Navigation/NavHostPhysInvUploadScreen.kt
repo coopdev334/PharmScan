@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -23,10 +24,12 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.pharmscan.Data.Tables.PSNdc
-import com.example.pharmscan.Data.Tables.Settings
+import com.example.pharmscan.PharmScanApplication
+import com.example.pharmscan.R
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.GetOpId
 import com.example.pharmscan.ui.Screen.Screen
+import com.example.pharmscan.ui.Utility.CircularProgressBar
 import com.example.pharmscan.ui.Utility.ToastDisplay
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import kotlinx.coroutines.*
@@ -35,11 +38,11 @@ import java.io.File
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     composable(
-        route = Screen.PhysInvUploadScreen.route + "/{hostCompName}",
+        route = Screen.PhysInvUploadScreen.route + "/{hostIpAddress}",
         // Define argument list to pass to this composable in composable constructor
         // arguments parameter which is a list of navArguments.
         arguments = listOf(
-            navArgument("hostCompName") {
+            navArgument("hostIpAddress") {
                 type = NavType.StringType
                 nullable = false
             }
@@ -47,10 +50,11 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
     ) {
         // Get the arguments passed to this composable by key name
         // arg must be present
-        val argTextHostComputer = it.arguments!!.getString("hostCompName")
+        val argTextHostIpAddress = it.arguments!!.getString("hostIpAddress")
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
         val showEnterOpIdDialog = remember { mutableStateOf(false) }
+        val circularPrgBarLoading = pharmScanViewModel.circularPrgBarLoading.value
 
         if (showEnterOpIdDialog.value) {
             GetOpId(
@@ -71,7 +75,8 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                             if (sysInfo[0].NdcLoading == "off") {
                                 ToastDisplay("Downloading Started...", Toast.LENGTH_SHORT)
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    readFileLineByLineUsingForEachLine(pharmScanViewModel,"/sdcard/Download/psndc.dat")
+                                    val filePath = PharmScanApplication.context?.getString(R.string.collected_data_file_path)
+                                    readFileLineByLineUsingForEachLine(pharmScanViewModel,"${filePath}psndc.dat")
                                 }
                             }
                         }
@@ -117,19 +122,19 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                         color = MaterialTheme.colors.onBackground
                     )
 
-                    Spacer(modifier = Modifier.height(height = 10.dp))
-
-                    Text(
-                        text = "View File Name",
-                        modifier = Modifier.clickable {
-                            coroutineScope.launch {
-                                scaffoldState.drawerState.close()
-                                navController.navigate(Screen.ViewColDataFNameScreen.route)
-                            }
-                        },
-                        style = MaterialTheme.typography.caption,
-                        color = MaterialTheme.colors.onBackground
-                    )
+//                    Spacer(modifier = Modifier.height(height = 10.dp))
+//
+//                    Text(
+//                        text = "View File Name",
+//                        modifier = Modifier.clickable {
+//                            coroutineScope.launch {
+//                                scaffoldState.drawerState.close()
+//                                navController.navigate(Screen.ViewColDataFNameScreen.route)
+//                            }
+//                        },
+//                        style = MaterialTheme.typography.caption,
+//                        color = MaterialTheme.colors.onBackground
+//                    )
                     Spacer(modifier = Modifier.height(height = 10.dp))
 
                     Text(
@@ -192,7 +197,7 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                         color = MaterialTheme.colors.onBackground
                     )
                     Text(
-                        text = argTextHostComputer!!,
+                        text = argTextHostIpAddress!!,
                         fontSize = 40.sp,
                         modifier = Modifier
                             .align(alignment = Alignment.CenterHorizontally)
@@ -215,6 +220,7 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                     ) {
                         Button(
                             modifier = Modifier.clip(RoundedCornerShape(50.dp)),
+                            enabled = !circularPrgBarLoading,
                             onClick = {
                             showEnterOpIdDialog.value = true
                         }) {
@@ -233,6 +239,7 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                     ) {
                         Button(
                             modifier = Modifier.clip(RoundedCornerShape(50.dp)),
+                            enabled = !circularPrgBarLoading,
                             onClick = {
                                 pharmScanViewModel.uploadCollectedData()
                         }) {
@@ -243,6 +250,11 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                             )
                         }
                     }
+                    Spacer(modifier = Modifier.height(18.dp))
+                    CircularProgressBar(
+                        modifier = Modifier.size(width = 60.dp, height = 60.dp),
+                        isDisplayed = circularPrgBarLoading,
+                        color = Color.Blue, strokeWidth = 8.dp)
                 }
             }
         )

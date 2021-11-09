@@ -1,9 +1,7 @@
 package com.example.pharmscan.ui.Utility
 
 import com.example.pharmscan.Data.Tables.Settings
-import com.example.pharmscan.Data.Tables.SystemInfo
 import com.example.pharmscan.ViewModel.PharmScanViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.runBlocking
 
 // update individual column values in Settings table. ONLY 1 row is allowed.
@@ -17,7 +15,7 @@ fun UpdateSettings(pharmScanViewModel: PharmScanViewModel, columnValue: Map<Stri
         //if (settingsRow.isNullOrEmpty() || columnValue.isNullOrEmpty()) {
         if (settingsRow.isNullOrEmpty()) {
             // set to defaults then update columns
-            settingsRow = listOf(Settings("None", "None", "off", "0.00", "0", "on"))
+            settingsRow = listOf(Settings("2325", "None", "off", "0.00", "1", "on"))
         } else {
             val job = pharmScanViewModel.deleteAllSettings()
             job.join() // wait for deleteRow to complete
@@ -27,7 +25,7 @@ fun UpdateSettings(pharmScanViewModel: PharmScanViewModel, columnValue: Map<Stri
     if (!columnValue.isNullOrEmpty()) {
         for (item in columnValue) {
             when (item.key) {
-                "hostAcct" -> settingsRow[0].hostAcct = item.value
+                "hostServerPort" -> settingsRow[0].hostServerPort = item.value
                 "hostPassword" -> settingsRow[0].hostPassword = item.value
                 "ManualPrice" -> settingsRow[0].ManualPrice = item.value
                 "CostLimit" -> settingsRow[0].CostLimit = item.value

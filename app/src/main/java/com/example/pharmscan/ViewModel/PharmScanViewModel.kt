@@ -1,40 +1,49 @@
 package com.example.pharmscan.ViewModel
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
 import com.example.pharmscan.Data.ScanLiveData
 import com.example.pharmscan.Data.Tables.*
 import com.example.pharmscan.Repository.PharmScanRepo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PharmScanViewModel(
     private val repo: PharmScanRepo
 ): ViewModel() {
 
+    // Circular Progress Bar control variable
+    val circularPrgBarLoading = mutableStateOf(false)
+
+    // Screen fade amount. Used to fade composable that uses modifier.alpha() to fade
+    // the screen. 1.0f is no fade, 0.0f is blank screen
+    val screenFadeAmount = mutableStateOf(1.0f)
+
     // **********************************************************************
-    // HostCompName
+    // HostIpAddress
     // LiveData holds state which is observed by the UI
     // (state flows down from ViewModel)
-    var hostCompName: LiveData<List<HostCompName>> = getAllLiveDataHostCompName()
+    var hostIpAddress: LiveData<List<HostIpAddress>> = getAllLiveDataHostIpAddress()
 
     // Settings viewModel db interface
     // These functions will be called by the composable views to get and set database information
     // Suspend function modifier is not used here but in repo and dao
-    fun insertHostCompName(hostCompName: HostCompName) = CoroutineScope(Dispatchers.IO).launch {
-        repo.insertHostCompName(hostCompName)
+    fun insertHostIpAddress(hostIpAddress: HostIpAddress) = CoroutineScope(Dispatchers.IO).launch {
+        repo.insertHostIpAddress(hostIpAddress)
     }
 
-    fun deleteRowHostCompName(hostCompName: HostCompName) = CoroutineScope(Dispatchers.IO).launch {
-        repo.deleteRowHostCompName(hostCompName)
+    fun deleteRowHostIpAddress(hostIpAddress: HostIpAddress) = CoroutineScope(Dispatchers.IO).launch {
+        repo.deleteRowHostIpAddress(hostIpAddress)
     }
 
-    fun deleteAllHostCompName() = CoroutineScope(Dispatchers.IO).launch {
-        repo.deleteAllHostCompName()
+    fun deleteAllHostIpAddress() = CoroutineScope(Dispatchers.IO).launch {
+        repo.deleteAllHostIpAddress()
     }
 
-    fun getAllLiveDataHostCompName() = repo.getAllLiveDataHostCompName()
-    fun getAllHostCompName() = repo.getAllHostCompName()
+    fun getAllLiveDataHostIpAddress() = repo.getAllLiveDataHostIpAddress()
+    fun getAllHostIpAddress() = repo.getAllHostIpAddress()
 
 
     // **********************************************************************
@@ -66,9 +75,13 @@ class PharmScanViewModel(
     fun getColDataLastInsertedRow() = repo.getColDataLastInsertedRow()
     fun getColDataQtyPriceByTag(tag: String) = repo.getColDataQtyPriceByTag(tag)
 
-    // TODO: use IO dispatcher when Toast removed
-    fun uploadCollectedData() = CoroutineScope(Dispatchers.Main).launch {
+    fun uploadCollectedData() = CoroutineScope(Dispatchers.IO).launch {
+        screenFadeAmount.value = 0.2f
+        circularPrgBarLoading.value = true
         repo.uploadCollectedData()
+        delay(2000)
+        circularPrgBarLoading.value = false
+        screenFadeAmount.value = 1.0f
     }
 
 

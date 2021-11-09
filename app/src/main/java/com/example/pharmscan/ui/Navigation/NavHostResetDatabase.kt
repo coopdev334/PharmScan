@@ -19,7 +19,7 @@ import kotlinx.coroutines.runBlocking
 fun NavGraphBuilder.addResetDatabaseScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
     composable(route = Screen.ResetDatabaseScreen.route) {
         var checkedStateColData by remember { mutableStateOf(false) }
-        var checkedStateHostCompName by remember { mutableStateOf(false) }
+        var checkedStateHostIpAddress by remember { mutableStateOf(false) }
         var checkedStateNdc by remember { mutableStateOf(false) }
         var checkedStateSettings by remember { mutableStateOf(false) }
         var checkedStateSystemInfo by remember { mutableStateOf(false) }
@@ -34,9 +34,9 @@ fun NavGraphBuilder.addResetDatabaseScreen(navController: NavController, pharmSc
 
             }
 
-            if (checkedStateHostCompName) {
+            if (checkedStateHostIpAddress) {
                 runBlocking {
-                    val job = pharmScanViewModel.deleteAllHostCompName()
+                    val job = pharmScanViewModel.deleteAllHostIpAddress()
                     job.join()
                 }
             }
@@ -130,8 +130,8 @@ fun NavGraphBuilder.addResetDatabaseScreen(navController: NavController, pharmSc
                 //Spacer(modifier = Modifier.width(width = 10.dp))
                 Checkbox(
                     modifier = Modifier.size(width = 40.dp, height = 20.dp),
-                    checked = checkedStateHostCompName,
-                    onCheckedChange = {checkedStateHostCompName = it}
+                    checked = checkedStateHostIpAddress,
+                    onCheckedChange = {checkedStateHostIpAddress = it}
                 )
             }
             Spacer(modifier = Modifier.height(height = 10.dp))

@@ -17,7 +17,7 @@ fun UpdateSystemInfo(pharmScanViewModel: PharmScanViewModel, columnValue: Map<St
 
         if (systemInfo.isEmpty() || columnValue.isNullOrEmpty()) {
             // set to defaults then update columns
-            systemInfo = listOf(SystemInfo("0", "0", "0.0", "0.00", "0", "0", "0", "off"))
+            systemInfo = listOf(SystemInfo("0", "0", "0", "0.0", "0.00", "0", "0", "0", "off"))
         } else {
             val job = pharmScanViewModel.deleteAllSystemInfo()
             job.join() // wait for deleteRow to complete
@@ -28,6 +28,7 @@ fun UpdateSystemInfo(pharmScanViewModel: PharmScanViewModel, columnValue: Map<St
     if (!columnValue.isNullOrEmpty()) {
         for (item in columnValue) {
             when (item.key) {
+                "hostIpAddress" -> systemInfo[0].hostIpAddress = item.value
                 "opid" -> systemInfo[0].opid = item.value
                 "HHDevice" -> systemInfo[0].HHDeviceId = item.value
                 "TotQty" -> systemInfo[0].TotQty = item.value
@@ -42,6 +43,7 @@ fun UpdateSystemInfo(pharmScanViewModel: PharmScanViewModel, columnValue: Map<St
                     systemInfo[0].Tag = item.value
 
                 }
+                "TagChangeCount" -> systemInfo[0].TagChangeCount = item.value
                 "NdcLoading" -> systemInfo[0].NdcLoading = item.value
             }
         }

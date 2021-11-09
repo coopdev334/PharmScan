@@ -3,7 +3,6 @@ package com.example.pharmscan.Data.DAO
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.pharmscan.Data.Tables.CollectedData
-import com.example.pharmscan.Data.Tables.PSNdc
 
 // This object contains all the SQL needed to access the
 // database tables.
@@ -36,6 +35,7 @@ interface CollectedDataDao {
     @Query("SELECT * FROM CollectedData WHERE iD = (SELECT MAX(iD) FROM CollectedData) LIMIT 1")
     fun getLastInsertedRow(): List<CollectedData>
 
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT qty, price FROM CollectedData WHERE :tag = loc")
     fun getQtyPriceByTag(tag: String): List<CollectedData>
 

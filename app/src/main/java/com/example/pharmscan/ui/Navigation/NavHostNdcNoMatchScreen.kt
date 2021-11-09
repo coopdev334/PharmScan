@@ -9,15 +9,12 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-//import androidx.compose.runtime.Composable
-//import androidx.compose.runtime.mutableStateOf
-//import androidx.compose.runtime.remember
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.nativeKeyCode
 import androidx.compose.ui.input.key.onPreviewKeyEvent
@@ -28,6 +25,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.example.pharmscan.Data.ScanLiveData
 import com.example.pharmscan.ViewModel.InsertNdc
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Screen.*
@@ -39,7 +39,17 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanViewModel: PharmScanViewModel) {
-    composable(Screen.NdcNoMatchScreen.route) {
+    composable(
+        Screen.NdcNoMatchScreen.route + "/{ndcinputtype}",
+        // Define argument list to pass to this composable in composable constructor
+        // arguments parameter which is a list of navArguments.
+        arguments = listOf(
+            navArgument("ndcinputtype") {
+                type = NavType.StringType
+                nullable = false
+            }
+        )
+    ) {
 
         val lifecycleOwner = LocalLifecycleOwner.current
         val focusManager = LocalFocusManager.current
@@ -57,9 +67,10 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
         var price by remember { mutableStateOf(InputWrapper("", null)) }
         var pksz by remember { mutableStateOf(InputWrapper("", null)) }
         var qty by remember { mutableStateOf(InputWrapper("", null)) }
+        val ndcInputType = it.arguments?.getString("ndcinputtype")
         val ndcFocusRequester = remember { FocusRequester() }
         val showKyBrdInputDialog = remember { mutableStateOf(false) }
-        var onClickEntered = remember { mutableStateOf(false) }
+        val onClickEntered = remember { mutableStateOf(false) }
         //val pkszFocusRequester = remember { FocusRequester() }
 
         DisposableEffect(Unit) {
@@ -69,10 +80,10 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
 
         fun InputsValid (): Boolean {
             when {
-                ndc.value.isNullOrEmpty() -> return false
-                price.value.isNullOrEmpty() -> return false
-                pksz.value.isNullOrEmpty() -> return false
-                qty.value.isNullOrEmpty() -> return false
+                ndc.value.isEmpty() -> return false
+                price.value.isEmpty() -> return false
+                pksz.value.isEmpty() -> return false
+                qty.value.isEmpty() -> return false
             }
 
             return when {
@@ -112,14 +123,16 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
 
         fun onImeActionDoneClick() {
             if (InputsValid()) {
-                InsertNdc(pharmScanViewModel, ndc.value, price.value, pksz.value, qty.value, "R")
+                InsertNdc(pharmScanViewModel, ndc.value, price.value, pksz.value, qty.value, "R", ndcInputType!!)
+                pharmScanViewModel.scanLiveData.value = ScanLiveData(null, null)
                 navController.popBackStack()
             }
         }
 
         fun onOkClick() {
             onClickEntered.value = true
-            InsertNdc(pharmScanViewModel, ndc.value, price.value, pksz.value, qty.value, "R")
+            InsertNdc(pharmScanViewModel, ndc.value, price.value, pksz.value, qty.value, "R", ndcInputType!!)
+            pharmScanViewModel.scanLiveData.value = ScanLiveData(null, null)
             navController.popBackStack()
         }
 
@@ -191,7 +204,10 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
                 inputWrapper = ndc,
                 onValueChange = ::onNdcEntered,
                 onImeKeyAction = ::onImeActionClick,
-                length = 11
+                length = 11,
+                colors = TextFieldDefaults.textFieldColors(textColor = Color.Blue, focusedLabelColor = Color.Blue, unfocusedLabelColor = Color.Blue),
+                textStyle = MaterialTheme.typography.h5
+
             )
             Spacer(Modifier.height(10.dp))
             TextFieldWithMsg(
@@ -216,7 +232,9 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
                 inputWrapper = price,
                 onValueChange = ::onPriceEntered,
                 onImeKeyAction = ::onImeActionClick,
-                length = 8
+                length = 8,
+                colors = TextFieldDefaults.textFieldColors(textColor = Color.Blue, focusedLabelColor = Color.Blue, unfocusedLabelColor = Color.Blue),
+                textStyle = MaterialTheme.typography.h5
             )
             Spacer(Modifier.height(10.dp))
             TextFieldWithMsg(
@@ -240,7 +258,9 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
                 inputWrapper = pksz,
                 onValueChange = ::onPkSzEntered,
                 onImeKeyAction = ::onImeActionClick,
-                length = 8
+                length = 8,
+                colors = TextFieldDefaults.textFieldColors(textColor = Color.Blue, focusedLabelColor = Color.Blue, unfocusedLabelColor = Color.Blue),
+                textStyle = MaterialTheme.typography.h5
             )
             Spacer(Modifier.height(10.dp))
             TextFieldWithMsg(
@@ -264,7 +284,9 @@ fun NavGraphBuilder.addNdcNoMatchScreen(navController: NavController, pharmScanV
                 inputWrapper = qty,
                 onValueChange = ::onQtyEntered,
                 onImeKeyAction = ::onImeActionDoneClick,
-                length = 6
+                length = 6,
+                colors = TextFieldDefaults.textFieldColors(textColor = Color.Blue, focusedLabelColor = Color.Blue, unfocusedLabelColor = Color.Blue),
+                textStyle = MaterialTheme.typography.h5
             )
             Spacer(Modifier.height(8.dp))
             Row(
