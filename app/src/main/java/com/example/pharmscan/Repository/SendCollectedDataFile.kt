@@ -58,6 +58,7 @@ fun repoSendCollectedDataFileToHost(hostIpAddress: String, hostServerPort: Strin
                     writer.println(valRec)
                     writer.println("END OF FILE")
                     success = true
+                    soc.close()
                 }
             }
 

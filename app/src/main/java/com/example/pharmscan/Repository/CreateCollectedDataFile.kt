@@ -24,9 +24,10 @@ fun repoCreateCollectedDataFile(daoCollectedData: CollectedDataDao): Boolean {
 
     if (collectedData.isNotEmpty()) {
         try {
+            val operid = collectedData[0].operid
             val filePath = PharmScanApplication.context?.getString(R.string.collected_data_file_path)
             val fileWriter =
-                FileWriter("${filePath}pharmscan_999_${dateFormated}_$secs.new")
+                FileWriter("${filePath}pharmscan_${operid?.padStart(3, '0')}_${dateFormated}_$secs.new")
 
             out = BufferedWriter(fileWriter)
 
