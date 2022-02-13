@@ -1,5 +1,6 @@
 package com.example.pharmscan.ui.Navigation
 
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -18,11 +19,18 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.unit.sp
 import com.example.pharmscan.Data.Tables.HostIpAddress
+import com.example.pharmscan.Data.Tables.Settings
+import com.example.pharmscan.PharmScanApplication
 import com.example.pharmscan.ViewModel.PharmScanViewModel
 import com.example.pharmscan.ui.Dialog.AddHostIpAddress
 import com.example.pharmscan.ui.Dialog.DeleteHostComputerAlert
+import com.example.pharmscan.ui.Utility.ToastDisplay
+import com.example.pharmscan.ui.Utility.UpdateSettings
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import kotlinx.coroutines.launch
 
@@ -39,6 +47,22 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
         val showDelHostCompDialog = remember { mutableStateOf(false) }
         val showAddHostCompDialog = remember { mutableStateOf(false) }
         val hostIpAddressList: List<HostIpAddress> by pharmScanViewModel.hostIpAddress.observeAsState(pharmScanViewModel.getAllHostIpAddress())
+        val settings: List<Settings> by pharmScanViewModel.settings.observeAsState(pharmScanViewModel.getSettingsRow())
+        val settingsNotInitialized = remember { mutableStateOf(true) }
+        val toastObj = remember { mutableStateOf(Toast(PharmScanApplication.context)) }
+
+        if (settings.isNullOrEmpty() && settingsNotInitialized.value) {
+            settingsNotInitialized.value = false
+            UpdateSettings(pharmScanViewModel)
+            ToastDisplay("WARNING: Settings Table is Empty", Toast.LENGTH_LONG)
+        }else{
+            if (!settings.isNullOrEmpty()) {
+                // Check if settings table has ONLY default row meaning user never setup settings table
+                if (settings[0].FileSendTagChgs == "0" || settings[0].hostServerPort == "0") {
+                    toastObj.value = ToastDisplay("WARNING: Settings Not FULLY Setup", Toast.LENGTH_SHORT)!!
+                }
+            }
+        }
 
 //        if (hostIpAddressList.isNullOrEmpty()) {
 //            // set to defaults
@@ -161,6 +185,15 @@ fun NavGraphBuilder.addMainScreen(navController: NavController, pharmScanViewMod
                             }
                         ) {
                             Icon(Icons.Filled.Menu, contentDescription = "Localized description")
+                        }
+                    },
+                    actions = {
+                        Column(horizontalAlignment = Alignment.End) {
+                            Text(
+                                text = (settings[0].hostServerPort!!),
+                                fontSize = 14.sp,
+                                fontStyle = FontStyle.Italic
+                            )
                         }
                     }
                 )

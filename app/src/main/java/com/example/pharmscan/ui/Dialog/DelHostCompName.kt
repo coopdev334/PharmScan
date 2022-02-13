@@ -59,7 +59,8 @@ fun DeleteHostComputerAlert(
                     Spacer(modifier = Modifier.height(20.dp))
                     Text(
                         text = hostComp,
-                        style = MaterialTheme.typography.h4
+                        style = MaterialTheme.typography.h4,
+                        maxLines = 1
                     )
                     Row(
                         modifier = Modifier.fillMaxSize(),

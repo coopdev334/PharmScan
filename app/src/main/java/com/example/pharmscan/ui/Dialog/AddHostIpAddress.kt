@@ -14,7 +14,12 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.nativeKeyCode
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.pharmscan.ui.Utility.is1DecNumber
 
 @ExperimentalComposeUiApi
 @Composable
@@ -26,6 +31,7 @@ fun AddHostIpAddress(
     var text by remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
     val requester = FocusRequester()
+    var invalidInput = false
 
     if (showDialog) {
         AlertDialog(
@@ -33,8 +39,16 @@ fun AddHostIpAddress(
                 .size(240.dp, 230.dp)
                 .onPreviewKeyEvent { KeyEvent ->
                     if (KeyEvent.key.nativeKeyCode == 66) {
-                        keyboardController?.hide()
-                        onAdd(text)
+                        if (text.isNotEmpty()) {
+                            var result = text.filter { it == '.' }
+                            if (result.length == 3) { // must have 3 periods for valid IP address
+                                keyboardController?.hide()
+                                onAdd(text)
+                            } else {
+                                invalidInput = true
+                                text = ""
+                            }
+                        }
                         true
                     } else {
                         false
@@ -66,12 +80,31 @@ fun AddHostIpAddress(
                             }
                         },
                         singleLine = true,
-                        textStyle = MaterialTheme.typography.h4,
+                        textStyle = TextStyle(
+                                        fontFamily = FontFamily.Default,
+                                        fontWeight = FontWeight.W500,
+                                        fontSize = 22.sp
+                                    ),
                         modifier = Modifier
                             .focusRequester(requester)
                             .focusable()
                     )
-                    Spacer(modifier = Modifier.height(40.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        val textColor = if (invalidInput) {
+                            MaterialTheme.colors.error
+                        } else {
+                            MaterialTheme.colors.onBackground
+                        }
+                        Text(
+                            text = if (invalidInput) "Requires 3 periods and\n4 number groups" else "",
+                            style = MaterialTheme.typography.h6,
+                            color = textColor
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(35.dp))
                     Row(
                         modifier = Modifier.fillMaxSize(),
                         horizontalArrangement = Arrangement.End,
@@ -90,7 +123,14 @@ fun AddHostIpAddress(
                             modifier = Modifier.size(width = 90.dp, height = 45.dp),
                             onClick = {
                                 if (text.isNotEmpty()) {
-                                    onAdd(text)
+                                    var result = text.filter { it == '.' }
+                                    if (result.length == 3) { // must have 3 periods for valid IP address
+                                        onAdd(text)
+                                    }
+                                    else {
+                                        invalidInput = true
+                                        text = ""
+                                    }
                                 }
                             }
                         ) {

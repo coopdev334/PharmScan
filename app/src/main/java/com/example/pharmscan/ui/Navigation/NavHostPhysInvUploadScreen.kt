@@ -8,6 +8,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -16,6 +18,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -24,6 +27,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.pharmscan.Data.Tables.PSNdc
+import com.example.pharmscan.Data.Tables.Settings
 import com.example.pharmscan.PharmScanApplication
 import com.example.pharmscan.R
 import com.example.pharmscan.ViewModel.PharmScanViewModel
@@ -31,6 +35,7 @@ import com.example.pharmscan.ui.Dialog.GetOpId
 import com.example.pharmscan.ui.Screen.Screen
 import com.example.pharmscan.ui.Utility.CircularProgressBar
 import com.example.pharmscan.ui.Utility.ToastDisplay
+import com.example.pharmscan.ui.Utility.UpdateSettings
 import com.example.pharmscan.ui.Utility.UpdateSystemInfo
 import kotlinx.coroutines.*
 import java.io.File
@@ -55,6 +60,22 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
         val coroutineScope = rememberCoroutineScope()
         val showEnterOpIdDialog = remember { mutableStateOf(false) }
         val circularPrgBarLoading = pharmScanViewModel.circularPrgBarLoading.value
+        val settings: List<Settings> by pharmScanViewModel.settings.observeAsState(pharmScanViewModel.getSettingsRow())
+        val settingsNotInitialized = remember { mutableStateOf(true) }
+        val toastObj = remember { mutableStateOf(Toast(PharmScanApplication.context)) }
+
+        if (settings.isNullOrEmpty() && settingsNotInitialized.value) {
+            settingsNotInitialized.value = false
+            UpdateSettings(pharmScanViewModel)
+            ToastDisplay("WARNING: Settings Table is Empty", Toast.LENGTH_LONG)
+        }else{
+            if (!settings.isNullOrEmpty()) {
+                // Check if settings table has ONLY default row meaning user never setup settings table
+                if (settings[0].FileSendTagChgs == "0" || settings[0].hostServerPort == "0") {
+                    toastObj.value = ToastDisplay("WARNING: Settings Not FULLY Setup", Toast.LENGTH_SHORT)!!
+                }
+            }
+        }
 
         if (showEnterOpIdDialog.value) {
             GetOpId(
@@ -173,6 +194,15 @@ fun NavGraphBuilder.addPhysInvUploadScreen(navController: NavController, pharmSc
                             }
                         ) {
                             Icon(Icons.Filled.Menu, contentDescription = "Localized description")
+                        }
+                    },
+                    actions = {
+                        Column(horizontalAlignment = Alignment.End) {
+                            Text(
+                                text = (settings[0].hostServerPort!!),
+                                fontSize = 14.sp,
+                                fontStyle = FontStyle.Italic
+                            )
                         }
                     }
                 )

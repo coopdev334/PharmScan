@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
@@ -29,6 +30,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.example.pharmscan.Data.ScanLiveData
@@ -449,6 +452,22 @@ fun NavGraphBuilder.addScanScreen(navController: NavController, pharmScanViewMod
                                 }
                             }
                         }
+
+                        if (!ndcLoading.value && systemInfo[0].NdcLoading == "off") {
+                            Column(horizontalAlignment = Alignment.End) {
+                                Text(
+                                    text = (settings[0].hostServerPort!!),
+                                    fontSize = 14.sp,
+                                    fontStyle = FontStyle.Italic
+                                )
+                                Text(
+                                    text = (systemInfo[0].hostIpAddress!!),
+                                    fontSize = 14.sp,
+                                    fontStyle = FontStyle.Italic
+                                )
+                            }
+                        }
+
                         // Currently not using manual price icon
 //                        IconToggleButton(
 //                            checked = manPrcOn.value,
